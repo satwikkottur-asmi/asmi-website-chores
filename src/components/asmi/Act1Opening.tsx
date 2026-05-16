@@ -27,7 +27,7 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
 
         <motion.div
           className="relative z-10 text-center w-full"
-          style={{ opacity: statementOpacity, y: statementY, scale: statementScale, filter: statementFilter }}
+          style={{ opacity: statementOpacity, y: statementY, scale: statementScale }}
         >
           <h1
             className="font-serif font-normal text-espresso tracking-[-0.02em]"
