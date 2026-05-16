@@ -12,13 +12,13 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const statementOpacity = useTransform(scrollYProgress, [0.38, 0.46], [1, 0]);
-  const wordmarkOpacity = useTransform(scrollYProgress, [0.25, 0.42, 0.7], [0, 1, 0]);
-  const wordmarkY = useTransform(scrollYProgress, [0.25, 0.7], [28, -12]);
-  const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
+  const statementOpacity = useTransform(scrollYProgress, [0.28, 0.34], [1, 0]);
+  const wordmarkOpacity = useTransform(scrollYProgress, [0.32, 0.45, 0.85], [0, 1, 0]);
+  const wordmarkY = useTransform(scrollYProgress, [0.32, 0.85], [28, -12]);
+  const brushOpacity = useTransform(scrollYProgress, [0.02, 0.12], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[100vh] md:h-[105vh]">
+    <section ref={ref} className="relative h-[200vh] md:h-[210vh]">
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center md:justify-center overflow-hidden px-5 sm:px-6 pt-[14vh] md:pt-0 gap-6 md:gap-0">
         <AmbientBlobs density={6} />
 
