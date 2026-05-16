@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Pill = { label: string; cat: "home" | "health" | "fin" | "travel" | "family"; size: "lg" | "md" | "sm" };
 
@@ -52,7 +53,6 @@ const PILLS: Pill[] = [
   { label: "Internet outage", cat: "home", size: "sm" },
 ];
 
-// Deterministic pseudo-random scatter positions
 function positions(count: number) {
   const out: { x: number; y: number; delay: number; dur: number }[] = [];
   for (let i = 0; i < count; i++) {
@@ -69,40 +69,94 @@ function positions(count: number) {
 }
 
 const POS = positions(PILLS.length);
+// Mobile shows a curated subset to avoid visual overload
+const MOBILE_PILLS = PILLS.slice(0, 24);
 
 export function Act4Cloud() {
   const ref = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const cloudOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.7, 0.9], [0, 1, 1, 0]);
   const cloudScale = useTransform(scrollYProgress, [0.1, 0.4], [0.92, 1]);
 
   return (
-    <section ref={ref} className="relative py-32">
-      <div className="text-center mb-14 px-6">
-        <h2 className="font-serif text-espresso" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}>
+    <section ref={ref} className="relative py-24 md:py-32">
+      <div className="text-center mb-12 md:mb-14 px-5 sm:px-6">
+        <h2
+          className="font-serif text-espresso"
+          style={{
+            color: "var(--color-espresso)",
+            fontSize: "clamp(2.2rem, 7vw, 5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+          }}
+        >
           From plumbers to prescriptions.
         </h2>
-        <p className="mt-4 font-sans text-stone" style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.4vw, 1.2rem)" }}>
+        <p
+          className="mt-3 md:mt-4 font-sans text-stone"
+          style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+        >
           Everything that needs a phone call.
         </p>
       </div>
 
-      <motion.div
-        ref={containerRef}
-        className="relative mx-auto"
+      {isMobile ? (
+        <motion.div
+          className="px-4 mx-auto max-w-xl flex flex-wrap justify-center gap-2.5"
+          style={{ opacity: cloudOpacity }}
+        >
+          {MOBILE_PILLS.map((p, i) => (
+            <FlowingPill key={p.label} pill={p} delay={(i % 6) * 0.25} dur={6 + (i % 4)} />
+          ))}
+        </motion.div>
+      ) : (
+        <motion.div
+          ref={containerRef}
+          className="relative mx-auto"
+          style={{
+            opacity: cloudOpacity,
+            scale: cloudScale,
+            height: "min(78vh, 720px)",
+            maxWidth: "1400px",
+          }}
+        >
+          {PILLS.map((p, i) => (
+            <FloatingPill key={p.label} pill={p} pos={POS[i]} containerRef={containerRef} />
+          ))}
+        </motion.div>
+      )}
+    </section>
+  );
+}
+
+function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: number }) {
+  const sizeClass =
+    pill.size === "lg" ? "px-4 py-2.5 text-[0.9rem]"
+    : pill.size === "md" ? "px-3.5 py-2 text-[0.82rem]"
+    : "px-3 py-1.5 text-[0.76rem]";
+  return (
+    <motion.div
+      animate={{ y: [0, -4, 0, 3, 0] }}
+      transition={{ duration: dur, repeat: Infinity, ease: "easeInOut", delay }}
+    >
+      <span
+        className={`inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap ${sizeClass}`}
         style={{
-          opacity: cloudOpacity,
-          scale: cloudScale,
-          height: "min(78vh, 720px)",
-          maxWidth: "1400px",
+          background: "rgba(251, 248, 243, 0.85)",
+          color: "var(--color-stone)",
+          backdropFilter: "blur(8px)",
+          border: "1px solid rgba(44,37,32,0.08)",
         }}
       >
-        {PILLS.map((p, i) => (
-          <FloatingPill key={p.label} pill={p} pos={POS[i]} containerRef={containerRef} />
-        ))}
-      </motion.div>
-    </section>
+        <span
+          className="inline-block rounded-full"
+          style={{ width: 6, height: 6, background: CATS[pill.cat] }}
+        />
+        {pill.label}
+      </span>
+    </motion.div>
   );
 }
 
