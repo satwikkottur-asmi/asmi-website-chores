@@ -41,7 +41,8 @@ export function Act2CallViz() {
   const stageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const endpoints = isMobile ? MOBILE_ENDPOINTS : DESKTOP_ENDPOINTS;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const { scrollYProgress: sectionProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const scrollYProgress = useTransform(sectionProgress, [0, 1], [0, 1]);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -111,7 +112,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[260vh] md:h-[280vh]">
+    <section ref={ref} className="relative h-[200vh] md:h-[220vh]">
       <div ref={stageRef} className="sticky top-0 h-screen w-full overflow-hidden relative">
         {/* Warm radial wash */}
         <div
