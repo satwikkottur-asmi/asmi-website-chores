@@ -248,7 +248,7 @@ export function Act2CallViz() {
           style={{ opacity: closingOpacity }}
         >
           <div>
-            <p className="font-serif" style={{ color: "var(--color-espresso)", fontSize: "clamp(2rem, 5vw, 4.4rem)", lineHeight: 1.05 }}>
+            <p className="font-serif" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.2rem, 7vw, 4.4rem)", lineHeight: 1.05 }}>
               Sarah found out over iMessage.
             </p>
             <p className="mt-4 font-serif italic" style={{ color: "#5C5349", fontSize: "clamp(1.2rem, 2.6vw, 2.2rem)" }}>
