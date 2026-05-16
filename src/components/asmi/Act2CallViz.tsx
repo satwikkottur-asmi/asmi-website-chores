@@ -189,45 +189,64 @@ function EndpointLabel({
 }: { endpoint: Endpoint; index: number; phase: "intro" | "dialing" | "resolved" | "outro" }) {
   const winner = index === 0;
   const visible = phase !== "intro";
-  // After resolution: only winner shows result; others fade out fully.
   const resolved = phase === "resolved" || phase === "outro";
   const showResult = resolved && winner;
-  const opacity = !visible ? 0 : resolved && !winner ? 0 : 1;
+  const labelOpacity = !visible ? 0 : resolved && !winner ? 0 : 1;
+  const dotOpacity = !visible ? 0 : winner || phase === "dialing" ? 1 : 0.3;
+  const dotColor = resolved ? (winner ? "#8BA888" : "#C9C2B6") : "#C25B3F";
 
-  // Push label vertically away from the orb so it doesn't overlap.
   const above = endpoint.y < 50;
-  const offsetY = above ? "calc(-100% - 14px)" : "14px";
 
   return (
-    <div
-      className="absolute"
-      style={{
-        left: `${endpoint.x}%`,
-        top: `${endpoint.y}%`,
-        transform: `translate(-50%, ${offsetY})`,
-        opacity,
-        transition: "opacity 0.5s ease",
-        maxWidth: "44vw",
-      }}
-    >
-      <div className="whitespace-nowrap text-center">
-        {showResult ? (
-          <span
-            className="label-mono px-2.5 py-1 rounded-md"
-            style={{
-              color: "var(--color-sage)",
-              background: "rgba(139,168,136,0.10)",
-              boxShadow: "0 0 24px rgba(139,168,136,0.25)",
-            }}
-          >
-            Bay Dermatology · Dr. Chen · Tomorrow 10am ✓
-          </span>
-        ) : (
-          <span className="label-mono" style={{ color: "#6B6560" }}>
-            {endpoint.label}
-          </span>
-        )}
+    <>
+      {/* Endpoint pin dot (in DOM so it's a true circle) */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          left: `${endpoint.x}%`,
+          top: `${endpoint.y}%`,
+          width: 10,
+          height: 10,
+          background: dotColor,
+          transform: "translate(-50%, -50%)",
+          opacity: dotOpacity,
+          transition: "opacity 0.5s ease, background 0.5s ease",
+          boxShadow: winner && resolved ? "0 0 18px rgba(139,168,136,0.6)" : undefined,
+        }}
+      />
+      {/* Label */}
+      <div
+        className="absolute"
+        style={{
+          left: `${endpoint.x}%`,
+          top: `${endpoint.y}%`,
+          transform: above
+            ? "translate(-50%, calc(-100% - 14px))"
+            : "translate(-50%, 14px)",
+          opacity: labelOpacity,
+          transition: "opacity 0.5s ease",
+          maxWidth: "44vw",
+        }}
+      >
+        <div className="whitespace-nowrap text-center">
+          {showResult ? (
+            <span
+              className="label-mono px-2.5 py-1 rounded-md"
+              style={{
+                color: "var(--color-sage)",
+                background: "rgba(139,168,136,0.10)",
+                boxShadow: "0 0 24px rgba(139,168,136,0.25)",
+              }}
+            >
+              Bay Dermatology · Dr. Chen · Tomorrow 10am ✓
+            </span>
+          ) : (
+            <span className="label-mono" style={{ color: "#6B6560" }}>
+              {endpoint.label}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
