@@ -1,4 +1,4 @@
-import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -41,8 +41,8 @@ export function Act2CallViz() {
   const stageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const endpoints = isMobile ? MOBILE_ENDPOINTS : DESKTOP_ENDPOINTS;
-  const { scrollYProgress: sectionProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const scrollYProgress = useTransform(sectionProgress, [0, 1], [0, 1]);
+  const { scrollY } = useScroll();
+  const scrollYProgress = useMotionValue(0);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -54,6 +54,32 @@ export function Act2CallViz() {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const el = ref.current;
+      if (!el || typeof window === "undefined") return;
+
+      const rect = el.getBoundingClientRect();
+      const totalScrollable = Math.max(el.offsetHeight - window.innerHeight, 1);
+      const rawProgress = -rect.top / totalScrollable;
+      scrollYProgress.set(Math.max(0, Math.min(1, rawProgress)));
+    };
+
+    updateProgress();
+    window.addEventListener("resize", updateProgress);
+    return () => window.removeEventListener("resize", updateProgress);
+  }, [scrollYProgress]);
+
+  useMotionValueEvent(scrollY, "change", () => {
+    const el = ref.current;
+    if (!el || typeof window === "undefined") return;
+
+    const rect = el.getBoundingClientRect();
+    const totalScrollable = Math.max(el.offsetHeight - window.innerHeight, 1);
+    const rawProgress = -rect.top / totalScrollable;
+    scrollYProgress.set(Math.max(0, Math.min(1, rawProgress)));
+  });
 
   const [phase, setPhase] = useState<Phase>("ask");
   useMotionValueEvent(scrollYProgress, "change", (value) => {
@@ -112,7 +138,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[200vh] md:h-[220vh]">
+    <section ref={ref} className="relative h-[185vh] md:h-[205vh]">
       <div ref={stageRef} className="sticky top-0 h-screen w-full overflow-hidden relative">
         {/* Warm radial wash */}
         <div
