@@ -458,25 +458,33 @@ function TravelingWave({
 }) {
   const color = winner ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)";
   const dur = 2.6 + branch.index * 0.22;
+  const bars = 4;
+  const barW = 3;
+  const gap = 6;
+  const barH = 18;
+  const groupW = bars * barW + (bars - 1) * (gap - barW);
   return (
-    <g>
-      <g transform="translate(-7,-12)">
-        {[0, 1, 2].map((bar) => (
-          <rect
-            key={bar}
-            x={bar * 5}
-            y={0}
-            width={2}
-            height={12}
-            rx={1}
-            fill={color}
-            style={{
-              transformOrigin: `${bar * 5 + 1}px 12px`,
-              animation: `wave-bar 0.8s ease-in-out infinite`,
-              animationDelay: `${bar * 0.12}s`,
-            }}
-          />
-        ))}
+    <g style={{ filter: `drop-shadow(0 0 6px ${color})` }}>
+      <g transform={`translate(${-groupW / 2}, ${-barH / 2})`}>
+        {Array.from({ length: bars }).map((_, bar) => {
+          const x = bar * gap;
+          return (
+            <rect
+              key={bar}
+              x={x}
+              y={0}
+              width={barW}
+              height={barH}
+              rx={1.5}
+              fill={color}
+              style={{
+                transformOrigin: `${x + barW / 2}px ${barH / 2}px`,
+                animation: `wave-bar 0.7s ease-in-out infinite`,
+                animationDelay: `${bar * 0.1}s`,
+              }}
+            />
+          );
+        })}
       </g>
       <animateMotion
         dur={`${dur}s`}
