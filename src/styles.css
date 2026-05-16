@@ -110,8 +110,8 @@
 }
 
 @keyframes wave-bar {
-  0%, 100% { transform: scaleY(0.25); }
-  50% { transform: scaleY(1.1); }
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
 }
 
 .font-serif { font-family: var(--font-serif); }
