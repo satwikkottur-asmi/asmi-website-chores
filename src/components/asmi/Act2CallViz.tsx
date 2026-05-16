@@ -5,17 +5,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type Endpoint = { x: number; y: number; label: string };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 18, y: 28, label: "Bay Area Plumbing" },
-  { x: 82, y: 26, label: "Rapid Rooter" },
-  { x: 14, y: 72, label: "Pacific Plumbing Co" },
-  { x: 86, y: 74, label: "Mr. Fix-It" },
-  { x: 50, y: 88, label: "Joe's Plumbing" },
+  { x: 16, y: 30, label: "Bay Dermatology" },
+  { x: 84, y: 28, label: "Pacific Skin Clinic" },
+  { x: 18, y: 76, label: "Marina Derm Group" },
+  { x: 82, y: 78, label: "SF Skin Institute" },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 28, label: "Bay Area" },
-  { x: 80, y: 30, label: "Rapid Rooter" },
-  { x: 50, y: 82, label: "Mr. Fix-It" },
+  { x: 20, y: 28, label: "Bay Dermatology" },
+  { x: 80, y: 30, label: "Pacific Skin" },
+  { x: 22, y: 78, label: "Marina Derm" },
+  { x: 78, y: 80, label: "SF Skin Inst." },
 ];
 
 export function Act2CallViz() {
@@ -62,7 +62,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[260vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[180vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
@@ -87,7 +87,7 @@ export function Act2CallViz() {
               lineHeight: 1.35,
             }}
           >
-            "Sink is leaking. Can you find a plumber today?"
+            "Need a dermatologist appointment this week."
           </p>
         </motion.div>
 
@@ -308,7 +308,7 @@ function EndpointLabel({
                 boxShadow: "0 0 24px rgba(139,168,136,0.3)",
               }}
             >
-              Bay Area Plumbing · Mike · Today 2pm ✓
+              ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
             </span>
           ) : (
             <span className="label-mono" style={{ color: "#6B6560" }}>

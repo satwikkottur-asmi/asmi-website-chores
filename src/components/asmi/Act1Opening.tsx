@@ -17,7 +17,7 @@ export function Act1Opening() {
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[120vh] md:h-[140vh]">
+    <section ref={ref} className="relative h-[105vh] md:h-[115vh]">
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-5 sm:px-6">
         <AmbientBlobs density={6} />
 
