@@ -90,7 +90,7 @@ export function Act2CallViz() {
           observer.disconnect();
         }
       },
-      { threshold: 0.45 }
+      { threshold: 0.45 },
     );
 
     observer.observe(el);
@@ -101,7 +101,8 @@ export function Act2CallViz() {
     if (!hasStarted) return;
 
     const prefersReducedMotion =
-      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReducedMotion) {
       setActiveStep(3);
@@ -109,7 +110,7 @@ export function Act2CallViz() {
     }
 
     const timers = STEP_DELAYS.map((delay, index) =>
-      window.setTimeout(() => setActiveStep(index), delay)
+      window.setTimeout(() => setActiveStep(index), delay),
     );
 
     return () => timers.forEach((timer) => window.clearTimeout(timer));
@@ -121,10 +122,8 @@ export function Act2CallViz() {
     const ex = (endpoint.x / 100) * size.w;
     const ey = (endpoint.y / 100) * size.h;
     const mx =
-      (cx + ex) / 2 +
-      (index - (endpoints.length - 1) / 2) * (size.w * (isMobile ? 0.024 : 0.038));
-    const my =
-      (cy + ey) / 2 + (index % 2 === 0 ? -(isMobile ? 34 : 58) : isMobile ? 34 : 58);
+      (cx + ex) / 2 + (index - (endpoints.length - 1) / 2) * (size.w * (isMobile ? 0.024 : 0.038));
+    const my = (cy + ey) / 2 + (index % 2 === 0 ? -(isMobile ? 34 : 58) : isMobile ? 34 : 58);
 
     return {
       id: `branch-${index}`,
@@ -150,13 +149,17 @@ export function Act2CallViz() {
                   animate={{ opacity: isActive ? 1 : 0.36, x: isActive ? 0 : -10 }}
                   transition={{ duration: 0.45, ease: "easeOut" }}
                   className="border-b pb-5"
-                  style={{ borderColor: "color-mix(in srgb, var(--color-espresso) 10%, transparent)" }}
+                  style={{
+                    borderColor: "color-mix(in srgb, var(--color-espresso) 10%, transparent)",
+                  }}
                 >
                   <div className="mb-2 flex items-center gap-3">
                     <span
                       className="label-mono inline-flex h-7 w-7 items-center justify-center rounded-full"
                       style={{
-                        background: isActive ? "var(--color-terracotta)" : "color-mix(in srgb, var(--color-sand) 72%, white)",
+                        background: isActive
+                          ? "var(--color-terracotta)"
+                          : "color-mix(in srgb, var(--color-sand) 72%, white)",
                         color: isActive ? "var(--color-cream)" : "var(--color-stone)",
                       }}
                     >
@@ -164,7 +167,9 @@ export function Act2CallViz() {
                     </span>
                     <p
                       className="label-mono"
-                      style={{ color: isCurrent ? "var(--color-terracotta)" : "var(--color-stone)" }}
+                      style={{
+                        color: isCurrent ? "var(--color-terracotta)" : "var(--color-stone)",
+                      }}
                     >
                       {step.title}
                     </p>
@@ -267,26 +272,36 @@ export function Act2CallViz() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
-              <div className="relative" style={{ width: isMobile ? 124 : 168, height: isMobile ? 124 : 168 }}>
+              <div
+                className="relative"
+                style={{ width: isMobile ? 124 : 168, height: isMobile ? 124 : 168 }}
+              >
                 <motion.div
                   className="absolute inset-0 rounded-full"
                   animate={{ scale: [1, 1.06, 1], opacity: [0.24, 0.4, 0.24] }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-                  style={{ background: "color-mix(in srgb, var(--color-terracotta) 18%, transparent)" }}
+                  style={{
+                    background: "color-mix(in srgb, var(--color-terracotta) 18%, transparent)",
+                  }}
                 />
                 <div
                   className="absolute inset-[15%] rounded-full"
-                  style={{ background: "color-mix(in srgb, var(--color-terracotta) 26%, transparent)" }}
+                  style={{
+                    background: "color-mix(in srgb, var(--color-terracotta) 26%, transparent)",
+                  }}
                 />
                 <div
                   className="absolute inset-[30%] rounded-full"
-                  style={{ background: "color-mix(in srgb, var(--color-terracotta) 44%, transparent)" }}
+                  style={{
+                    background: "color-mix(in srgb, var(--color-terracotta) 44%, transparent)",
+                  }}
                 />
                 <div
                   className="absolute inset-[39%] rounded-full"
                   style={{
                     background: "var(--color-terracotta)",
-                    boxShadow: "0 0 50px color-mix(in srgb, var(--color-terracotta) 48%, transparent)",
+                    boxShadow:
+                      "0 0 50px color-mix(in srgb, var(--color-terracotta) 48%, transparent)",
                   }}
                 />
                 <div
@@ -343,7 +358,9 @@ export function Act2CallViz() {
                       style={{
                         left: `${endpoint.x}%`,
                         top: `${endpoint.y}%`,
-                        transform: above ? "translate(-50%, calc(-100% - 18px))" : "translate(-50%, 18px)",
+                        transform: above
+                          ? "translate(-50%, calc(-100% - 18px))"
+                          : "translate(-50%, 18px)",
                         maxWidth: isMobile ? "8.75rem" : "14rem",
                       }}
                     >
@@ -353,7 +370,11 @@ export function Act2CallViz() {
                           opacity: isVisible ? 1 : 0,
                           y: isVisible ? 0 : 10,
                         }}
-                        transition={{ duration: 0.5, ease: "easeOut", delay: isVisible ? index * 0.18 : 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: "easeOut",
+                          delay: isVisible ? index * 0.18 : 0,
+                        }}
                         className="text-center"
                       >
                         <p
@@ -395,7 +416,8 @@ export function Act2CallViz() {
                 style={{
                   borderColor: "color-mix(in srgb, var(--color-sage-deep) 20%, transparent)",
                   background: "color-mix(in srgb, var(--color-cream) 88%, white)",
-                  boxShadow: "0 24px 60px -28px color-mix(in srgb, var(--color-sage-deep) 34%, transparent)",
+                  boxShadow:
+                    "0 24px 60px -28px color-mix(in srgb, var(--color-sage-deep) 34%, transparent)",
                 }}
               >
                 <p className="label-mono mb-2" style={{ color: "var(--color-sage-deep)" }}>
@@ -403,10 +425,16 @@ export function Act2CallViz() {
                 </p>
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-serif text-[1.3rem] leading-none md:text-[1.5rem]" style={{ color: "var(--color-espresso)" }}>
+                    <p
+                      className="font-serif text-[1.3rem] leading-none md:text-[1.5rem]"
+                      style={{ color: "var(--color-espresso)" }}
+                    >
                       Mike · Today 2pm
                     </p>
-                    <p className="mt-2 text-sm md:text-base" style={{ color: "var(--color-stone)" }}>
+                    <p
+                      className="mt-2 text-sm md:text-base"
+                      style={{ color: "var(--color-stone)" }}
+                    >
                       Sarah gets a real yes instead of five loose threads.
                     </p>
                   </div>
