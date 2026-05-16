@@ -181,7 +181,7 @@ function EndpointLabel({
   const survives = index === 0 || index === 4;
   const winner = index === 0;
 
-  const opacity = useTransform(progress, (p) => {
+  const opacityBase = useTransform(progress, (p) => {
     if (p < 0.28) return 0;
     if (p < 0.45) return 1;
     if (!survives) return Math.max(0, 1 - (p - 0.45) * 4);
@@ -189,15 +189,11 @@ function EndpointLabel({
     if (p > 0.78) return Math.max(0, 1 - (p - 0.78) * 5);
     return 1;
   });
+  const showResult = useTransform(progress, (p) => (p > 0.45 && survives ? 1 : 0));
+  const showInitial = useTransform(progress, (p) => (p > 0.45 && survives ? 0 : 1));
 
-  const text = useTransform(progress, (p) => {
-    if (!survives) return endpoint.label;
-    if (p < 0.45) return endpoint.label;
-    if (winner) return p > 0.6 ? `${endpoint.label} · $85 · 2pm ✓` : `${endpoint.label} · $85 · 2pm ✓`;
-    return `AllPro · $120 · 4pm ✓`;
-  });
+  const resultLabel = winner ? `${endpoint.label} · $85 · 2pm ✓` : `AllPro · $120 · 4pm ✓`;
 
-  // anchor text relative to viewport, not SVG, using percent positioning
   return (
     <motion.div
       className="absolute"
@@ -205,18 +201,25 @@ function EndpointLabel({
         left: `${endpoint.x}%`,
         top: `${endpoint.y}%`,
         transform: "translate(-50%, -120%)",
-        opacity,
+        opacity: opacityBase,
       }}
     >
-      <motion.p
-        className="label-mono whitespace-nowrap"
-        style={{
-          color: survives ? "var(--color-sage)" : "var(--color-stone-dim)",
-          fontSize: "0.7rem",
-        }}
-      >
-        <motion.span>{text}</motion.span>
-      </motion.p>
+      <div className="relative whitespace-nowrap">
+        <motion.span
+          className="label-mono absolute left-1/2 -translate-x-1/2"
+          style={{ color: "var(--color-stone)", opacity: showInitial }}
+        >
+          {endpoint.label}
+        </motion.span>
+        <motion.span
+          className="label-mono absolute left-1/2 -translate-x-1/2"
+          style={{ color: "var(--color-sage)", opacity: showResult }}
+        >
+          {resultLabel}
+        </motion.span>
+        {/* invisible spacer to give wrapper height */}
+        <span className="label-mono opacity-0">{resultLabel}</span>
+      </div>
     </motion.div>
   );
 }
