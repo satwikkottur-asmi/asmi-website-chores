@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -45,7 +45,13 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const phase = usePhase(scrollYProgress);
+  const [phase, setPhase] = useState<Phase>("intro");
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    if (value < 0.16) setPhase("intro");
+    else if (value < 0.64) setPhase("dialing");
+    else if (value < 0.92) setPhase("resolved");
+    else setPhase("outro");
+  });
   const captionOpacity = useTransform(scrollYProgress, [0.03, 0.08, 0.24, 0.34], [0, 1, 1, 0]);
   const speechOpacity = useTransform(scrollYProgress, [0.1, 0.18, 0.34, 0.44], [0, 1, 1, 0]);
   const sceneOpacity = useTransform(scrollYProgress, [0.14, 0.22, 0.95, 0.995], [0, 1, 1, 0]);
@@ -193,14 +199,6 @@ export function Act2CallViz() {
       </div>
     </section>
   );
-}
-
-function usePhase(progress: MotionValue<number>): Phase {
-  const latest = progress.get();
-  if (latest < 0.16) return "intro";
-  if (latest < 0.64) return "dialing";
-  if (latest < 0.92) return "resolved";
-  return "outro";
 }
 
 function BranchPath({
