@@ -1,26 +1,21 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion } from "motion/react";
 import { useRef } from "react";
 import { AmbientBlobs } from "./Atmosphere";
 
 export function Act6Close() {
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const y1 = useTransform(scrollYProgress, [0.2, 0.6], [40, 0]);
-  const o1 = useTransform(scrollYProgress, [0.15, 0.5], [0, 1]);
-  const o2 = useTransform(scrollYProgress, [0.35, 0.7], [0, 1]);
-  const oRest = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
 
   return (
     <section
       id="start"
       ref={ref}
       className="relative"
-      style={{ padding: "120px 20px", minHeight: "100vh" }}
+      style={{ padding: "80px 20px", minHeight: "90vh" }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ opacity: 0.5 }}>
         <AmbientBlobs density={5} />
       </div>
-      <div className="relative z-10 flex items-center justify-center min-h-[80vh]" style={{ padding: "40px 0" }}>
+      <div className="relative z-10 flex items-center justify-center min-h-[70vh]">
         <div className="text-center w-full max-w-4xl mx-auto">
           <motion.h2
             className="font-serif"
@@ -30,9 +25,11 @@ export function Act6Close() {
               lineHeight: 0.98,
               letterSpacing: "-0.02em",
               fontWeight: 400,
-              opacity: o1,
-              y: y1,
             }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             Your day,
           </motion.h2>
@@ -44,16 +41,24 @@ export function Act6Close() {
               lineHeight: 0.98,
               letterSpacing: "-0.02em",
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
           >
-            <motion.span style={{ opacity: o2, display: "inline-block" }}>handled.</motion.span>
+            handled.
           </motion.p>
-          <motion.div style={{ opacity: oRest }} className="mt-10 md:mt-14">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.35 }}
+            className="mt-10 md:mt-14"
+          >
             <p
               className="font-sans mx-auto"
               style={{
-                color: "#6B6560",
+                color: "#5C5349",
                 fontSize: 18,
                 fontWeight: 300,
                 maxWidth: 540,
@@ -62,6 +67,13 @@ export function Act6Close() {
             >
               Join thousands who talk to Asmi every morning.
             </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: 0.5 }}
+          >
             <div className="mt-8 flex justify-center px-4">
               <a
                 href="#start"
@@ -76,7 +88,7 @@ export function Act6Close() {
                 Start with an iMessage →
               </a>
             </div>
-            <p className="mt-6 label-mono" style={{ color: "var(--color-stone-dim)", fontSize: 12 }}>
+            <p className="mt-6 label-mono text-center" style={{ color: "var(--color-stone-dim)", fontSize: 12 }}>
               No app to download.
             </p>
           </motion.div>

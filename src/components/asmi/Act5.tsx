@@ -49,12 +49,38 @@ const LANGUAGES = [
 // Mobile hides smallest languages
 const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
 
-function langPos(i: number, total: number) {
-  const a = Math.sin(i * 12.9898) * 43758.5453;
-  const b = Math.cos(i * 78.233) * 12345.678;
+// Precompute per-ring positions so each label gets a unique slot on its ring.
+const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
+const RING_R = [12, 26, 38, 48]; // % radius
+const RING_OFFSET = [0, 0.17, 0.41, 0.06];
+const RING_ASPECT = 1.65; // ellipse stretch
+
+const RING_COUNTS = LANGUAGES.reduce<Record<number, number>>((acc, l) => {
+  const r = RING_OF[l.size] ?? 3;
+  acc[r] = (acc[r] || 0) + 1;
+  return acc;
+}, {});
+const RING_INDEX: number[] = [];
+{
+  const seen: Record<number, number> = {};
+  LANGUAGES.forEach((l) => {
+    const r = RING_OF[l.size] ?? 3;
+    RING_INDEX.push(seen[r] || 0);
+    seen[r] = (seen[r] || 0) + 1;
+  });
+}
+
+function langPos(i: number, total: number, size: string) {
+  const ring = RING_OF[size] ?? 3;
+  const slot = RING_INDEX[i];
+  const count = RING_COUNTS[ring] || 1;
+  const angle = (slot / count) * Math.PI * 2 + RING_OFFSET[ring] * Math.PI * 2;
+  const r = RING_R[ring];
+  const x = 50 + Math.cos(angle) * r * RING_ASPECT * 0.55;
+  const y = 50 + Math.sin(angle) * r;
   return {
-    x: Math.min(95, Math.max(5, ((a - Math.floor(a)) * 88) + 6)),
-    y: Math.min(92, Math.max(8, ((b - Math.floor(b)) * 82) + 9)),
+    x: Math.min(94, Math.max(6, x)),
+    y: Math.min(92, Math.max(8, y)),
     delay: (i / total) * 4,
     dur: 8 + (i % 6),
   };
@@ -231,7 +257,7 @@ export function Act5() {
         {/* Desktop: scattered floating cloud */}
         <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
           {LANGUAGES.map((l, i) => {
-            const p = langPos(i, LANGUAGES.length);
+            const p = langPos(i, LANGUAGES.length, l.size);
             const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<string, string>;
             const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
