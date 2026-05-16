@@ -95,7 +95,7 @@ export function Act5() {
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
         <motion.h2
           className="font-serif mb-20 md:mb-24"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -155,7 +155,7 @@ export function Act5() {
                     className="font-serif flex-1"
                     style={{
                       color: "var(--color-espresso)",
-                      fontSize: "clamp(24px, 4.5vw, 44px)",
+                      fontSize: "clamp(26px, 6vw, 44px)",
                       lineHeight: 1.15,
                       letterSpacing: "-0.01em",
                     }}
@@ -169,7 +169,7 @@ export function Act5() {
 
                 <p
                   className="mt-5 font-sans max-w-2xl"
-                  style={{ color: "#5C5349", fontSize: 18, lineHeight: 1.55 }}
+                  style={{ color: "#5C5349", fontSize: "clamp(16px, 4.2vw, 18px)", lineHeight: 1.6 }}
                 >
                   {s.body}
                 </p>
@@ -191,7 +191,7 @@ export function Act5() {
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
           className="font-serif mb-16 md:mb-20 text-center"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -221,7 +221,7 @@ export function Act5() {
         <div className="text-center mb-12">
           <motion.h2
             className="font-serif"
-            style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+            style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -297,12 +297,12 @@ function Channel({ word, caption, ambient }: { word: string; caption: string; am
     >
       <p
         className="font-serif"
-        style={{ color: "var(--color-espresso)", fontSize: 48, lineHeight: 1, letterSpacing: "-0.02em" }}
+        style={{ color: "var(--color-espresso)", fontSize: "clamp(38px, 9vw, 48px)", lineHeight: 1, letterSpacing: "-0.02em" }}
       >
         {word}
       </p>
       <div className="mt-5 h-7 flex items-center">{ambient}</div>
-      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: 15, lineHeight: 1.5, maxWidth: 280 }}>
+      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: "clamp(15px, 4vw, 16px)", lineHeight: 1.55, maxWidth: 280 }}>
         {caption}
       </p>
     </motion.div>
