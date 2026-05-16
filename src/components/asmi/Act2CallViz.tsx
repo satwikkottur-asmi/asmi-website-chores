@@ -29,9 +29,9 @@ export function Act2CallViz() {
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.10) setPhase("intro");
-    else if (p < 0.40) setPhase("dialing");
-    else if (p < 0.78) setPhase("resolved");
+    if (p < 0.14) setPhase("intro");
+    else if (p < 0.48) setPhase("dialing");
+    else if (p < 0.84) setPhase("resolved");
     else setPhase("outro");
   });
 
@@ -47,10 +47,10 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.06, 0.90, 0.96], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.06, 0.14, 0.34, 0.42], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.82, 0.92], [1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.72, 0.84], [0, 1]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.08, 0.92, 0.97], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.08, 0.18, 0.42, 0.50], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.88, 0.96], [1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.80, 0.90], [0, 1]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
@@ -66,8 +66,8 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[260vh] md:h-[240vh]" style={{ overflowX: "hidden" }}>
-      <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden" style={{ maxWidth: "100vw" }}>
+    <section ref={ref} className="relative h-[320vh] md:h-[290vh]" style={{ overflowX: "hidden" }}>
+      <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden relative" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
           className="absolute left-1/2 -translate-x-1/2 text-center z-20"
