@@ -23,7 +23,29 @@ Net effect: scroll drives the animation while the page stays put; only after the
 
 In `EndpointLabel` (resolved/winner branch): drop padding to `px-2 py-1`, set `fontSize: 11px` and `letterSpacing: 0.08em`, tighten `maxWidth` to `min(70vw, 230px)`, and soften the glow to `0 0 16px rgba(139,168,136,0.25)`. Keep the copy `✓ Bay Area Plumbing · Mike · Today 2pm`.
 
-## 3. Mobile fixes
+## 3. Hero → Act 2 shatter transition
+
+Give "The screen era is over." a real payoff: the headline shatters and the call viz is revealed through the cracks.
+
+New component `HeroShatter.tsx`, rendered as a fixed-position overlay between Act 1 and Act 2.
+
+Beat:
+1. Hero locks. Words assemble normally.
+2. When Act 1 `scrollYProgress` crosses `0.92` (or Act 2 enters `intro`), trigger a one-shot ~700ms shatter timeline.
+3. Each letter of the headline is split into ~6 angular shards (per-letter `<span>` wrappers, shards generated with a seeded RNG so layout is stable). Shards animate via Motion: `x` (random ±200), `y` (200–500 downward), `rotate` (±60deg), `opacity 1→0`, `filter: blur(0→3px)`, staggered 8ms per shard.
+4. A subtle linen→cream flash (`background` overlay, 120ms) hides the seam while Act 1 sticky releases and Act 2 sticky engages.
+5. Through the clearing shards, the Act 2 orb is already pulsing — call viz takes over.
+
+Implementation notes:
+- Trigger source of truth: a single shared `useMotionValue` (or a `useState` lifted to `index.tsx`) flipped by Act 1's scroll threshold. Act 2 reads the same value to make sure its `intro` phase aligns with the shatter completing.
+- Shatter is a fixed-duration timeline, NOT scroll-frame-bound — avoids jank during scroll-jacking. Scroll-lock for the call story (section 1) stays exactly as planned.
+- Shards are pure CSS transforms, no canvas/WebGL.
+- `prefers-reduced-motion`: skip the shatter, fall back to a 250ms cross-fade.
+- Mobile: same effect, shard count halved (~3 per letter) for perf.
+
+Files: new `src/components/asmi/HeroShatter.tsx`, small wiring edits in `src/routes/index.tsx`, and one threshold read in `Act2CallViz.tsx`.
+
+## 4. Mobile fixes
 
 ### 3a. `Act1Opening.tsx` — hero vertical centering
 The sticky container is `h-screen flex flex-col items-center justify-center`, but the absolutely-positioned wordmark (`md:top-[58%]`) plus the in-flow CTA block push the visual center upward on mobile (the headline ends up near the top). Fix:
