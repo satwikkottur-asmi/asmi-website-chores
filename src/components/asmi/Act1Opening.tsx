@@ -260,8 +260,8 @@ function ParticleTitle({
 
   useMotionValueEvent(progress, "change", (v) => {
     if (reducedMotion) return;
-    // map scroll progress 0.02..0.38 -> dissolve 0..1 (starts as scroll begins)
-    const t = Math.min(1, Math.max(0, (v - 0.02) / (0.38 - 0.02)));
+    // map scroll progress 0..0.25 -> dissolve 0..1 (fully gone well before next section)
+    const t = Math.min(1, Math.max(0, v / 0.25));
     dissolveRef.current = t;
     if (t > 0 && t < 1) {
       (ParticleTitle as any)._ensureLoop?.();
