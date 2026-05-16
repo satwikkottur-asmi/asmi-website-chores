@@ -87,7 +87,7 @@ export function Act2CallViz() {
             className="font-serif italic"
             style={{
               color: "#6B6560",
-              fontSize: isMobile ? "1rem" : "clamp(1.125rem, 1.8vw, 1.6rem)",
+              fontSize: isMobile ? "1.15rem" : "clamp(1.125rem, 1.8vw, 1.6rem)",
               lineHeight: 1.35,
             }}
           >
