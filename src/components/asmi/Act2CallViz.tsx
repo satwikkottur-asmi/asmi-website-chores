@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type Endpoint = { x: number; y: number; label: string };
-type Phase = "ask" | "listen" | "dial" | "confirm" | "close";
+type Phase = "ask" | "listen" | "dial" | "confirm";
 type Branch = {
   id: string;
   d: string;
@@ -310,12 +310,12 @@ function BranchPath({
   const opacity = useTransform(
     progress,
     winner
-      ? [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.close.in]
+      ? [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.confirm.end]
       : [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.confirm.out],
     winner ? [0, 0.85, 1, 0] : [0, 0.7, 0.12, 0]
   );
 
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const stroke = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
@@ -349,11 +349,11 @@ function TravelingWave({
   const opacity = useTransform(
     progress,
     winner
-      ? [appearStart, appearEnd, STEPS.confirm.in, STEPS.close.in]
+      ? [appearStart, appearEnd, STEPS.confirm.in, STEPS.confirm.end]
       : [appearStart, appearEnd, STEPS.confirm.in - 0.02, STEPS.confirm.in + 0.02],
     winner ? [0, 1, 1, 0] : [0, 1, 0.6, 0]
   );
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const color = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
@@ -407,7 +407,7 @@ function EndpointLabel({
   const dotOpacity = useTransform(
     progress,
     winner
-      ? [labelStart - 0.02, labelStart + 0.04, STEPS.close.in, STEPS.close.in + 0.02]
+      ? [labelStart - 0.02, labelStart + 0.04, STEPS.confirm.end - 0.001, STEPS.confirm.end]
       : [labelStart - 0.02, labelStart + 0.04, STEPS.confirm.in, STEPS.confirm.out],
     winner ? [0, 1, 1, 0] : [0, 0.95, 0.3, 0]
   );
@@ -429,12 +429,12 @@ function EndpointLabel({
   // Winner's confirmation card
   const resultOpacity = useTransform(
     progress,
-    winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.close.in, STEPS.close.in + 0.02] : [0, 0, 1, 1],
+    winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.end] : [0, 0, 1],
     [0, 1, 1, 0]
   );
   const resultY = useTransform(progress, [STEPS.confirm.start, STEPS.confirm.in], [14, 0]);
 
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
