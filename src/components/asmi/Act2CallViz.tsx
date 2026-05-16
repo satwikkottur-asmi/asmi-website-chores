@@ -295,23 +295,25 @@ function EndpointLabel({
             : "translate(-50%, 14px)",
           opacity: labelOpacity,
           transition: "opacity 0.3s ease",
-          maxWidth: "44vw",
+          maxWidth: "min(86vw, 360px)",
         }}
       >
-        <div className="whitespace-nowrap text-center">
+        <div className="text-center">
           {showResult ? (
             <span
-              className="label-mono px-2.5 py-1 rounded-md"
+              className="label-mono inline-block px-3 py-1.5 rounded-md"
               style={{
                 color: "var(--color-sage)",
                 background: "rgba(139,168,136,0.10)",
                 boxShadow: "0 0 24px rgba(139,168,136,0.3)",
+                whiteSpace: "normal",
+                lineHeight: 1.4,
               }}
             >
               ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
             </span>
           ) : (
-            <span className="label-mono" style={{ color: "#6B6560" }}>
+            <span className="label-mono whitespace-nowrap" style={{ color: "#6B6560" }}>
               {endpoint.label}
             </span>
           )}
