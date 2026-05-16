@@ -1,40 +1,63 @@
-# Hero title — scroll-driven particle dissolve
+# Hero title — proper particle dissolve (rebuild)
 
-Replace the current word-by-word fade on the Act 1 headline ("The screen era is over.") with a particle dissolve effect: as the user scrolls, the letters break into small particles that drift up and to the right like windblown dust, then fade out. Reference: https://codepen.io/TaminoMartinius/pen/AobWbm
+## What's wrong today
 
-The rest of the page (wordmark, CTA, BrushUnderline, atmosphere, all other Acts) stays exactly as-is.
+The current implementation renders the title twice:
+- A real DOM `<h1>` (clean serif, antialiased by the browser).
+- A `<canvas>` overlay that re-rasterizes the same text from `getComputedStyle` and samples it on a 3px grid.
 
-## Behavior
+Then it crossfades between them as scroll progresses. The canvas version doesn't match the DOM version pixel-for-pixel (different rasterizer, sparse grid → visible dot pattern, slight metric drift), so during the transition you see a "ghost" or "alternate" version of the headline. That's the hacky feel in screenshot 2.
 
-- At scroll progress 0 → 0.4: title is solid, rendered as normal text (crisp, accessible, SEO-friendly).
-- At progress 0.4 → 0.7: title transitions into a canvas overlay; pixels lift off as particles, drifting up-right with slight turbulence, fading as they go.
-- At progress > 0.7: title fully gone (canvas cleared), wordmark fades in as today.
-- Reverses smoothly on scroll back up.
-- `prefers-reduced-motion`: skip particles, use the existing simple opacity fade.
-- Mobile: lower particle density for performance; same behavior.
+## Goal
 
-## Technical approach
+One single visual representation of the headline from the start. The real text appears to disintegrate into particles that drift away. No duplicate, no crossfade between two renderings.
 
-In `src/components/asmi/Act1Opening.tsx`:
+## Approach
 
-1. Add a new `ParticleTitle` component that renders:
-   - A hidden/measured DOM `<h1>` for layout + accessibility (kept in normal flow, drives sizing).
-   - An absolutely-positioned `<canvas>` overlay on top, same box.
-2. On mount + resize: draw the headline text to an offscreen canvas, sample pixels on a grid (step ~3px desktop, ~5px mobile), and build a particle array `{x0, y0, vx, vy, life}`.
-3. Subscribe to the existing `scrollYProgress` via `useMotionValueEvent`. Map progress 0.4–0.7 → dissolve amount `t` (0..1).
-   - For each particle, compute `x = x0 + ease(t) * (drift + noise)`, `y = y0 - ease(t) * (lift + noise)`, `alpha = 1 - t`.
-   - Particles activate staggered left→right (wind sweep) using `particle.threshold = x0 / width * 0.6`.
-4. Use a single `requestAnimationFrame` loop only while `t > 0 && t < 1` to avoid idle cost. Render with `ctx.fillRect` (2x2 px) using espresso color `#2C2520`.
-5. Toggle DOM `<h1>` opacity inversely (`1 - t`) so the canvas takes over seamlessly.
-6. Remove the current per-word `Word` dim/translate effect (replaced by the dissolve).
+Render the headline entirely on canvas from the moment the page loads, at a density high enough that it looks identical to the native serif `<h1>`. The DOM `<h1>` is kept only for accessibility/SEO (`sr-only`, visually hidden). There is never a moment where both renderings are visible.
 
-Keep `statementY` / `statementScale` motion or drop them — drop them to let the dissolve carry the moment; keep `statementOpacity` only as the final clean-up past 0.7.
+### Concretely
+
+1. **Single source of truth = canvas.**
+   - One `<canvas>` sized to the headline's natural bounding box (measured once via a hidden measuring `<h1>` with identical font styles, then removed/hidden).
+   - `<h1>` element is `sr-only` (kept for screen readers / SEO).
+   - No more crossfade between DOM text and canvas.
+
+2. **High-fidelity rasterization (no dotted look at rest).**
+   - Render at `devicePixelRatio` (capped at 2).
+   - Wait for `document.fonts.ready` before sampling so the serif (Newsreader) is actually loaded.
+   - Sample every pixel (step = 1 logical px, ~1.5–2 device px) instead of every 3px. At rest the particles pack densely enough to look like solid antialiased text.
+   - Use the sampled alpha as the particle's base alpha (not a hard 0/1 threshold). This preserves the serif's edge antialiasing, so the rendered text reads as crisp type, not a halftone.
+   - Particle color = espresso `#2C2520`; size = 1 device px square (or 1.2 px circle on hi-DPI).
+
+3. **Dissolve driven by scroll.**
+   - `scrollYProgress` 0 → ~0.25 maps to dissolve `t` 0 → 1, completing well before the next section.
+   - Per-particle threshold seeded by `x / width` so the wind sweeps left → right (matches the reference codepen).
+   - Once a particle's local progress > 0: drift right + lift up + sine wobble, alpha fades to 0.
+   - At `t == 0` the canvas renders the headline statically (no animation cost, looks identical to native type).
+   - `requestAnimationFrame` loop only runs while `0 < t < 1`.
+
+4. **Sizing & layout stay identical.**
+   - The wrapper still reserves the same space the `<h1>` used to take (so the BrushUnderline, CTA, asmi wordmark, and overall hero rhythm don't shift).
+   - Done by keeping a visually-hidden `<h1>` in the flow with `visibility: hidden` (occupies space, not painted) and absolutely positioning the canvas on top of it.
+
+5. **Reduced motion / fallback.**
+   - `prefers-reduced-motion`: render the real `<h1>` normally, no canvas at all. Pure opacity fade as scroll passes.
+   - Same fallback if Canvas 2D unavailable.
+
+6. **Hero pin duration stays at ~2 viewports** (already changed) so dissolve has room to complete before Act 2 appears.
+
+## Why this fixes the complaint
+
+- No alternate/ghost text — the canvas IS the title, from page load.
+- Dense per-pixel sampling with alpha preserved = at rest, the canvas is visually indistinguishable from the DOM serif. No dotted/stippled look until particles start to scatter.
+- Single render path → no crossfade artifacts, no font/metric drift.
 
 ## Files
 
-- Edit: `src/components/asmi/Act1Opening.tsx` (add ParticleTitle, swap word rendering).
-- No new dependencies. Uses existing `motion/react` + canvas 2D.
+- Rewrite `ParticleTitle` inside `src/components/asmi/Act1Opening.tsx`. No other files touched.
 
 ## Out of scope
 
-- No changes to Act2 waveform, Nav, other Acts, styles.css tokens, or routes.
+- No changes to other Acts, Nav, tokens, or routes.
+- No new dependencies.
