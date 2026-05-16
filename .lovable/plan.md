@@ -1,50 +1,48 @@
-# Mobile + Desktop Polish Pass
+# Fix broken animations and visual issues
 
-Goal: keep the current desktop experience intact, and make every act feel native on a phone (375–430px). No new content, no story changes — only layout, sizing, pacing, and touch behavior.
+Audit pass on the live site found several real breakages, not just polish issues. This plan fixes them in priority order.
 
-## What changes, act by act
+## Confirmed problems (from live screenshots)
 
-**Act 1 — Opening hero**
-- Shorten the scroll section from `200vh` to `140vh` on mobile so the reveal doesn't drag.
-- Move the wordmark/CTA block down with safer spacing (use `flex` stack inside the sticky frame instead of `top: 58%`) so headline and wordmark never collide on short viewports.
-- Tighten headline clamp lower bound and line-height for phones.
-- CTA becomes full-width pill on mobile.
+1. **Act 2 (Call Visualization) is broken.** The center orb never appears, the curved call-lines never render, and the endpoint labels float in the wrong place. The only thing visible mid-section is the radial waveform ring and orphaned label text — so the whole "call branches → one survives" story is invisible.
+2. **Act 6 final CTA is ghost-faded.** "Your day, handled." renders at very low opacity and the CTA / supporting copy is barely visible because the scroll-linked opacity timing never reaches 1 while the section is on screen.
+3. **Act 4 task cloud overflows the right edge.** Some pills (e.g. "Grocery delivery") get clipped at the viewport edge because positions go past the safe inner bounds.
+4. **Act 5 desktop language constellation is sparse + clusters collide.** Random positions cluster and overlap.
+5. **Misc.** Mid-page sticky areas show large blank stretches because scroll-linked opacities fade content to 0 well before the next section arrives.
 
-**Act 2 — Call viz**
-- Audit at 375px; ensure the phone/wave illustration scales and ambient SVGs don't clip. Reduce side padding, scale down ring sizes.
+## What to change
 
-**Act 3 — Three moments**
-- Reduce headline clamp floor; add horizontal padding so long lines ("Calls. IVRs. Hold queues…") wrap nicely.
-- Message bubble: smaller padding and font on mobile.
+### Act 2 — Call Visualization (rebuild the failing parts, keep the structure)
+- Make the center orb always visible while the section is in the sticky window (replace the SVG `<motion.g>` scale/opacity wiring with a plain centered absolute-positioned div so it actually renders).
+- Render the call-line branches with plain SVG `path` plus a CSS dasharray draw-in (no `pathLength` MotionValue on a path inside a stretched viewBox — that's the part not painting).
+- Stroke color change (terracotta → sage for the winner, fade for the losers) driven by a CSS class swap based on scroll progress, not by passing a MotionValue into the `stroke` attribute.
+- Endpoint labels: position with `transform: translate(-50%, -50%)` over the actual SVG endpoints, anchor them to the same sticky container the orb lives in, and add a small dot at each endpoint so they read as "phone numbers being dialed".
+- Keep: the radial waveform ring around the orb, the caller-quote, and the closing "Sarah found out over iMessage" beat.
 
-**Act 4 — Pill cloud (biggest fix)**
-- Desktop: unchanged (scattered floating cloud with mouse-repel).
-- Mobile (<768px): switch to a **dense flowing wrap layout** — pills become inline-flex inside a centered container with `flex-wrap`, gentle staggered float animation kept, mouse-repel disabled (no hover on touch). Trim to ~24 pills on mobile to avoid visual overload.
-- Container height becomes `auto` on mobile instead of `78vh`.
+### Act 6 — Final CTA
+- Replace the scroll-linked `opacity` MotionValues with `whileInView` reveal (once, `margin: -120px`) so the headline, italic "handled.", subhead, and CTA all reach full opacity as soon as they enter the viewport.
+- Stagger them (0 / 0.15s / 0.35s / 0.5s) so the reveal still feels composed.
+- Tighten section padding so the CTA isn't pushed to the very bottom of a tall section on desktop.
 
-**Act 5**
-- Verify spacing; tighten section padding and font clamps for mobile.
+### Act 4 — Task Cloud
+- Clamp x positions to [8, 88] and y to [10, 88] in `generatePositions`.
+- Add `overflow: hidden` + `padding-inline` on the cloud container so anything near the edge can't bleed past.
+- Reduce mouse-repel radius from 120px to 90px to prevent pills snapping into each other.
 
-**Act 6 — Close**
-- Same hero treatment as Act 1: shorter scroll distance, stacked layout, full-width CTA.
-- Headline clamp lowered so "handled." doesn't overflow on 375px.
+### Act 5 — Desktop language constellation
+- Replace random positions with a deterministic ring-grid (3 concentric loose rings) so labels distribute evenly and don't collide.
+- Keep the per-label float animation and hover color change.
 
-**Nav**
-- Already hides middle links under `md`. Add: shrink CTA label to "iMessage" on `<sm` so it fits with the wordmark.
-
-## Cross-cutting
-
-- Add a `useIsMobile` check (already exists at `src/hooks/use-mobile.tsx`) where layout truly diverges (Act 4, Act 1/6 scroll length).
-- Replace hover-only affordances with always-on subtle styling on touch (pills get a faint border by default).
-- Reduce parallax travel distances by ~40% on mobile for smoother scroll on low-end devices.
-- Keep `prefers-reduced-motion` rule already in `styles.css`.
-
-## Technical notes
-
-- Use Tailwind responsive prefixes (`sm:`, `md:`) for static layout differences; use the `useIsMobile` hook only where JS behavior must branch (disabling mouse-repel, swapping Act 4 layout, shortening scroll heights).
-- No new dependencies. No design system token changes.
-- QA at 375×812, 414×896, 768×1024, 1280×800, 1920×1080.
+### Cross-cutting cleanup
+- Remove dead `as unknown as string` casts where MotionValues were being forced into non-style SVG attributes.
+- For every scroll-linked section that goes fully transparent before the next section is visible, extend the fade-out window so there's no blank viewport between acts.
+- Re-verify on desktop (current 1252px viewport) and mobile (375px) after each fix.
 
 ## Out of scope
+- No copy changes.
+- No new sections, no palette / typography changes.
+- No new dependencies.
 
-- No copy changes, no new sections, no color/typography changes, no new animations beyond what's needed for the mobile pill layout.
+## Technical notes
+- TanStack Start + motion/react. All changes are presentation-layer only.
+- Files touched: `src/components/asmi/Act2CallViz.tsx`, `Act4Cloud.tsx`, `Act5.tsx`, `Act6Close.tsx`, and small additions in `src/styles.css` for the branch draw-in keyframe.
