@@ -2,22 +2,110 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type Endpoint = { x: number; y: number; label: string };
+type Endpoint = {
+  x: number;
+  y: number;
+  label: string;
+  labelOffsetX: number;
+  labelOffsetY: number;
+  labelAlign: "left" | "center" | "right";
+  maxWidth?: number;
+};
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 16, y: 30, label: "Bay Area Plumbing" },
-  { x: 84, y: 28, label: "Rapid Rooter" },
-  { x: 12, y: 72, label: "Pacific Plumbing Co" },
-  { x: 88, y: 74, label: "Mr. Fix-It" },
-  { x: 50, y: 88, label: "Joe's Plumbing" },
+  {
+    x: 16,
+    y: 30,
+    label: "Bay Area Plumbing",
+    labelOffsetX: 16,
+    labelOffsetY: -10,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 84,
+    y: 28,
+    label: "Rapid Rooter",
+    labelOffsetX: -16,
+    labelOffsetY: -10,
+    labelAlign: "right",
+    maxWidth: 180,
+  },
+  {
+    x: 12,
+    y: 72,
+    label: "Pacific Plumbing Co",
+    labelOffsetX: 16,
+    labelOffsetY: 8,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 88,
+    y: 74,
+    label: "Mr. Fix-It",
+    labelOffsetX: -16,
+    labelOffsetY: 8,
+    labelAlign: "right",
+    maxWidth: 150,
+  },
+  {
+    x: 50,
+    y: 88,
+    label: "Joe's Plumbing",
+    labelOffsetX: 0,
+    labelOffsetY: 14,
+    labelAlign: "center",
+    maxWidth: 170,
+  },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 22, label: "Bay Area Plumbing" },
-  { x: 80, y: 22, label: "Rapid Rooter" },
-  { x: 14, y: 54, label: "Pacific Plumbing Co" },
-  { x: 86, y: 56, label: "Mr. Fix-It" },
-  { x: 50, y: 84, label: "Joe's Plumbing" },
+  {
+    x: 15,
+    y: 20,
+    label: "Bay Area Plumbing",
+    labelOffsetX: 16,
+    labelOffsetY: -12,
+    labelAlign: "left",
+    maxWidth: 116,
+  },
+  {
+    x: 85,
+    y: 20,
+    label: "Rapid Rooter",
+    labelOffsetX: -16,
+    labelOffsetY: -12,
+    labelAlign: "right",
+    maxWidth: 108,
+  },
+  {
+    x: 11,
+    y: 57,
+    label: "Pacific Plumbing Co",
+    labelOffsetX: 16,
+    labelOffsetY: 8,
+    labelAlign: "left",
+    maxWidth: 112,
+  },
+  {
+    x: 89,
+    y: 58,
+    label: "Mr. Fix-It",
+    labelOffsetX: -16,
+    labelOffsetY: 8,
+    labelAlign: "right",
+    maxWidth: 98,
+  },
+  {
+    x: 50,
+    y: 85,
+    label: "Joe's Plumbing",
+    labelOffsetX: 0,
+    labelOffsetY: 12,
+    labelAlign: "center",
+    maxWidth: 122,
+  },
 ];
 
 const STEPS = [
