@@ -48,10 +48,10 @@ export function Act2CallViz() {
   }, []);
 
   // Caption is visible almost the entire time so the stage never reads as blank.
-  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.015, 0.82, 0.9], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.0, 0.04, 0.22, 0.3], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.0, 0.03, 0.86, 0.93], [0, 1, 1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.56, 0.68, 0.84, 0.92], [0, 1, 1, 0]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.015, 0.9, 0.98], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.0, 0.04, 0.22, 0.32], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.0, 0.03, 0.93, 0.99], [0, 1, 1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.5, 0.62, 0.92, 0.985], [0, 1, 1, 0]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
@@ -67,7 +67,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[210vh] md:h-[220vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[185vh] md:h-[190vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden relative" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
