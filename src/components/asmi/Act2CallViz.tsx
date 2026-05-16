@@ -373,6 +373,7 @@ function EndpointLabel({
       ? "var(--color-sage-strong)"
       : "rgba(107, 101, 96, 0.14)"
     : "var(--color-terracotta)";
+  const resultY = useTransform(progress, [0.62, 0.72], [12, 0]);
   const above = endpoint.y < 50;
 
   return (
@@ -416,7 +417,7 @@ function EndpointLabel({
           </motion.span>
 
           {winner && (
-            <motion.div style={{ opacity: resultOpacity, y: useTransform(progress, [0.62, 0.72], [12, 0]) }}>
+            <motion.div style={{ opacity: resultOpacity, y: resultY }}>
               <span
                 className="label-mono inline-flex items-center justify-center px-4 py-2 rounded-full"
                 style={{
