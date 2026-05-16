@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from "motion/react";
 import { useRef } from "react";
 import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,6 +15,7 @@ export function Act1Opening() {
   const statementY = useTransform(scrollYProgress, [0.5, 0.9], [0, isMobile ? -60 : -120]);
   const statementScale = useTransform(scrollYProgress, [0.72, 0.96], [1, prefersReducedMotion ? 0.98 : 1.06]);
   const statementBlur = useTransform(scrollYProgress, [0.78, 0.96], [0, prefersReducedMotion ? 0 : 5]);
+  const statementFilter = useMotionTemplate`blur(${statementBlur}px)`;
   const wordmarkOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
   const wordmarkY = useTransform(scrollYProgress, [0.55, 0.85], [40, 0]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
@@ -26,7 +27,7 @@ export function Act1Opening() {
 
         <motion.div
           className="relative z-10 text-center w-full"
-          style={{ opacity: statementOpacity, y: statementY, scale: statementScale, filter: statementBlur.to((v) => `blur(${v}px)`) }}
+          style={{ opacity: statementOpacity, y: statementY, scale: statementScale, filter: statementFilter }}
         >
           <h1
             className="font-serif font-normal text-espresso tracking-[-0.02em]"
