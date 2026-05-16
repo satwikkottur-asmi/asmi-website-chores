@@ -29,9 +29,9 @@ export function Act2CallViz() {
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.06) setPhase("intro");
-    else if (p < 0.30) setPhase("dialing");
-    else if (p < 0.56) setPhase("resolved");
+    if (p < 0.10) setPhase("intro");
+    else if (p < 0.40) setPhase("dialing");
+    else if (p < 0.78) setPhase("resolved");
     else setPhase("outro");
   });
 
@@ -47,10 +47,10 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.05, 0.82, 0.92], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.04, 0.10, 0.30, 0.40], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.60, 0.72], [1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.52, 0.64], [0, 1]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.06, 0.90, 0.96], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.06, 0.14, 0.34, 0.42], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.82, 0.92], [1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.72, 0.84], [0, 1]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
