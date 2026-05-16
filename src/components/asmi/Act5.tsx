@@ -230,36 +230,9 @@ export function Act5() {
           </motion.h2>
         </div>
 
-        {/* Mobile: centered wrapped cloud — no overflow */}
-        <div className="md:hidden relative mx-auto w-full max-w-md px-2">
-          <div
-            className="flex flex-wrap items-center justify-center"
-            style={{ rowGap: "0.65rem", columnGap: "0.9rem" }}
-          >
-            {LANGUAGES.map((l, i) => {
-              const sizeMap = { sm: "1rem", md: "1.25rem", lg: "1.7rem", xl: "2.3rem" } as Record<string, string>;
-              const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
-              const opacity = l.size === "sm" ? 0.75 : l.size === "md" ? 0.9 : 1;
-              return (
-                <motion.span
-                  key={l.name}
-                  className="font-serif inline-block"
-                  style={{
-                    fontSize: sizeMap[l.size],
-                    color: colorMap[l.size],
-                    opacity,
-                    lineHeight: 1.1,
-                    whiteSpace: "nowrap",
-                  }}
-                  animate={{ y: [0, -3, 0, 2, 0] }}
-                  transition={{ duration: 7 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 8) * 0.4 }}
-                >
-                  {l.name}
-                </motion.span>
-              );
-            })}
-          </div>
-        </div>
+        {/* Mobile: scattered floating cloud with tap-to-light interaction */}
+        <MobileLanguageCloud />
+
 
         {/* Desktop: scattered floating cloud */}
         <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
