@@ -63,14 +63,12 @@
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
   }
   body {
     background: linear-gradient(135deg, #F6F1EB, #EDE6DC, #F2EDE7, #F6F1EB);
     background-size: 400% 400%;
     animation: breathe 22s ease-in-out infinite;
     min-height: 100vh;
-    max-width: 100vw;
   }
   ::selection {
     background: var(--color-terracotta);
