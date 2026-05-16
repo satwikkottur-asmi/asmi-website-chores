@@ -88,27 +88,7 @@ export function Act2CallViz() {
             );
           })}
 
-          {/* endpoint dots */}
-          {ENDPOINTS.map((e, i) => {
-            const winner = i === 0;
-            const visible = phase !== "intro";
-            const fill = phase === "resolved" || phase === "outro"
-              ? (winner ? "#8BA888" : "#C9C2B6")
-              : "#C25B3F";
-            return (
-              <circle
-                key={`d${i}`}
-                cx={e.x}
-                cy={e.y}
-                r="0.9"
-                fill={fill}
-                style={{
-                  opacity: visible ? (winner || phase === "dialing" ? 1 : 0.3) : 0,
-                  transition: "opacity 0.5s ease, fill 0.5s ease",
-                }}
-              />
-            );
-          })}
+          {/* endpoint dots — drawn in DOM (below) to avoid SVG stretch */}
 
           {/* radial waveform around orb (decorative) */}
           <g style={{ opacity: phase === "dialing" || phase === "resolved" ? 0.3 : 0 }}>
