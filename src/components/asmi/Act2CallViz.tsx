@@ -5,17 +5,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type Endpoint = { x: number; y: number; label: string };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 18, y: 28, label: "Bay Area Plumbing" },
-  { x: 82, y: 26, label: "Rapid Rooter" },
-  { x: 14, y: 72, label: "Pacific Plumbing Co" },
-  { x: 86, y: 74, label: "Mr. Fix-It" },
-  { x: 50, y: 88, label: "Joe's Plumbing" },
+  { x: 16, y: 30, label: "Bay Dermatology" },
+  { x: 84, y: 28, label: "Pacific Skin Clinic" },
+  { x: 12, y: 70, label: "Golden Gate Derm" },
+  { x: 88, y: 72, label: "SF Skin Institute" },
+  { x: 50, y: 86, label: "Mission Dermatology" },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 28, label: "Bay Area" },
-  { x: 80, y: 30, label: "Rapid Rooter" },
-  { x: 50, y: 82, label: "Mr. Fix-It" },
+  { x: 18, y: 30, label: "Bay Derm" },
+  { x: 82, y: 32, label: "Pacific Skin" },
+  { x: 50, y: 80, label: "Mission Derm" },
 ];
 
 export function Act2CallViz() {
