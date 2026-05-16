@@ -53,14 +53,23 @@ const PILLS: Pill[] = [
   { label: "Internet outage", cat: "home", size: "sm" },
 ];
 
-function positions(count: number) {
+// Collision-avoiding positions clamped to 5-95% horizontal
+function generatePositions(count: number) {
   const out: { x: number; y: number; delay: number; dur: number }[] = [];
+  const minDist = 11; // % distance in viewport units
   for (let i = 0; i < count; i++) {
-    const a = Math.sin(i * 9.31) * 10000;
-    const b = Math.cos(i * 4.27) * 10000;
+    let x = 0, y = 0, ok = false, tries = 0;
+    while (!ok && tries < 80) {
+      const a = Math.sin((i + 1) * 9.31 + tries * 0.7) * 10000;
+      const b = Math.cos((i + 1) * 4.27 + tries * 1.3) * 10000;
+      x = ((a - Math.floor(a)) * 88) + 6;
+      y = ((b - Math.floor(b)) * 76) + 12;
+      ok = out.every((p) => Math.hypot(p.x - x, p.y - y) > minDist);
+      tries++;
+    }
     out.push({
-      x: ((a - Math.floor(a)) * 92) + 4,
-      y: ((b - Math.floor(b)) * 78) + 11,
+      x,
+      y,
       delay: ((i * 13) % 100) / 100,
       dur: 7 + ((i * 7) % 8),
     });
@@ -68,9 +77,8 @@ function positions(count: number) {
   return out;
 }
 
-const POS = positions(PILLS.length);
-// Mobile shows a curated subset to avoid visual overload
-const MOBILE_PILLS = PILLS.slice(0, 24);
+const POS = generatePositions(PILLS.length);
+const MOBILE_PILLS = PILLS.slice(0, 20);
 
 export function Act4Cloud() {
   const ref = useRef<HTMLElement>(null);
@@ -81,13 +89,13 @@ export function Act4Cloud() {
   const cloudScale = useTransform(scrollYProgress, [0.1, 0.4], [0.92, 1]);
 
   return (
-    <section ref={ref} className="relative py-24 md:py-32">
+    <section ref={ref} className="relative py-24 md:py-32" style={{ overflowX: "hidden" }}>
       <div className="text-center mb-12 md:mb-14 px-5 sm:px-6">
         <h2
-          className="font-serif text-espresso"
+          className="font-serif"
           style={{
             color: "var(--color-espresso)",
-            fontSize: "clamp(2.2rem, 7vw, 5rem)",
+            fontSize: "clamp(2rem, 7vw, 5rem)",
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
           }}
@@ -95,8 +103,8 @@ export function Act4Cloud() {
           From plumbers to prescriptions.
         </h2>
         <p
-          className="mt-3 md:mt-4 font-sans text-stone"
-          style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+          className="mt-3 md:mt-4 font-sans"
+          style={{ color: "#6B6560", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
         >
           Everything that needs a phone call.
         </p>
@@ -105,7 +113,7 @@ export function Act4Cloud() {
       {isMobile ? (
         <motion.div
           className="px-4 mx-auto max-w-xl flex flex-wrap justify-center gap-2.5"
-          style={{ opacity: cloudOpacity }}
+          style={{ opacity: cloudOpacity, minHeight: 500 }}
         >
           {MOBILE_PILLS.map((p, i) => (
             <FlowingPill key={p.label} pill={p} delay={(i % 6) * 0.25} dur={6 + (i % 4)} />
@@ -123,7 +131,7 @@ export function Act4Cloud() {
           }}
         >
           {PILLS.map((p, i) => (
-            <FloatingPill key={p.label} pill={p} pos={POS[i]} containerRef={containerRef} />
+            <FloatingPill key={p.label} pill={p} pos={POS[i]} />
           ))}
         </motion.div>
       )}
@@ -135,7 +143,7 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
   const sizeClass =
     pill.size === "lg" ? "px-4 py-2.5 text-[0.9rem]"
     : pill.size === "md" ? "px-3.5 py-2 text-[0.82rem]"
-    : "px-3 py-1.5 text-[0.76rem]";
+    : "px-3 py-2 text-[0.78rem]";
   return (
     <motion.div
       animate={{ y: [0, -4, 0, 3, 0] }}
@@ -145,15 +153,13 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
         className={`inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap ${sizeClass}`}
         style={{
           background: "rgba(251, 248, 243, 0.85)",
-          color: "var(--color-stone)",
+          color: "#5C5349",
           backdropFilter: "blur(8px)",
           border: "1px solid rgba(44,37,32,0.08)",
+          minHeight: 36,
         }}
       >
-        <span
-          className="inline-block rounded-full"
-          style={{ width: 6, height: 6, background: CATS[pill.cat] }}
-        />
+        <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
         {pill.label}
       </span>
     </motion.div>
@@ -161,16 +167,16 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
 }
 
 function FloatingPill({
-  pill, pos, containerRef,
+  pill, pos,
 }: {
   pill: Pill;
   pos: { x: number; y: number; delay: number; dur: number };
-  containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) return;
     const handler = (e: MouseEvent) => {
       const el = ref.current;
       if (!el) return;
@@ -180,9 +186,9 @@ function FloatingPill({
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       const d = Math.hypot(dx, dy);
-      const radius = 130;
+      const radius = 120;
       if (d < radius && d > 0.1) {
-        const force = (1 - d / radius) * 26;
+        const force = (radius - d) * 0.15;
         setOffset({ x: -(dx / d) * force, y: -(dy / d) * force });
       } else {
         setOffset({ x: 0, y: 0 });
@@ -206,11 +212,8 @@ function FloatingPill({
         top: `${pos.y}%`,
         transform: "translate(-50%, -50%)",
       }}
-      animate={{
-        x: offset.x,
-        y: offset.y + Math.sin(pos.delay * 6) * 0,
-      }}
-      transition={{ type: "spring", stiffness: 120, damping: 14 }}
+      animate={{ x: offset.x, y: offset.y }}
+      transition={{ type: "spring", stiffness: 120, damping: 14, mass: 0.6 }}
     >
       <motion.div
         animate={{ y: [0, -8, 0, 6, 0] }}
@@ -220,7 +223,7 @@ function FloatingPill({
           className={`group inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap transition-all duration-300 ${sizeClass}`}
           style={{
             background: "rgba(251, 248, 243, 0.85)",
-            color: "var(--color-stone)",
+            color: "#5C5349",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(44,37,32,0.06)",
           }}
@@ -231,14 +234,11 @@ function FloatingPill({
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "rgba(44,37,32,0.06)";
-            e.currentTarget.style.color = "var(--color-stone)";
+            e.currentTarget.style.color = "#5C5349";
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <span
-            className="inline-block rounded-full"
-            style={{ width: 6, height: 6, background: CATS[pill.cat] }}
-          />
+          <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
           {pill.label}
         </button>
       </motion.div>
