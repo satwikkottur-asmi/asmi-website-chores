@@ -1,27 +1,34 @@
 import { motion } from "motion/react";
 import { OrganicDivider } from "./Atmosphere";
+import { AudioPlayButton } from "./AudioPlayButton";
 
 const STORIES = [
   {
-    cat: "MOVING LOGISTICS",
-    catColor: "var(--color-terracotta)",
-    headline: "Seven suppliers. Best price. Boxes ordered.",
-    body: "Asmi called seven, compared quotes, placed the order.",
-    result: "→ No tabs opened. He just talked.",
+    num: "01",
+    cat: "HEALTHCARE",
+    catColor: "#C25B3F",
+    accent: "#C25B3F",
+    headline: "Three clinics called. Opening found. Insurance pre-authorized.",
+    body: "Needed a specialist. Asmi called three clinics, compared wait times, booked the earliest opening, then called insurance to pre-authorize. Done before breakfast.",
+    result: "→ CONFIRMED: DR. CHEN, TOMORROW 10AM.",
   },
   {
-    cat: "EMERGENCY REPAIR",
-    catColor: "var(--color-sage)",
-    headline: "Five plumbers. One at the door in two hours.",
-    body: "Burst pipe. Five calls in parallel. One confirmed.",
-    result: "→ iMessage: \"He's on his way.\"",
+    num: "02",
+    cat: "HOME REPAIR",
+    catColor: "#8BA888",
+    accent: "#8BA888",
+    headline: "Five contractors called. Quotes compared. Best one booked.",
+    body: "AC broke in July. Asmi called five HVAC contractors, compared availability and pricing, and confirmed the best option for Saturday morning.",
+    result: "→ BOOKED: SATURDAY 9AM, $150 DIAGNOSTIC.",
   },
   {
+    num: "03",
     cat: "FAMILY CARE",
-    catColor: "var(--color-clay)",
+    catColor: "#D4A574",
+    accent: "#D4A574",
     headline: "Twice-daily check-ins. Italian. SF to Rome.",
-    body: "Asmi calls his mother in Rome every morning and evening. In Italian.",
-    result: "→ Three years. Never missed a call.",
+    body: "Asmi calls his mother in Rome every morning and evening. In Italian. Tracks medications. Reorders when needed.",
+    result: "→ THREE YEARS. NEVER MISSED A CALL.",
   },
 ];
 
@@ -39,12 +46,15 @@ const LANGUAGES = [
   { name: "Dansk", size: "sm" }, { name: "Català", size: "sm" }, { name: "Punjabi", size: "md" },
 ];
 
+// Mobile hides smallest languages
+const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
+
 function langPos(i: number, total: number) {
   const a = Math.sin(i * 12.9898) * 43758.5453;
   const b = Math.cos(i * 78.233) * 12345.678;
   return {
-    x: ((a - Math.floor(a)) * 92) + 4,
-    y: ((b - Math.floor(b)) * 86) + 7,
+    x: Math.min(95, Math.max(5, ((a - Math.floor(a)) * 88) + 6)),
+    y: Math.min(92, Math.max(8, ((b - Math.floor(b)) * 82) + 9)),
     delay: (i / total) * 4,
     dur: 8 + (i % 6),
   };
@@ -52,13 +62,13 @@ function langPos(i: number, total: number) {
 
 export function Act5() {
   return (
-    <section className="relative">
+    <section id="stories" className="relative">
       <OrganicDivider />
 
       {/* 5A Stories */}
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
         <motion.h2
-          className="font-serif text-espresso mb-20"
+          className="font-serif mb-20 md:mb-24"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -68,7 +78,7 @@ export function Act5() {
           This happened this week.
         </motion.h2>
 
-        <div className="space-y-24">
+        <div className="flex flex-col gap-[100px] md:gap-[120px]">
           {STORIES.map((s, i) => (
             <motion.div
               key={i}
@@ -76,21 +86,74 @@ export function Act5() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.9, delay: i * 0.1 }}
-              className="relative"
+              className="relative md:pl-8"
+              style={{ minHeight: 1 }}
             >
-              <p className="label-mono mb-4" style={{ color: s.catColor }}>{s.cat}</p>
-              <h3 className="font-serif text-espresso" style={{ color: "var(--color-espresso)", fontSize: "clamp(1.6rem, 3.4vw, 2.8rem)", lineHeight: 1.15, letterSpacing: "-0.01em" }}>
-                {s.headline}
-              </h3>
-              <p className="mt-4 font-sans text-stone max-w-2xl" style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.3vw, 1.15rem)" }}>
-                {s.body}
-              </p>
-              <p className="mt-3 label-mono" style={{ color: "var(--color-sage)" }}>{s.result}</p>
-              {i < STORIES.length - 1 && (
-                <svg className="mt-16 w-40 opacity-40" viewBox="0 0 200 12">
-                  <path d="M0 6 Q 50 0, 100 6 T 200 6" stroke="var(--color-stone-dim)" strokeWidth="1" fill="none" />
-                </svg>
-              )}
+              {/* Ghost number - desktop only */}
+              <span
+                className="hidden md:block absolute font-serif pointer-events-none select-none"
+                style={{
+                  top: -40,
+                  left: -10,
+                  fontSize: 180,
+                  lineHeight: 1,
+                  color: "var(--color-espresso)",
+                  opacity: 0.035,
+                  fontWeight: 400,
+                  zIndex: 0,
+                }}
+                aria-hidden
+              >
+                {s.num}
+              </span>
+
+              {/* Left vertical accent line */}
+              <span
+                className="hidden md:block absolute"
+                style={{
+                  left: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: 2,
+                  background: s.accent,
+                  opacity: 0.55,
+                }}
+                aria-hidden
+              />
+
+              <div className="relative" style={{ zIndex: 1 }}>
+                <p className="label-mono mb-4" style={{ color: s.catColor }}>{s.cat}</p>
+
+                <div className="flex items-start gap-4 md:gap-6">
+                  <h3
+                    className="font-serif flex-1"
+                    style={{
+                      color: "var(--color-espresso)",
+                      fontSize: "clamp(24px, 4.5vw, 44px)",
+                      lineHeight: 1.15,
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {s.headline}
+                  </h3>
+                  <div className="mt-1">
+                    <AudioPlayButton color={s.accent} />
+                  </div>
+                </div>
+
+                <p
+                  className="mt-5 font-sans max-w-2xl"
+                  style={{ color: "#5C5349", fontSize: 18, lineHeight: 1.55 }}
+                >
+                  {s.body}
+                </p>
+                <p
+                  className="mt-4 label-mono"
+                  style={{ color: s.accent, fontSize: 14, letterSpacing: "0.14em" }}
+                >
+                  {s.result}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -98,10 +161,10 @@ export function Act5() {
 
       <OrganicDivider />
 
-      {/* 5B Available */}
-      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-5xl mx-auto text-center">
+      {/* 5B Available everywhere */}
+      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
-          className="font-serif text-espresso mb-16"
+          className="font-serif mb-16 md:mb-20 text-center"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -110,23 +173,28 @@ export function Act5() {
         >
           No app. No new habit.
         </motion.h2>
-        <div className="grid md:grid-cols-3 gap-12 md:gap-8 mt-20">
-          <ChannelWord word="Call" ambient={<MiniWave />} />
-          <ChannelWord word="Text" ambient={<TypingDots />} />
-          <ChannelWord word="Listen" ambient={<Ripples />} />
+
+        <div className="flex flex-col md:flex-row gap-12 md:gap-8">
+          <Channel word="Call" caption="Every morning. Asmi calls you." ambient={<MiniWave />} />
+          <Channel word="Text" caption="iMessage mid-day. Same context." ambient={<TypingDots />} />
+          <Channel word="Listen" caption="Call Asmi directly. Always on." ambient={<Ripples />} />
         </div>
-        <p className="mt-20 font-sans text-stone max-w-2xl mx-auto" style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.4vw, 1.2rem)" }}>
-          Asmi calls you. You call Asmi. You text Asmi. <em className="font-serif italic">Same intelligence everywhere.</em>
+
+        <p
+          className="mt-16 md:mt-20 font-sans text-center"
+          style={{ color: "var(--color-espresso)", fontSize: 16, fontWeight: 400 }}
+        >
+          Same intelligence. Every surface. No app.
         </p>
       </div>
 
       <OrganicDivider />
 
       {/* 5C Languages */}
-      <div className="px-5 sm:px-6 py-20 md:py-32">
+      <div id="languages" className="px-5 sm:px-6 py-20 md:py-32">
         <div className="text-center mb-12">
           <motion.h2
-            className="font-serif text-espresso"
+            className="font-serif"
             style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -136,19 +204,20 @@ export function Act5() {
             50+ languages. <em className="italic">Your accent. Your way.</em>
           </motion.h2>
         </div>
-        {/* Mobile: organic flowing wrap */}
-        <div className="md:hidden px-4 mx-auto max-w-2xl flex flex-wrap justify-center items-center gap-x-4 gap-y-3">
-          {LANGUAGES.map((l, i) => {
-            const sizeMap = { sm: "0.95rem", md: "1.15rem", lg: "1.5rem", xl: "2rem" } as Record<string, string>;
-            const colorMap = { sm: "var(--color-stone-dim)", md: "var(--color-stone)", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+
+        {/* Mobile: organic flowing wrap, no labels smaller than 14px */}
+        <div className="md:hidden px-4 mx-auto max-w-2xl flex flex-wrap justify-center items-center gap-x-4 gap-y-3" style={{ minHeight: 400 }}>
+          {MOBILE_LANGUAGES.map((l, i) => {
+            const sizeMap = { md: "1.15rem", lg: "1.5rem", xl: "2rem" } as Record<string, string>;
+            const colorMap = { md: "#5C5349", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
               <motion.span
                 key={l.name}
                 className="font-serif"
                 style={{
-                  fontSize: sizeMap[l.size],
-                  color: colorMap[l.size],
-                  opacity: l.size === "sm" ? 0.65 : l.size === "md" ? 0.85 : 1,
+                  fontSize: sizeMap[l.size] || "1rem",
+                  color: colorMap[l.size] || "#5C5349",
+                  opacity: l.size === "md" ? 0.85 : 1,
                 }}
                 animate={{ y: [0, -3, 0, 2, 0] }}
                 transition={{ duration: 6 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.3 }}
@@ -164,7 +233,7 @@ export function Act5() {
           {LANGUAGES.map((l, i) => {
             const p = langPos(i, LANGUAGES.length);
             const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<string, string>;
-            const colorMap = { sm: "var(--color-stone-dim)", md: "var(--color-stone)", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+            const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
               <motion.span
                 key={l.name}
@@ -175,7 +244,7 @@ export function Act5() {
                   transform: "translate(-50%, -50%)",
                   fontSize: sizeMap[l.size],
                   color: colorMap[l.size],
-                  opacity: l.size === "sm" ? 0.6 : l.size === "md" ? 0.8 : 1,
+                  opacity: l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
                 }}
                 animate={{ y: [0, -10, 0, 8, 0] }}
                 transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
@@ -191,37 +260,46 @@ export function Act5() {
   );
 }
 
-function ChannelWord({ word, ambient }: { word: string; ambient: React.ReactNode }) {
+function Channel({ word, caption, ambient }: { word: string; caption: string; ambient: React.ReactNode }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center"
+      className="flex-1 flex flex-col items-center md:items-start text-center md:text-left"
     >
-      <p className="font-serif text-espresso" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 5vw, 3.8rem)", letterSpacing: "-0.02em" }}>
+      <p
+        className="font-serif"
+        style={{ color: "var(--color-espresso)", fontSize: 48, lineHeight: 1, letterSpacing: "-0.02em" }}
+      >
         {word}
       </p>
-      <div className="mt-4 h-12 flex items-center justify-center">{ambient}</div>
+      <div className="mt-5 h-7 flex items-center">{ambient}</div>
+      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: 15, lineHeight: 1.5, maxWidth: 280 }}>
+        {caption}
+      </p>
     </motion.div>
   );
 }
 
 function MiniWave() {
   return (
-    <svg viewBox="0 0 120 24" className="w-32">
-      <motion.path
-        d="M0 12 Q 15 4 30 12 T 60 12 T 90 12 T 120 12"
-        stroke="var(--color-terracotta)" strokeWidth="1.5" fill="none"
-        animate={{ d: [
-          "M0 12 Q 15 4 30 12 T 60 12 T 90 12 T 120 12",
-          "M0 12 Q 15 20 30 12 T 60 12 T 90 12 T 120 12",
-          "M0 12 Q 15 4 30 12 T 60 12 T 90 12 T 120 12",
-        ] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </svg>
+    <div className="flex items-end gap-[3px]" style={{ height: 24 }}>
+      {[0, 1, 2, 3].map((i) => (
+        <span
+          key={i}
+          style={{
+            width: 3,
+            background: "var(--color-terracotta)",
+            display: "block",
+            height: 24,
+            transformOrigin: "center",
+            animation: `wave-bar 1s ease-in-out ${i * 0.13}s infinite`,
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -231,9 +309,10 @@ function TypingDots() {
       {[0, 1, 2].map((i) => (
         <span
           key={i}
-          className="block w-2.5 h-2.5 rounded-full"
+          className="block rounded-full"
           style={{
-            background: "var(--color-terracotta)",
+            width: 8, height: 8,
+            background: "#6B6560",
             animation: `typing-dot 1.4s ease-in-out ${i * 0.18}s infinite`,
           }}
         />
@@ -252,7 +331,8 @@ function Ripples() {
           style={{
             width: 36, height: 36,
             borderColor: "var(--color-terracotta)",
-            animation: `ripple 2.4s ease-out ${i * 0.7}s infinite`,
+            opacity: 0.15,
+            animation: `ripple 3s ease-out ${i}s infinite`,
           }}
         />
       ))}
