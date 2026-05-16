@@ -111,8 +111,8 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[340vh] md:h-[360vh]" style={{ overflowX: "hidden" }}>
-      <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden relative" style={{ maxWidth: "100vw" }}>
+    <section ref={ref} className="relative h-[260vh] md:h-[280vh]">
+      <div ref={stageRef} className="sticky top-0 h-screen w-full overflow-hidden relative">
         {/* Warm radial wash */}
         <div
           className="absolute inset-0 pointer-events-none"
