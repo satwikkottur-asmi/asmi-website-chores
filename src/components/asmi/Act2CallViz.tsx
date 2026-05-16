@@ -230,8 +230,8 @@ export function Act2CallViz() {
                 className="label-mono"
                 style={{
                   color: "var(--color-espresso-strong)",
-                  fontSize: isMobile ? "0.62rem" : "0.78rem",
-                  letterSpacing: isMobile ? "0.15em" : "0.22em",
+                  fontSize: isMobile ? "0.78rem" : "0.78rem",
+                  letterSpacing: isMobile ? "0.2em" : "0.22em",
                 }}
               >
                 {STEPS[active].label}
