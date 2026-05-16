@@ -32,8 +32,7 @@ const STEPS = {
   ask:     { start: 0.02, in: 0.08, out: 0.22, end: 0.26 },
   listen:  { start: 0.22, in: 0.28, out: 0.36, end: 0.40 },
   dial:    { start: 0.34, in: 0.42, out: 0.66, end: 0.70 },
-  confirm: { start: 0.66, in: 0.74, out: 0.96, end: 1.00 },
-  close:   { start: 0.97, in: 0.985, out: 0.995, end: 1.00 },
+  confirm: { start: 0.66, in: 0.74, out: 1.00, end: 1.00 },
 };
 
 export function Act2CallViz() {
@@ -86,15 +85,14 @@ export function Act2CallViz() {
     if (value < STEPS.listen.start) setPhase("ask");
     else if (value < STEPS.dial.start) setPhase("listen");
     else if (value < STEPS.confirm.start) setPhase("dial");
-    else if (value < STEPS.close.start) setPhase("confirm");
-    else setPhase("close");
+    else setPhase("confirm");
   });
 
   // STEP labels — top of the stage, always anchored
   const stepAskOpacity     = useTransform(scrollYProgress, [STEPS.ask.start, STEPS.ask.in, STEPS.ask.out, STEPS.ask.end], [0, 1, 1, 0]);
   const stepListenOpacity  = useTransform(scrollYProgress, [STEPS.listen.start, STEPS.listen.in, STEPS.listen.out, STEPS.listen.end], [0, 1, 1, 0]);
   const stepDialOpacity    = useTransform(scrollYProgress, [STEPS.dial.start, STEPS.dial.in, STEPS.dial.out, STEPS.dial.end], [0, 1, 1, 0]);
-  const stepConfirmOpacity = useTransform(scrollYProgress, [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.out, STEPS.confirm.end], [0, 1, 1, 0]);
+  const stepConfirmOpacity = useTransform(scrollYProgress, [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.end], [0, 1, 1]);
 
   // Speech bubble (Sarah) — appears with ASK, lingers a touch into LISTEN
   const speechOpacity = useTransform(
@@ -106,15 +104,15 @@ export function Act2CallViz() {
   // Asmi orb visible from LISTEN through CONFIRM
   const orbOpacity = useTransform(
     scrollYProgress,
-    [STEPS.ask.out, STEPS.listen.in, STEPS.confirm.out, STEPS.close.in],
-    [0, 1, 1, 0]
+    [STEPS.ask.out, STEPS.listen.in, STEPS.confirm.in, STEPS.confirm.end],
+    [0, 1, 1, 1]
   );
 
   // Branch network visible from DIAL through CONFIRM
   const sceneOpacity = useTransform(
     scrollYProgress,
-    [STEPS.dial.start - 0.02, STEPS.dial.in - 0.02, STEPS.confirm.out, STEPS.close.in],
-    [0, 1, 1, 0]
+    [STEPS.dial.start - 0.02, STEPS.dial.in - 0.02, STEPS.confirm.in, STEPS.confirm.end],
+    [0, 1, 1, 1]
   );
 
   const cx = size.w / 2;
@@ -131,7 +129,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[170vh] md:h-[190vh]">
+    <section ref={ref} className="relative h-[155vh] md:h-[170vh]">
       <div
         ref={stageRef}
         className="sticky top-0 h-screen w-full overflow-hidden relative z-20"
