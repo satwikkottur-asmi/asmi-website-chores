@@ -58,7 +58,7 @@ export function Act2CallViz() {
               stroke="#C25B3F"
               strokeWidth="0.4"
               strokeLinecap="round"
-              style={{ pathLength: wavePathLen, opacity: useTransform(scrollYProgress, [0.05, 0.15, 0.55, 0.65], [0, 0.9, 0.9, 0]) }}
+              style={{ pathLength: wavePathLen, opacity: waveOpacity }}
             />
           </svg>
 
