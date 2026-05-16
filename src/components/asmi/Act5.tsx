@@ -136,7 +136,31 @@ export function Act5() {
             50+ languages. <em className="italic">Your accent. Your way.</em>
           </motion.h2>
         </div>
-        <div className="relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
+        {/* Mobile: organic flowing wrap */}
+        <div className="md:hidden px-4 mx-auto max-w-2xl flex flex-wrap justify-center items-center gap-x-4 gap-y-3">
+          {LANGUAGES.map((l, i) => {
+            const sizeMap = { sm: "0.95rem", md: "1.15rem", lg: "1.5rem", xl: "2rem" } as Record<string, string>;
+            const colorMap = { sm: "var(--color-stone-dim)", md: "var(--color-stone)", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+            return (
+              <motion.span
+                key={l.name}
+                className="font-serif"
+                style={{
+                  fontSize: sizeMap[l.size],
+                  color: colorMap[l.size],
+                  opacity: l.size === "sm" ? 0.65 : l.size === "md" ? 0.85 : 1,
+                }}
+                animate={{ y: [0, -3, 0, 2, 0] }}
+                transition={{ duration: 6 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.3 }}
+              >
+                {l.name}
+              </motion.span>
+            );
+          })}
+        </div>
+
+        {/* Desktop: scattered floating cloud */}
+        <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
           {LANGUAGES.map((l, i) => {
             const p = langPos(i, LANGUAGES.length);
             const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<string, string>;
