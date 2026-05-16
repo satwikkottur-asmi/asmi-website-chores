@@ -229,35 +229,35 @@ export function Act5() {
           </motion.h2>
         </div>
 
-        {/* Mobile: scattered floating cloud (tighter radii) */}
-        <div className="md:hidden relative mx-auto w-full" style={{ height: "min(70vh, 560px)" }}>
-          {LANGUAGES.map((l, i) => {
-            const p = langPos(i, LANGUAGES.length, l.size);
-            // pull labels inward on mobile
-            const x = 50 + (p.x - 50) * 0.78;
-            const y = 50 + (p.y - 50) * 0.92;
-            const sizeMap = { sm: "0.85rem", md: "1.1rem", lg: "1.55rem", xl: "2.2rem" } as Record<string, string>;
-            const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
-            return (
-              <motion.span
-                key={l.name}
-                className="absolute font-serif"
-                style={{
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  transform: "translate(-50%, -50%)",
-                  fontSize: sizeMap[l.size],
-                  color: colorMap[l.size],
-                  opacity: l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
-                  whiteSpace: "nowrap",
-                }}
-                animate={{ y: [0, -6, 0, 4, 0] }}
-                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-              >
-                {l.name}
-              </motion.span>
-            );
-          })}
+        {/* Mobile: centered wrapped cloud — no overflow */}
+        <div className="md:hidden relative mx-auto w-full max-w-md px-2">
+          <div
+            className="flex flex-wrap items-center justify-center"
+            style={{ rowGap: "0.65rem", columnGap: "0.9rem" }}
+          >
+            {LANGUAGES.map((l, i) => {
+              const sizeMap = { sm: "1rem", md: "1.25rem", lg: "1.7rem", xl: "2.3rem" } as Record<string, string>;
+              const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+              const opacity = l.size === "sm" ? 0.75 : l.size === "md" ? 0.9 : 1;
+              return (
+                <motion.span
+                  key={l.name}
+                  className="font-serif inline-block"
+                  style={{
+                    fontSize: sizeMap[l.size],
+                    color: colorMap[l.size],
+                    opacity,
+                    lineHeight: 1.1,
+                    whiteSpace: "nowrap",
+                  }}
+                  animate={{ y: [0, -3, 0, 2, 0] }}
+                  transition={{ duration: 7 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 8) * 0.4 }}
+                >
+                  {l.name}
+                </motion.span>
+              );
+            })}
+          </div>
         </div>
 
         {/* Desktop: scattered floating cloud */}
