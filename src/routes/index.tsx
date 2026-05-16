@@ -27,6 +27,7 @@ function Index() {
     <main className="relative">
       <ScrollProgress />
       <Nav />
+      <HeroShatter />
       <Act1Opening />
       <Act2CallViz />
       <Act3ThreeMoments />
