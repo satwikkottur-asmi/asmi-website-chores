@@ -36,8 +36,9 @@ export function Nav() {
               <span style={{ color: "var(--color-stone-dim)" }}>·</span>
               <a href="#languages" className="hover:text-espresso transition-colors">Languages</a>
             </div>
-            <a href="#start" className="btn-pill" style={{ padding: "0.6rem 1.2rem", fontSize: "0.85rem" }}>
-              Start with iMessage
+            <a href="#start" className="btn-pill" style={{ padding: "0.55rem 1.1rem", fontSize: "0.82rem" }}>
+              <span className="hidden sm:inline">Start with iMessage</span>
+              <span className="sm:hidden">iMessage</span>
             </a>
           </div>
         </motion.nav>
