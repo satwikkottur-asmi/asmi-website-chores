@@ -63,9 +63,7 @@
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* Use `clip` instead of `hidden` so position: sticky keeps working.
-       `overflow-x: hidden` on html/body silently breaks sticky descendants. */
-    overflow-x: clip;
+    overflow-x: hidden;
   }
   body {
     background: linear-gradient(135deg, #F6F1EB, #EDE6DC, #F2EDE7, #F6F1EB);

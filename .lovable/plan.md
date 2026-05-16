@@ -1,79 +1,76 @@
-# Fix plan: make the call animation truly pinned, step-by-step, and readable
+# Fix plan: make the hero-to-call sequence work exactly as intended
 
 ## Goal
 
-Fix the highlight section so the viewport feels locked while scrolling through the call story: Sarah asks, Asmi calls 5 plumbers one by one, one confirms in a stronger green, and only then does the page move to the next section.
+Restore the shatter transition and make the call animation begin immediately at the seam, stay pinned while the full sequence plays, and release only after the green confirmed state and final message have both had time on screen.
 
-## What is failing now
+## 1. Restore the missing shatter effect
 
-- The call section is not behaving like a true pinned sequence.
-- Motion is warning that a scroll container/target is not being measured correctly, which can cause bad offset tracking.
-- The section reveals are tied to a long progress band, so the screen keeps drifting instead of feeling anchored.
-- The reveal timing is too compressed, while the copy and winner state are too light for the most important section on the page.
+Problem: the shatter effect was removed from the route, so the transition beat is gone entirely.
 
-## 1. Rebuild Act 2 around a real sticky stage
+Fix:
+- Re-add `HeroShatter` to `src/routes/index.tsx`.
+- Rebuild `HeroShatter.tsx` as a one-shot overlay triggered by a shared handoff state, not by an independent `window.scrollY` listener.
+- Use a fixed-duration animation (~650–750ms) so the effect feels intentional and not tied to scroll jitter.
+- Keep the visual language already approved: the headline breaks into shards, brief flash, Act 2 revealed underneath.
 
-Update `src/components/asmi/Act2CallViz.tsx` so the animation is driven by a dedicated relative wrapper with a sticky child that stays at `top-0 h-screen` for the entire narrative.
+## 2. Make Act 2 start right away instead of after a dead scroll zone
 
-Plan:
-- Keep the outer section strictly responsible for scroll length.
-- Keep the inner stage strictly responsible for the pinned visual frame.
-- Move all reveal choreography to this pinned stage instead of letting the page feel like it is sliding past the content.
-- Fix the Motion container/target setup so the scroll progress is measured against a stable relative element.
+Problem: Act 2 currently has too much empty intro distance. The user scrolls into a mostly blank frame before the real call motion starts.
 
-## 2. Make the sequence reveal one beat per scroll segment
+Fix in `Act2CallViz.tsx`:
+- Start the sticky section earlier and front-load the content so the orb, branches, and first call beat are visible as soon as the user crosses out of the hero.
+- Compress the silent intro band to a very small slice of progress:
+  - `intro` `0.00–0.08`
+  - `dialing` `0.08–0.42`
+  - `resolved` `0.42–0.80`
+  - `outro` `0.80+`
+- Move caption/speech opacity ramps earlier so there is no blank hold before the call sequence is readable.
+- Ensure the first waveform motion is already active during the early dialing window.
 
-Retime the progress map in `Act2CallViz.tsx` into slower, discrete bands:
+## 3. Keep the call section pinned until everything is revealed
 
-1. **Sarah asks** — message and prompt fully readable before anything else changes.
-2. **Asmi listens** — central orb and support label come in and hold.
-3. **Asmi calls 5 plumbers** — branches and endpoints reveal one at a time, not all at once.
-4. **One confirms** — winner upgrades into the strong green confirmation state and holds.
-5. **Close** — closing copy appears while the winner remains visible briefly.
-6. **Release** — only after the close beat finishes does the sticky section let the next section enter.
+Problem: the user can scroll a long distance without getting a satisfying locked sequence, and the release timing does not align with the final reveal.
 
-This will be done by widening each step range, adding deliberate hold ranges, and removing any fast overlap that makes the user miss information.
+Fix:
+- Re-time the sticky container so the visible narrative is:
+  1. hero shatters
+  2. call fans out
+  3. winner turns green
+  4. closing message appears
+  5. only then does the page continue
+- Tune the section height and fade ranges together instead of only increasing raw height.
+- Hold the green confirmed state on screen before the closing copy fades in.
+- Hold the closing copy on screen before the sticky stage fades out.
 
-## 3. Remove the “screen keeps moving” feeling
+## 4. Use one shared transition state across Act 1, shatter, and Act 2
 
-The user experience should feel like scroll is scrubbing the animation while the frame stays put.
+Problem: the current pieces are acting independently, which creates desync and awkward handoff timing.
 
-Plan:
-- Increase the scroll length only where it gives each step breathing room.
-- Delay Act 2 release until after the close state has had a visible hold.
-- Pull Act 3 upward so there is no dead spacer after Act 2 finishes.
-- Check the seam between Act 2 and Act 3 so the next section arrives immediately after release.
+Fix:
+- Lift a small transition state into `src/routes/index.tsx`.
+- `Act1Opening` reports when the headline has reached the shatter threshold.
+- `HeroShatter` reads that same state and plays exactly once.
+- `Act2CallViz` uses that same handoff state to align its opening beat so the call is already present behind the shatter.
 
-## 4. Strengthen contrast and hierarchy in the highlight section
+## 5. Smoothness and performance guardrails
 
-The call section should read as the visual centerpiece of the page.
-
-Plan:
-- Deepen the green winner treatment using existing site tokens, not raw colors in component markup.
-- Increase contrast for key labels, message copy, and endpoint text.
-- Keep non-winning plumbers quieter, but still readable during their reveal.
-- Preserve the site palette so the section feels more vivid without looking disconnected from the rest of the page.
-
-## 5. Keep scope focused
-
-Do not bring back the shatter effect in this pass.
-
-This fix is only about:
-- pinned scroll behavior
-- slower step-by-step reveal timing
-- no empty gap before the next section
-- stronger visibility and visual emphasis in the call section
+To prevent another janky transition:
+- Avoid `window` scroll listeners for the handoff logic.
+- Keep shatter transforms to `transform` + `opacity`; use minimal blur only if it remains smooth.
+- Keep the pinned scene visually full at every frame — no blank cream screen between sections.
+- Preserve reduced-motion fallback as a quick cross-fade.
 
 ## Files to update
 
+- `src/routes/index.tsx`
+- `src/components/asmi/Act1Opening.tsx`
 - `src/components/asmi/Act2CallViz.tsx`
-- `src/components/asmi/Act3Moments.tsx`
-- `src/styles.css`
+- `src/components/asmi/HeroShatter.tsx`
 
 ## Validation
 
-- The call section stays visually pinned while the user scrolls through every reveal.
-- The viewport does not feel like it is drifting downward during the key beats.
-- Sarah’s ask, the 5 calls, and the single confirmation each have their own readable scroll segment.
-- The green confirmed state is clearly visible and aesthetically stronger.
-- The next section appears immediately after the call sequence ends, with no dead empty space.
+- Desktop: first scroll out of hero immediately reveals the call stage.
+- The call stage stays pinned through the green winner and the final “She never opened an app” beat.
+- No blank seam between hero and Act 2.
+- Shatter effect is visibly present and smooth.
