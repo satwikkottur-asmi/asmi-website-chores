@@ -12,16 +12,15 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  // Hero exits faster so shatter+Act 2 take over right at the seam.
-  const statementOpacity = useTransform(scrollYProgress, [0.55, 0.82], [1, 0]);
-  const statementY = useTransform(scrollYProgress, [0.55, 0.9], [0, isMobile ? -50 : -100]);
-  const statementScale = useTransform(scrollYProgress, [0.7, 0.9], [1, prefersReducedMotion ? 0.98 : 1.04]);
-  const wordmarkOpacity = useTransform(scrollYProgress, [0.5, 0.7, 0.82], [0, 1, 0]);
-  const wordmarkY = useTransform(scrollYProgress, [0.55, 0.85], [40, 0]);
+  const statementOpacity = useTransform(scrollYProgress, [0.42, 0.68], [1, 0]);
+  const statementY = useTransform(scrollYProgress, [0.42, 0.72], [0, isMobile ? -36 : -72]);
+  const statementScale = useTransform(scrollYProgress, [0.5, 0.72], [1, prefersReducedMotion ? 0.985 : 1.02]);
+  const wordmarkOpacity = useTransform(scrollYProgress, [0.3, 0.48, 0.68], [0, 1, 0]);
+  const wordmarkY = useTransform(scrollYProgress, [0.32, 0.68], [28, -12]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[110vh] md:h-[120vh]">
+    <section ref={ref} className="relative h-[100vh] md:h-[105vh]">
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center md:justify-center overflow-hidden px-5 sm:px-6 pt-[14vh] md:pt-0 gap-6 md:gap-0">
         <AmbientBlobs density={6} />
 
