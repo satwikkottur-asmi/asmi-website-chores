@@ -53,7 +53,7 @@ The sticky container is `h-screen flex flex-col items-center justify-center`, bu
 - Reduce the headline clamp lower bound so 5 words fit on two lines without dominating the viewport: `clamp(2.2rem, 11vw, 14rem)`.
 - Add `gap-6` between headline and CTA stack on mobile so they read as one centered group.
 
-### 3b. `Act5.tsx` — mobile language cloud
+### 4b. `Act5.tsx` — mobile language cloud
 Currently mobile uses a flex-wrap list. Replace with the same scattered absolute-positioned cloud the desktop uses, scaled to mobile:
 - Render `LANGUAGES` (full list, not filtered) with the existing `langPos` math in an absolutely-positioned container `h-[70vh] max-h-[560px]`.
 - Mobile size map: `sm: 0.85rem`, `md: 1.1rem`, `lg: 1.55rem`, `xl: 2.2rem` so a few words stand out and the rest recede, matching the desktop hierarchy.
