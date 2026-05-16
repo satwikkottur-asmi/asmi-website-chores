@@ -499,13 +499,17 @@ function EndpointLabel({
 }) {
   const winner = index === 0;
   const delay = 0.18 * index;
-  const above = endpoint.y < 50;
+  const alignStyles = {
+    left: { transform: "translate(0, 0)", textAlign: "left" as const },
+    center: { transform: "translate(-50%, 0)", textAlign: "center" as const },
+    right: { transform: "translate(-100%, 0)", textAlign: "right" as const },
+  }[endpoint.labelAlign];
 
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
       : "rgba(107, 101, 96, 0.22)"
-    : "var(--color-terracotta)";
+    : "var(--color-terracotta-deep)";
 
   return (
     <>
@@ -532,29 +536,34 @@ function EndpointLabel({
       <motion.div
         className="absolute"
         style={{
-          left: `${endpoint.x}%`,
-          top: `${endpoint.y}%`,
-          transform: above
-            ? "translate(-50%, calc(-100% - 18px))"
-            : "translate(-50%, 18px)",
-          maxWidth: "min(70vw, 280px)",
+          left: `calc(${endpoint.x}% + ${endpoint.labelOffsetX}px)`,
+          top: `calc(${endpoint.y}% + ${endpoint.labelOffsetY}px)`,
+          transform: alignStyles.transform,
+          maxWidth: endpoint.maxWidth
+            ? `${endpoint.maxWidth}px`
+            : isMobile
+              ? "8rem"
+              : "12rem",
         }}
-        initial={{ opacity: 0, y: above ? -6 : 6 }}
+        initial={{ opacity: 0, y: endpoint.labelOffsetY < 0 ? -6 : 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: delay + 0.1 }}
       >
-        <div className="text-center">
+        <div style={{ textAlign: alignStyles.textAlign }}>
           {!(winner && isConfirmed) && (
             <span
               className="label-mono inline-block"
               style={{
                 color: isConfirmed
                   ? "var(--color-stone-dim)"
-                  : "var(--color-espresso)",
-                whiteSpace: isMobile ? "normal" : "nowrap",
-                lineHeight: 1.45,
-                maxWidth: isMobile ? "8.5rem" : undefined,
-                fontWeight: 500,
+                  : "var(--color-espresso-strong)",
+                whiteSpace: "normal",
+                lineHeight: isMobile ? 1.35 : 1.45,
+                fontWeight: 600,
+                fontSize: isMobile ? "0.58rem" : "0.72rem",
+                letterSpacing: isMobile ? "0.12em" : "0.16em",
+                textWrap: "balance",
+                textShadow: "0 1px 0 rgba(251,248,243,0.55)",
                 transition: "color 0.4s ease",
               }}
             >
@@ -577,9 +586,11 @@ function EndpointLabel({
                   boxShadow: "0 18px 48px -18px rgba(73,100,78,0.6)",
                   whiteSpace: "normal",
                   lineHeight: 1.45,
-                  fontSize: 11,
-                  letterSpacing: "0.14em",
+                  fontSize: isMobile ? 10 : 11,
+                  letterSpacing: isMobile ? "0.1em" : "0.14em",
                   fontWeight: 600,
+                  maxWidth: isMobile ? "8.75rem" : "none",
+                  textAlign: "center",
                 }}
               >
                 ✓ Mike · Today 2pm
