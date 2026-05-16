@@ -1,9 +1,9 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { RefObject, useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion, useMotionValueEvent } from "motion/react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const WORDS = ["The", "screen", "era", "is", "over."];
+const HEADLINE = "The screen era is over.";
 
 export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement | null> }) {
   const internalRef = useRef<HTMLElement>(null);
@@ -12,9 +12,7 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const statementOpacity = useTransform(scrollYProgress, [0.42, 0.68], [1, 0]);
-  const statementY = useTransform(scrollYProgress, [0.42, 0.72], [0, isMobile ? -36 : -72]);
-  const statementScale = useTransform(scrollYProgress, [0.5, 0.72], [1, prefersReducedMotion ? 0.985 : 1.02]);
+  const statementOpacity = useTransform(scrollYProgress, [0.68, 0.74], [1, 0]);
   const wordmarkOpacity = useTransform(scrollYProgress, [0.3, 0.48, 0.68], [0, 1, 0]);
   const wordmarkY = useTransform(scrollYProgress, [0.32, 0.68], [28, -12]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
@@ -26,25 +24,14 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
 
         <motion.div
           className="relative z-10 text-center w-full"
-          style={{ opacity: statementOpacity, y: statementY, scale: statementScale }}
+          style={{ opacity: statementOpacity }}
         >
-          <h1
-            className="font-serif font-normal text-espresso tracking-[-0.02em]"
-            style={{
-              fontSize: "clamp(2.2rem, 11vw, 14rem)",
-              lineHeight: 1.02,
-              color: "var(--color-espresso)",
-            }}
-          >
-            {WORDS.map((w, i) => (
-              <span key={i}>
-                <Word progress={scrollYProgress} index={i} total={WORDS.length}>
-                  {w}
-                </Word>
-                {i < WORDS.length - 1 ? " " : ""}
-              </span>
-            ))}
-          </h1>
+          <ParticleTitle
+            text={HEADLINE}
+            progress={scrollYProgress}
+            isMobile={!!isMobile}
+            reducedMotion={!!prefersReducedMotion}
+          />
           <div className="mt-6 sm:mt-10 flex justify-center">
             <motion.div style={{ opacity: brushOpacity }} className="w-full max-w-[24rem] sm:max-w-[40rem]">
               <BrushUnderline progress={1} />
@@ -79,24 +66,232 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
   );
 }
 
-function Word({
-  children,
+type Particle = {
+  x0: number;
+  y0: number;
+  size: number;
+  threshold: number; // when (during dissolve) this particle starts moving
+  driftX: number;
+  liftY: number;
+  jitter: number;
+  phase: number;
+};
+
+function ParticleTitle({
+  text,
   progress,
-  index,
-  total,
+  isMobile,
+  reducedMotion,
 }: {
-  children: React.ReactNode;
+  text: string;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
-  index: number;
-  total: number;
+  isMobile: boolean;
+  reducedMotion: boolean;
 }) {
-  const dim = useTransform(
-    progress,
-    [0.45, 0.7],
-    [1, index === total - 1 ? 1 : 0.55]
-  );
-  const y = useTransform(progress, [0, 0.5], [0, -(index * 2)]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const dissolveRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const [ready, setReady] = useState(false);
+
+  // Sample the rendered text into particles
+  useEffect(() => {
+    if (reducedMotion) return;
+    const h1 = h1Ref.current;
+    const wrap = wrapRef.current;
+    const canvas = canvasRef.current;
+    if (!h1 || !wrap || !canvas) return;
+
+    let cancelled = false;
+
+    const build = async () => {
+      // ensure fonts are loaded before sampling
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch {}
+      }
+      if (cancelled) return;
+
+      const rect = h1.getBoundingClientRect();
+      const wrapRect = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.ceil(rect.width);
+      const h = Math.ceil(rect.height);
+      if (w === 0 || h === 0) return;
+
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      canvas.style.left = `${rect.left - wrapRect.left}px`;
+      canvas.style.top = `${rect.top - wrapRect.top}px`;
+
+      const off = document.createElement("canvas");
+      off.width = canvas.width;
+      off.height = canvas.height;
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      if (!octx) return;
+
+      const cs = window.getComputedStyle(h1);
+      const fontSize = parseFloat(cs.fontSize);
+      octx.scale(dpr, dpr);
+      octx.fillStyle = "#2C2520";
+      octx.textBaseline = "alphabetic";
+      octx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`;
+
+      // measure to center
+      const metrics = octx.measureText(text);
+      const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
+      const descent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
+      const textH = ascent + descent;
+      const x = (w - metrics.width) / 2;
+      const y = (h - textH) / 2 + ascent;
+      octx.fillText(text, x, y);
+
+      const img = octx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = img.data;
+      const step = Math.max(2, Math.round((isMobile ? 5 : 3) * dpr));
+      const particles: Particle[] = [];
+      for (let py = 0; py < canvas.height; py += step) {
+        for (let px = 0; px < canvas.width; px += step) {
+          const idx = (py * canvas.width + px) * 4 + 3;
+          if (data[idx] > 128) {
+            const nx = px / dpr;
+            const ny = py / dpr;
+            particles.push({
+              x0: nx,
+              y0: ny,
+              size: dpr >= 2 ? 1.5 : 1.25,
+              threshold: (nx / w) * 0.55 + Math.random() * 0.12,
+              driftX: 90 + Math.random() * 220,
+              liftY: 40 + Math.random() * 140,
+              jitter: 10 + Math.random() * 24,
+              phase: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+      }
+      particlesRef.current = particles;
+      setReady(true);
+      draw();
+    };
+
+    build();
+    const onResize = () => {
+      setReady(false);
+      build();
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", onResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, isMobile, reducedMotion]);
+
+  const draw = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const t = dissolveRef.current;
+    if (t <= 0) {
+      if (h1Ref.current) h1Ref.current.style.opacity = "1";
+      return;
+    }
+    if (h1Ref.current) h1Ref.current.style.opacity = "0";
+    if (t >= 1) return;
+
+    const now = (performance.now() - startTimeRef.current) / 1000;
+    const particles = particlesRef.current;
+    ctx.fillStyle = "#2C2520";
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      const local = (t - p.threshold) / (1 - p.threshold);
+      if (local <= 0) {
+        ctx.globalAlpha = 1;
+        ctx.fillRect(p.x0, p.y0, p.size, p.size);
+        continue;
+      }
+      const e = local < 1 ? 1 - Math.pow(1 - local, 2) : 1;
+      const wob = Math.sin(now * 2 + p.phase) * p.jitter * e;
+      const x = p.x0 + e * p.driftX + wob;
+      const y = p.y0 - e * p.liftY + Math.cos(now * 1.6 + p.phase) * p.jitter * 0.4 * e;
+      const a = Math.max(0, 1 - local);
+      ctx.globalAlpha = a;
+      ctx.fillRect(x, y, p.size, p.size);
+    }
+    ctx.globalAlpha = 1;
+  };
+
+  // Animate while dissolving
+  useEffect(() => {
+    if (reducedMotion) return;
+    const loop = () => {
+      draw();
+      const t = dissolveRef.current;
+      if (t > 0 && t < 1) {
+        rafRef.current = requestAnimationFrame(loop);
+      } else {
+        rafRef.current = null;
+      }
+    };
+    const ensureLoop = () => {
+      if (rafRef.current == null) {
+        startTimeRef.current = performance.now();
+        rafRef.current = requestAnimationFrame(loop);
+      }
+    };
+    // expose via closure on the motion subscription below
+    (ParticleTitle as any)._ensureLoop = ensureLoop;
+    return () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    };
+  }, [reducedMotion, ready]);
+
+  useMotionValueEvent(progress, "change", (v) => {
+    if (reducedMotion) return;
+    // map scroll progress 0.42..0.7 -> dissolve 0..1
+    const t = Math.min(1, Math.max(0, (v - 0.42) / (0.7 - 0.42)));
+    dissolveRef.current = t;
+    if (t > 0 && t < 1) {
+      (ParticleTitle as any)._ensureLoop?.();
+    } else {
+      draw();
+    }
+  });
+
   return (
-    <motion.span style={{ opacity: dim, y, display: "inline-block" }}>{children}</motion.span>
+    <div ref={wrapRef} className="relative w-full">
+      <h1
+        ref={h1Ref}
+        className="font-serif font-normal text-espresso tracking-[-0.02em]"
+        style={{
+          fontSize: "clamp(2.2rem, 11vw, 14rem)",
+          lineHeight: 1.02,
+          color: "var(--color-espresso)",
+          margin: 0,
+        }}
+      >
+        {text}
+      </h1>
+      {!reducedMotion && (
+        <canvas
+          ref={canvasRef}
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ left: 0, top: 0 }}
+        />
+      )}
+    </div>
   );
 }
