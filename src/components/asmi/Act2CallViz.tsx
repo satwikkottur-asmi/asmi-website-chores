@@ -300,19 +300,21 @@ function EndpointLabel({
             : "translate(-50%, 14px)",
           opacity: labelOpacity,
           transition: "opacity 0.3s ease",
-          maxWidth: "min(86vw, 360px)",
+          maxWidth: "min(70vw, 230px)",
         }}
       >
         <div className="text-center">
           {showResult ? (
             <span
-              className="label-mono inline-block px-3 py-1.5 rounded-md"
+              className="label-mono inline-block px-2 py-1 rounded-md"
               style={{
                 color: "var(--color-sage)",
                 background: "rgba(139,168,136,0.10)",
-                boxShadow: "0 0 24px rgba(139,168,136,0.3)",
+                boxShadow: "0 0 16px rgba(139,168,136,0.25)",
                 whiteSpace: "normal",
                 lineHeight: 1.4,
+                fontSize: 11,
+                letterSpacing: "0.08em",
               }}
             >
               ✓ Bay Area Plumbing · Mike · Today 2pm
