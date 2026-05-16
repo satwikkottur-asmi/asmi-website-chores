@@ -11,30 +11,48 @@ export function Act6Close() {
   const oRest = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[120vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+    <section ref={ref} className="relative h-[110vh] md:h-[120vh]">
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-5 sm:px-6">
         <AmbientBlobs density={6} />
-        <div className="relative z-10 text-center px-6">
+        <div className="relative z-10 text-center w-full">
           <motion.h2
             className="font-serif text-espresso"
-            style={{ color: "var(--color-espresso)", fontSize: "clamp(3.2rem, 12vw, 14rem)", lineHeight: 0.95, letterSpacing: "-0.02em", opacity: o1, y: y1 }}
+            style={{
+              color: "var(--color-espresso)",
+              fontSize: "clamp(2.8rem, 13vw, 14rem)",
+              lineHeight: 0.98,
+              letterSpacing: "-0.02em",
+              opacity: o1,
+              y: y1,
+            }}
           >
             Your day,
           </motion.h2>
           <motion.p
             className="font-serif italic mt-2"
-            style={{ color: "var(--color-terracotta)", fontSize: "clamp(3.6rem, 13vw, 15rem)", lineHeight: 0.95, letterSpacing: "-0.02em", opacity: o2 }}
+            style={{
+              color: "var(--color-terracotta)",
+              fontSize: "clamp(3rem, 14vw, 15rem)",
+              lineHeight: 0.98,
+              letterSpacing: "-0.02em",
+              opacity: o2,
+            }}
           >
             handled.
           </motion.p>
-          <motion.div style={{ opacity: oRest }} className="mt-12">
-            <p className="font-sans text-stone max-w-xl mx-auto" style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.4vw, 1.2rem)" }}>
+          <motion.div style={{ opacity: oRest }} className="mt-8 sm:mt-12">
+            <p
+              className="font-sans text-stone max-w-xl mx-auto"
+              style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+            >
               Join thousands who talk to Asmi every morning.
             </p>
-            <div className="mt-8">
-              <a href="#start" className="btn-pill">Start with an iMessage →</a>
+            <div className="mt-6 sm:mt-8 flex justify-center px-4">
+              <a href="#start" className="btn-pill w-full max-w-xs sm:w-auto justify-center">
+                Start with an iMessage →
+              </a>
             </div>
-            <p className="mt-6 label-mono" style={{ color: "var(--color-stone-dim)" }}>
+            <p className="mt-5 sm:mt-6 label-mono" style={{ color: "var(--color-stone-dim)" }}>
               No app to download.
             </p>
           </motion.div>

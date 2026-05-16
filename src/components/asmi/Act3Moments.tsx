@@ -11,12 +11,12 @@ function Moment({
   return (
     <div ref={ref} className="h-screen flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">{ambient}</div>
-      <motion.div className="relative text-center px-6 max-w-3xl" style={{ opacity, y }}>
-        <p className="label-mono mb-6" style={{ color: "var(--color-stone-dim)" }}>0{index}</p>
-        <h2 className="font-serif text-espresso" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.6rem, 7vw, 6rem)", lineHeight: 1.02, letterSpacing: "-0.02em" }}>
+      <motion.div className="relative text-center px-5 sm:px-6 max-w-3xl" style={{ opacity, y }}>
+        <p className="label-mono mb-5 sm:mb-6" style={{ color: "var(--color-stone-dim)" }}>0{index}</p>
+        <h2 className="font-serif text-espresso" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.1rem, 8vw, 6rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}>
           {headline}
         </h2>
-        <div className="mt-6 font-sans text-stone" style={{ color: "var(--color-stone)", fontSize: "clamp(1.05rem, 1.5vw, 1.3rem)" }}>
+        <div className="mt-5 sm:mt-6 font-sans text-stone" style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.5vw, 1.3rem)" }}>
           {subtext}
         </div>
       </motion.div>
