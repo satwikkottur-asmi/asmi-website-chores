@@ -12,6 +12,7 @@ export function Act1Opening() {
   const statementY = useTransform(scrollYProgress, [0.5, 0.9], [0, -120]);
   const wordmarkOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
   const wordmarkY = useTransform(scrollYProgress, [0.55, 0.85], [40, 0]);
+  const brushOpacity = useTransform(scrollYProgress, [0.32, 0.45], [0, 1]);
 
   return (
     <section ref={ref} className="relative h-[200vh]">
