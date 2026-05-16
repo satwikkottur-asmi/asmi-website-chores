@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type Endpoint = { x: number; y: number; label: string };
-type Phase = "intro" | "dialing" | "resolved" | "outro";
+type Phase = "ask" | "listen" | "dial" | "confirm" | "close";
 type Branch = {
   id: string;
   d: string;
@@ -12,20 +12,29 @@ type Branch = {
 };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 18, y: 28, label: "Bay Area Plumbing" },
-  { x: 82, y: 26, label: "Rapid Rooter" },
-  { x: 14, y: 72, label: "Pacific Plumbing Co" },
-  { x: 86, y: 74, label: "Mr. Fix-It" },
+  { x: 16, y: 30, label: "Bay Area Plumbing" },
+  { x: 84, y: 28, label: "Rapid Rooter" },
+  { x: 12, y: 72, label: "Pacific Plumbing Co" },
+  { x: 88, y: 74, label: "Mr. Fix-It" },
   { x: 50, y: 88, label: "Joe's Plumbing" },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 24, y: 24, label: "Bay Area Plumbing" },
-  { x: 76, y: 24, label: "Rapid Rooter" },
-  { x: 18, y: 54, label: "Pacific Plumbing Co" },
-  { x: 82, y: 56, label: "Mr. Fix-It" },
-  { x: 50, y: 82, label: "Joe's Plumbing" },
+  { x: 20, y: 22, label: "Bay Area Plumbing" },
+  { x: 80, y: 22, label: "Rapid Rooter" },
+  { x: 14, y: 54, label: "Pacific Plumbing Co" },
+  { x: 86, y: 56, label: "Mr. Fix-It" },
+  { x: 50, y: 84, label: "Joe's Plumbing" },
 ];
+
+// Step scroll ranges — each step gets real scroll room to be read.
+const STEPS = {
+  ask:     { start: 0.02, in: 0.08, out: 0.22, end: 0.26 },
+  listen:  { start: 0.22, in: 0.28, out: 0.36, end: 0.40 },
+  dial:    { start: 0.34, in: 0.42, out: 0.58, end: 0.62 }, // branches draw 0.34→0.58
+  confirm: { start: 0.58, in: 0.66, out: 0.82, end: 0.86 },
+  close:   { start: 0.82, in: 0.88, out: 0.97, end: 1.00 },
+};
 
 export function Act2CallViz() {
   const ref = useRef<HTMLElement>(null);
@@ -45,18 +54,48 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const [phase, setPhase] = useState<Phase>("intro");
+  const [phase, setPhase] = useState<Phase>("ask");
   useMotionValueEvent(scrollYProgress, "change", (value) => {
-    if (value < 0.16) setPhase("intro");
-    else if (value < 0.64) setPhase("dialing");
-    else if (value < 0.92) setPhase("resolved");
-    else setPhase("outro");
+    if (value < STEPS.listen.start) setPhase("ask");
+    else if (value < STEPS.dial.start) setPhase("listen");
+    else if (value < STEPS.confirm.start) setPhase("dial");
+    else if (value < STEPS.close.start) setPhase("confirm");
+    else setPhase("close");
   });
-  const captionOpacity = useTransform(scrollYProgress, [0.03, 0.08, 0.24, 0.34], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.1, 0.18, 0.34, 0.44], [0, 1, 1, 0]);
-  const sceneOpacity = useTransform(scrollYProgress, [0.14, 0.22, 0.95, 0.995], [0, 1, 1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.72, 0.8, 0.96, 0.995], [0, 1, 1, 0]);
-  const orbGlowOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.72, 0.94], [0.2, 0.55, 0.7, 0.18]);
+
+  // STEP labels — top of the stage, always anchored
+  const stepAskOpacity     = useTransform(scrollYProgress, [STEPS.ask.start, STEPS.ask.in, STEPS.ask.out, STEPS.ask.end], [0, 1, 1, 0]);
+  const stepListenOpacity  = useTransform(scrollYProgress, [STEPS.listen.start, STEPS.listen.in, STEPS.listen.out, STEPS.listen.end], [0, 1, 1, 0]);
+  const stepDialOpacity    = useTransform(scrollYProgress, [STEPS.dial.start, STEPS.dial.in, STEPS.dial.out, STEPS.dial.end], [0, 1, 1, 0]);
+  const stepConfirmOpacity = useTransform(scrollYProgress, [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.out, STEPS.confirm.end], [0, 1, 1, 0]);
+
+  // Speech bubble (Sarah) — appears with ASK, lingers a touch into LISTEN
+  const speechOpacity = useTransform(
+    scrollYProgress,
+    [STEPS.ask.start, STEPS.ask.in, STEPS.listen.in, STEPS.listen.end - 0.01],
+    [0, 1, 1, 0]
+  );
+
+  // Asmi orb visible from LISTEN through CONFIRM
+  const orbOpacity = useTransform(
+    scrollYProgress,
+    [STEPS.ask.out, STEPS.listen.in, STEPS.confirm.out, STEPS.close.in],
+    [0, 1, 1, 0]
+  );
+
+  // Branch network visible from DIAL through CONFIRM
+  const sceneOpacity = useTransform(
+    scrollYProgress,
+    [STEPS.dial.start - 0.02, STEPS.dial.in - 0.02, STEPS.confirm.out, STEPS.close.in],
+    [0, 1, 1, 0]
+  );
+
+  // Closing message
+  const closingOpacity = useTransform(
+    scrollYProgress,
+    [STEPS.close.start, STEPS.close.in, STEPS.close.out, STEPS.close.end],
+    [0, 1, 1, 0]
+  );
 
   const cx = size.w / 2;
   const cy = size.h / 2;
@@ -72,43 +111,55 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[280vh] md:h-[300vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[340vh] md:h-[360vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden relative" style={{ maxWidth: "100vw" }}>
-        <motion.div
+        {/* Warm radial wash */}
+        <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            opacity: orbGlowOpacity,
             background:
-              "radial-gradient(circle at center, rgba(194,91,63,0.08) 0%, rgba(194,91,63,0.04) 18%, rgba(246,241,235,0) 52%)",
+              "radial-gradient(circle at center, rgba(194,91,63,0.10) 0%, rgba(194,91,63,0.05) 25%, rgba(246,241,235,0) 60%)",
           }}
         />
 
-        <motion.div
-          className="absolute left-1/2 -translate-x-1/2 text-center z-20"
-          style={{ top: "8%", opacity: captionOpacity, transform: "translateX(-50%)" }}
+        {/* Step label (top) — stacks of overlapping labels */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 text-center z-30 pointer-events-none"
+          style={{ top: "6%" }}
         >
-          <p className="label-mono" style={{ color: "var(--color-stone)" }}>
-            9:03 AM · Sarah's morning call
-          </p>
+          <StepLabel index={1} text="The ask" opacity={stepAskOpacity} />
+          <StepLabel index={2} text="Asmi listens" opacity={stepListenOpacity} />
+          <StepLabel index={3} text="Asmi calls 5 plumbers" opacity={stepDialOpacity} />
+          <StepLabel index={4} text="One confirms" opacity={stepConfirmOpacity} />
+        </div>
+
+        {/* Sarah's speech bubble */}
+        <motion.div
+          className="absolute left-1/2 px-6 w-full max-w-3xl z-20 pointer-events-none"
+          style={{ top: isMobile ? "16%" : "18%", opacity: speechOpacity, transform: "translateX(-50%)" }}
+        >
+          <div className="text-center">
+            <p
+              className="label-mono mb-3"
+              style={{ color: "var(--color-terracotta)" }}
+            >
+              Sarah · 9:03 AM
+            </p>
+            <p
+              className="font-serif italic"
+              style={{
+                color: "var(--color-espresso)",
+                fontSize: isMobile ? "1.45rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
+                lineHeight: 1.28,
+                fontWeight: 400,
+              }}
+            >
+              "Sink is leaking. Can you find a plumber today?"
+            </p>
+          </div>
         </motion.div>
 
-        <motion.div
-          className="absolute left-1/2 text-center px-6 w-full max-w-2xl z-20"
-          style={{ top: isMobile ? "14%" : "17%", opacity: speechOpacity, transform: "translateX(-50%)" }}
-        >
-          <p
-            className="font-serif italic"
-            style={{
-              color: "var(--color-ink)",
-              fontSize: isMobile ? "1.22rem" : "clamp(1.3rem, 1.8vw, 1.78rem)",
-              lineHeight: 1.34,
-              textShadow: "0 1px 0 rgba(251,248,243,0.75)",
-            }}
-          >
-            "Sink is leaking. Can you find a plumber today?"
-          </p>
-        </motion.div>
-
+        {/* SVG network */}
         {size.w > 0 && (
           <motion.svg
             width={size.w}
@@ -135,31 +186,37 @@ export function Act2CallViz() {
             {branches.map((branch) => (
               <TravelingWave key={`wave-${branch.id}`} branch={branch} progress={scrollYProgress} phase={phase} />
             ))}
-
-            <OrbBurst cx={cx} cy={cy} isMobile={isMobile} progress={scrollYProgress} phase={phase} />
           </motion.svg>
         )}
 
+        {/* Center Asmi orb */}
         <motion.div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
-          style={{ opacity: sceneOpacity }}
+          style={{ opacity: orbOpacity }}
         >
-          <div className="relative" style={{ width: isMobile ? 112 : 152, height: isMobile ? 112 : 152 }}>
+          <div className="relative" style={{ width: isMobile ? 124 : 168, height: isMobile ? 124 : 168 }}>
             <div
               className="absolute inset-0 rounded-full"
-              style={{ background: "rgba(194,91,63,0.12)", boxShadow: "0 0 90px rgba(194,91,63,0.18)" }}
+              style={{ background: "rgba(194,91,63,0.14)", boxShadow: "0 0 110px rgba(194,91,63,0.28)" }}
             />
-            <div className="absolute inset-[16%] rounded-full" style={{ background: "rgba(194,91,63,0.22)" }} />
-            <div className="absolute inset-[31%] rounded-full" style={{ background: "rgba(194,91,63,0.34)" }} />
+            <div className="absolute inset-[16%] rounded-full" style={{ background: "rgba(194,91,63,0.26)" }} />
+            <div className="absolute inset-[31%] rounded-full" style={{ background: "rgba(194,91,63,0.4)" }} />
             <motion.div
               className="absolute inset-[39%] rounded-full"
-              style={{ background: "var(--color-terracotta)", boxShadow: "0 0 40px rgba(194,91,63,0.28)" }}
-              animate={{ scale: [1, 1.08, 1] }}
+              style={{ background: "var(--color-terracotta)", boxShadow: "0 0 50px rgba(194,91,63,0.45)" }}
+              animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
             />
+            <div
+              className="absolute left-1/2 -translate-x-1/2 label-mono"
+              style={{ bottom: -28, color: "var(--color-terracotta)", whiteSpace: "nowrap" }}
+            >
+              Asmi
+            </div>
           </div>
         </motion.div>
 
+        {/* Endpoint labels */}
         <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: sceneOpacity }}>
           {endpoints.map((endpoint, index) => (
             <EndpointLabel
@@ -172,6 +229,7 @@ export function Act2CallViz() {
           ))}
         </motion.div>
 
+        {/* Closing message */}
         <motion.div
           className="absolute inset-0 flex items-center justify-center text-center px-6 z-30 pointer-events-none"
           style={{ opacity: closingOpacity }}
@@ -181,16 +239,16 @@ export function Act2CallViz() {
               className="font-serif"
               style={{
                 color: "var(--color-espresso)",
-                fontSize: "clamp(2.35rem, 7vw, 4.9rem)",
+                fontSize: "clamp(2.4rem, 7vw, 5rem)",
                 lineHeight: 1.04,
-                textShadow: "0 8px 30px rgba(251,248,243,0.8)",
+                fontWeight: 500,
               }}
             >
               Sarah found out over iMessage.
             </p>
             <p
-              className="mt-4 font-serif italic"
-              style={{ color: "var(--color-ink)", fontSize: "clamp(1.3rem, 2.8vw, 2.35rem)" }}
+              className="mt-5 font-serif italic"
+              style={{ color: "var(--color-ink)", fontSize: "clamp(1.35rem, 2.8vw, 2.4rem)" }}
             >
               She never opened an app.
             </p>
@@ -198,6 +256,42 @@ export function Act2CallViz() {
         </motion.div>
       </div>
     </section>
+  );
+}
+
+function StepLabel({
+  index,
+  text,
+  opacity,
+}: {
+  index: number;
+  text: string;
+  opacity: MotionValue<number>;
+}) {
+  return (
+    <motion.div
+      className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 whitespace-nowrap"
+      style={{ opacity, top: 0 }}
+    >
+      <span
+        className="label-mono inline-flex items-center justify-center rounded-full"
+        style={{
+          width: 28,
+          height: 28,
+          background: "var(--color-terracotta)",
+          color: "var(--color-cream)",
+          fontSize: 11,
+        }}
+      >
+        {index}
+      </span>
+      <span
+        className="label-mono"
+        style={{ color: "var(--color-espresso)", fontSize: "0.78rem", letterSpacing: "0.22em" }}
+      >
+        {text}
+      </span>
+    </motion.div>
   );
 }
 
@@ -211,30 +305,32 @@ function BranchPath({
   phase: Phase;
 }) {
   const winner = branch.index === 0;
-  const drawStart = 0.2 + branch.index * 0.035;
-  const drawEnd = drawStart + 0.18;
+  // Stagger each plumber's line within the DIAL step (0.34 → 0.58, ~0.24 range)
+  const drawStart = STEPS.dial.start + branch.index * 0.04;
+  const drawEnd = drawStart + 0.06;
   const pathLength = useTransform(progress, [drawStart, drawEnd], [0, 1]);
+
   const opacity = useTransform(
     progress,
     winner
-      ? [drawStart - 0.04, drawStart, 0.68, 0.95]
-      : [drawStart - 0.04, drawStart, 0.58, 0.72, 0.92],
-    winner ? [0, 0.56, 1, 0.45] : [0, 0.38, 0.72, 0.14, 0]
+      ? [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.close.in]
+      : [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.confirm.out],
+    winner ? [0, 0.85, 1, 0] : [0, 0.7, 0.12, 0]
   );
 
-  const stroke =
-    phase === "resolved" || phase === "outro"
-      ? winner
-        ? "var(--color-sage-strong)"
-        : "rgba(107, 101, 96, 0.16)"
-      : "rgba(194, 91, 63, 0.84)";
+  const isConfirmed = phase === "confirm" || phase === "close";
+  const stroke = isConfirmed
+    ? winner
+      ? "var(--color-sage-strong)"
+      : "rgba(107, 101, 96, 0.18)"
+    : "var(--color-terracotta)";
 
   return (
     <motion.path
       d={branch.d}
       fill="none"
       stroke={stroke}
-      strokeWidth={winner ? 2.2 : 1.5}
+      strokeWidth={winner ? 2.6 : 1.6}
       strokeLinecap="round"
       style={{ pathLength, opacity }}
     />
@@ -251,18 +347,22 @@ function TravelingWave({
   phase: Phase;
 }) {
   const winner = branch.index === 0;
-  const appearStart = 0.28 + branch.index * 0.035;
-  const appearEnd = appearStart + 0.08;
+  const appearStart = STEPS.dial.start + branch.index * 0.04 + 0.04;
+  const appearEnd = appearStart + 0.05;
   const opacity = useTransform(
     progress,
     winner
-      ? [appearStart, appearEnd, 0.95, 0.99]
-      : [appearStart, appearEnd, 0.56, 0.7],
-    winner ? [0, 1, 1, 0] : [0, 1, 0.9, 0]
+      ? [appearStart, appearEnd, STEPS.confirm.in, STEPS.close.in]
+      : [appearStart, appearEnd, STEPS.confirm.in - 0.02, STEPS.confirm.in + 0.02],
+    winner ? [0, 1, 1, 0] : [0, 1, 0.6, 0]
   );
-  const color =
-    phase === "resolved" || phase === "outro" ? (winner ? "var(--color-sage-strong)" : "rgba(194,91,63,0.2)") : "var(--color-terracotta)";
-  const dur = 2.8 + branch.index * 0.24;
+  const isConfirmed = phase === "confirm" || phase === "close";
+  const color = isConfirmed
+    ? winner
+      ? "var(--color-sage-strong)"
+      : "rgba(194,91,63,0.18)"
+    : "var(--color-terracotta)";
+  const dur = 2.6 + branch.index * 0.22;
 
   return (
     <motion.g style={{ opacity }}>
@@ -291,57 +391,6 @@ function TravelingWave({
   );
 }
 
-function OrbBurst({
-  cx,
-  cy,
-  isMobile,
-  progress,
-  phase,
-}: {
-  cx: number;
-  cy: number;
-  isMobile: boolean;
-  progress: MotionValue<number>;
-  phase: Phase;
-}) {
-  const opacity = useTransform(progress, [0.18, 0.24, 0.9, 0.98], [0, 0.4, 0.4, 0]);
-  const stroke = phase === "resolved" || phase === "outro" ? "rgba(95,131,101,0.52)" : "rgba(194,91,63,0.36)";
-
-  return (
-    <motion.g style={{ opacity }}>
-      {Array.from({ length: 20 }).map((_, i) => {
-        const angle = (i / 20) * Math.PI * 2;
-        const inner = isMobile ? 60 : 84;
-        const baseLen = 8 + ((i * 7) % 5) * 2;
-        const x1 = cx + Math.cos(angle) * inner;
-        const y1 = cy + Math.sin(angle) * inner;
-        const x2a = cx + Math.cos(angle) * (inner + baseLen);
-        const y2a = cy + Math.sin(angle) * (inner + baseLen);
-        const x2b = cx + Math.cos(angle) * (inner + baseLen * 2.15);
-        const y2b = cy + Math.sin(angle) * (inner + baseLen * 2.15);
-        return (
-          <motion.line
-            key={i}
-            x1={x1}
-            y1={y1}
-            stroke={stroke}
-            strokeWidth={2}
-            strokeLinecap="round"
-            animate={{ x2: [x2a, x2b, x2a], y2: [y2a, y2b, y2a] }}
-            transition={{
-              duration: 1.6 + (i % 5) * 0.15,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: (i % 7) * 0.08,
-            }}
-            initial={{ x2: x2a, y2: y2a }}
-          />
-        );
-      })}
-    </motion.g>
-  );
-}
-
 function EndpointLabel({
   endpoint,
   index,
@@ -355,25 +404,46 @@ function EndpointLabel({
 }) {
   const isMobile = useIsMobile();
   const winner = index === 0;
-  const labelStart = 0.23 + index * 0.04;
-  const resultOpacity = useTransform(progress, winner ? [0.62, 0.72, 0.96, 0.995] : [0, 0, 1, 1], [0, 1, 1, 0]);
-  const plainLabelOpacity = useTransform(
-    progress,
-    winner ? [labelStart, labelStart + 0.08, 0.6, 0.68] : [labelStart, labelStart + 0.08, 0.56, 0.68],
-    [0, 1, 1, 0]
-  );
+  const labelStart = STEPS.dial.start + index * 0.04;
+
+  // Dot appears with the line
   const dotOpacity = useTransform(
     progress,
-    winner ? [labelStart - 0.03, labelStart, 0.96, 0.995] : [labelStart - 0.03, labelStart, 0.6, 0.72],
-    winner ? [0, 1, 1, 0] : [0, 0.92, 0.92, 0]
+    winner
+      ? [labelStart - 0.02, labelStart + 0.04, STEPS.close.in, STEPS.close.in + 0.02]
+      : [labelStart - 0.02, labelStart + 0.04, STEPS.confirm.in, STEPS.confirm.out],
+    winner ? [0, 1, 1, 0] : [0, 0.95, 0.3, 0]
   );
-  const dotScale = useTransform(progress, winner ? [0.62, 0.72] : [0, 0.01], winner ? [1, 1.35] : [1, 1]);
-  const dotColor = phase === "resolved" || phase === "outro"
+  const dotScale = useTransform(
+    progress,
+    winner ? [STEPS.confirm.start, STEPS.confirm.in] : [0, 0.01],
+    winner ? [1, 1.5] : [1, 1]
+  );
+
+  // Plain label appears with dial, fades when confirm starts (winner's name swaps to a result card)
+  const plainLabelOpacity = useTransform(
+    progress,
+    winner
+      ? [labelStart, labelStart + 0.04, STEPS.confirm.start, STEPS.confirm.in]
+      : [labelStart, labelStart + 0.04, STEPS.confirm.in, STEPS.confirm.out],
+    [0, 1, 1, 0]
+  );
+
+  // Winner's confirmation card
+  const resultOpacity = useTransform(
+    progress,
+    winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.close.in, STEPS.close.in + 0.02] : [0, 0, 1, 1],
+    [0, 1, 1, 0]
+  );
+  const resultY = useTransform(progress, [STEPS.confirm.start, STEPS.confirm.in], [14, 0]);
+
+  const isConfirmed = phase === "confirm" || phase === "close";
+  const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
-      : "rgba(107, 101, 96, 0.14)"
+      : "rgba(107, 101, 96, 0.18)"
     : "var(--color-terracotta)";
-  const resultY = useTransform(progress, [0.62, 0.72], [12, 0]);
+
   const above = endpoint.y < 50;
 
   return (
@@ -383,13 +453,13 @@ function EndpointLabel({
         style={{
           left: `${endpoint.x}%`,
           top: `${endpoint.y}%`,
-          width: winner ? 12 : 10,
-          height: winner ? 12 : 10,
+          width: winner ? 14 : 10,
+          height: winner ? 14 : 10,
           background: dotColor,
           transform: "translate(-50%, -50%)",
           opacity: dotOpacity,
           scale: dotScale,
-          boxShadow: winner ? "0 0 30px rgba(95,131,101,0.45)" : undefined,
+          boxShadow: winner && isConfirmed ? "0 0 36px rgba(95,131,101,0.6)" : undefined,
         }}
       />
 
@@ -398,8 +468,8 @@ function EndpointLabel({
         style={{
           left: `${endpoint.x}%`,
           top: `${endpoint.y}%`,
-          transform: above ? "translate(-50%, calc(-100% - 16px))" : "translate(-50%, 16px)",
-          maxWidth: "min(70vw, 260px)",
+          transform: above ? "translate(-50%, calc(-100% - 18px))" : "translate(-50%, 18px)",
+          maxWidth: "min(70vw, 280px)",
         }}
       >
         <div className="text-center">
@@ -407,32 +477,33 @@ function EndpointLabel({
             className="label-mono inline-block"
             style={{
               opacity: plainLabelOpacity,
-              color: "var(--color-stone)",
+              color: isConfirmed && !winner ? "var(--color-stone-dim)" : "var(--color-espresso)",
               whiteSpace: isMobile ? "normal" : "nowrap",
               lineHeight: 1.45,
-              maxWidth: isMobile ? "8rem" : undefined,
+              maxWidth: isMobile ? "8.5rem" : undefined,
+              fontWeight: 500,
             }}
           >
             {endpoint.label}
           </motion.span>
 
           {winner && (
-            <motion.div style={{ opacity: resultOpacity, y: resultY }}>
+            <motion.div style={{ opacity: resultOpacity, y: resultY }} className="mt-2">
               <span
                 className="label-mono inline-flex items-center justify-center px-4 py-2 rounded-full"
                 style={{
-                  color: "var(--color-sage-deep)",
-                  background: "rgba(95,131,101,0.18)",
-                  border: "1px solid rgba(95,131,101,0.28)",
-                  boxShadow: "0 18px 48px -24px rgba(95,131,101,0.6), inset 0 1px 0 rgba(251,248,243,0.7)",
-                  backdropFilter: "blur(10px)",
+                  color: "var(--color-cream)",
+                  background: "var(--color-sage-strong)",
+                  border: "1px solid var(--color-sage-deep)",
+                  boxShadow: "0 18px 48px -18px rgba(73,100,78,0.6)",
                   whiteSpace: "normal",
                   lineHeight: 1.45,
                   fontSize: 11,
-                  letterSpacing: "0.12em",
+                  letterSpacing: "0.14em",
+                  fontWeight: 600,
                 }}
               >
-                ✓ Bay Area Plumbing · Mike · Today 2pm
+                ✓ Mike · Today 2pm
               </span>
             </motion.div>
           )}
