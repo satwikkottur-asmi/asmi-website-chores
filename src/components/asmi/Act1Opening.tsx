@@ -12,9 +12,9 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const statementOpacity = useTransform(scrollYProgress, [0.68, 0.74], [1, 0]);
-  const wordmarkOpacity = useTransform(scrollYProgress, [0.3, 0.48, 0.68], [0, 1, 0]);
-  const wordmarkY = useTransform(scrollYProgress, [0.32, 0.68], [28, -12]);
+  const statementOpacity = useTransform(scrollYProgress, [0.38, 0.46], [1, 0]);
+  const wordmarkOpacity = useTransform(scrollYProgress, [0.25, 0.42, 0.7], [0, 1, 0]);
+  const wordmarkY = useTransform(scrollYProgress, [0.25, 0.7], [28, -12]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
 
   return (
@@ -260,8 +260,8 @@ function ParticleTitle({
 
   useMotionValueEvent(progress, "change", (v) => {
     if (reducedMotion) return;
-    // map scroll progress 0.42..0.7 -> dissolve 0..1
-    const t = Math.min(1, Math.max(0, (v - 0.42) / (0.7 - 0.42)));
+    // map scroll progress 0.02..0.38 -> dissolve 0..1 (starts as scroll begins)
+    const t = Math.min(1, Math.max(0, (v - 0.02) / (0.38 - 0.02)));
     dissolveRef.current = t;
     if (t > 0 && t < 1) {
       (ParticleTitle as any)._ensureLoop?.();
