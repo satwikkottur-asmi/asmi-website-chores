@@ -1,80 +1,76 @@
-# Fixes: Act 2 scroll lock, winner badge, mobile polish
+# Fix plan: make the hero-to-call sequence work exactly as intended
 
-## 1. Act 2 — keep the page locked until the full call story plays
+## Goal
 
-Symptom: by the time the winning (green) line appears, the user has already scrolled past — the sticky stage has released too early, so the climax happens off-screen.
+Restore the shatter transition and make the call animation begin immediately at the seam, stay pinned while the full sequence plays, and release only after the green confirmed state and final message have both had time on screen.
+
+## 1. Restore the missing shatter effect
+
+Problem: the shatter effect was removed from the route, so the transition beat is gone entirely.
+
+Fix:
+- Re-add `HeroShatter` to `src/routes/index.tsx`.
+- Rebuild `HeroShatter.tsx` as a one-shot overlay triggered by a shared handoff state, not by an independent `window.scrollY` listener.
+- Use a fixed-duration animation (~650–750ms) so the effect feels intentional and not tied to scroll jitter.
+- Keep the visual language already approved: the headline breaks into shards, brief flash, Act 2 revealed underneath.
+
+## 2. Make Act 2 start right away instead of after a dead scroll zone
+
+Problem: Act 2 currently has too much empty intro distance. The user scrolls into a mostly blank frame before the real call motion starts.
 
 Fix in `Act2CallViz.tsx`:
-- Lengthen the sticky scroll window: section height `h-[260vh] md:h-[240vh]` (was 185/168vh). More scroll = longer time the stage stays pinned at `top-0`.
-- Re-tune phase thresholds so the green/winner moment lands mid-scroll, not at the end:
-  - `intro` < 0.10
-  - `dialing` 0.10–0.40
-  - `resolved` 0.40–0.78 (full beat to read the green result)
-  - `outro` ≥ 0.78
-- Re-map opacity transforms to the new ranges so nothing fades while the resolved beat is on screen:
-  - `speechOpacity` `[0.06, 0.14, 0.34, 0.42]`
-  - `vizOpacity` `[0.82, 0.92]` (viz holds through the whole resolved beat)
-  - `closingOpacity` `[0.72, 0.84]`
-  - `captionOpacity` `[0, 0.06, 0.90, 0.96]`
+- Start the sticky section earlier and front-load the content so the orb, branches, and first call beat are visible as soon as the user crosses out of the hero.
+- Compress the silent intro band to a very small slice of progress:
+  - `intro` `0.00–0.08`
+  - `dialing` `0.08–0.42`
+  - `resolved` `0.42–0.80`
+  - `outro` `0.80+`
+- Move caption/speech opacity ramps earlier so there is no blank hold before the call sequence is readable.
+- Ensure the first waveform motion is already active during the early dialing window.
 
-Net effect: scroll drives the animation while the page stays put; only after the green winner has been visible for a real beat does the section release and the next section come in.
+## 3. Keep the call section pinned until everything is revealed
 
-## 2. Winner badge — smaller
+Problem: the user can scroll a long distance without getting a satisfying locked sequence, and the release timing does not align with the final reveal.
 
-In `EndpointLabel` (resolved/winner branch): drop padding to `px-2 py-1`, set `fontSize: 11px` and `letterSpacing: 0.08em`, tighten `maxWidth` to `min(70vw, 230px)`, and soften the glow to `0 0 16px rgba(139,168,136,0.25)`. Keep the copy `✓ Bay Area Plumbing · Mike · Today 2pm`.
+Fix:
+- Re-time the sticky container so the visible narrative is:
+  1. hero shatters
+  2. call fans out
+  3. winner turns green
+  4. closing message appears
+  5. only then does the page continue
+- Tune the section height and fade ranges together instead of only increasing raw height.
+- Hold the green confirmed state on screen before the closing copy fades in.
+- Hold the closing copy on screen before the sticky stage fades out.
 
-## 3. Hero → Act 2 shatter transition
+## 4. Use one shared transition state across Act 1, shatter, and Act 2
 
-Give "The screen era is over." a real payoff: the headline shatters and the call viz is revealed through the cracks.
+Problem: the current pieces are acting independently, which creates desync and awkward handoff timing.
 
-New component `HeroShatter.tsx`, rendered as a fixed-position overlay between Act 1 and Act 2.
+Fix:
+- Lift a small transition state into `src/routes/index.tsx`.
+- `Act1Opening` reports when the headline has reached the shatter threshold.
+- `HeroShatter` reads that same state and plays exactly once.
+- `Act2CallViz` uses that same handoff state to align its opening beat so the call is already present behind the shatter.
 
-Beat:
-1. Hero locks. Words assemble normally.
-2. When Act 1 `scrollYProgress` crosses `0.92` (or Act 2 enters `intro`), trigger a one-shot ~700ms shatter timeline.
-3. Each letter of the headline is split into ~6 angular shards (per-letter `<span>` wrappers, shards generated with a seeded RNG so layout is stable). Shards animate via Motion: `x` (random ±200), `y` (200–500 downward), `rotate` (±60deg), `opacity 1→0`, `filter: blur(0→3px)`, staggered 8ms per shard.
-4. A subtle linen→cream flash (`background` overlay, 120ms) hides the seam while Act 1 sticky releases and Act 2 sticky engages.
-5. Through the clearing shards, the Act 2 orb is already pulsing — call viz takes over.
+## 5. Smoothness and performance guardrails
 
-Implementation notes:
-- Trigger source of truth: a single shared `useMotionValue` (or a `useState` lifted to `index.tsx`) flipped by Act 1's scroll threshold. Act 2 reads the same value to make sure its `intro` phase aligns with the shatter completing.
-- Shatter is a fixed-duration timeline, NOT scroll-frame-bound — avoids jank during scroll-jacking. Scroll-lock for the call story (section 1) stays exactly as planned.
-- Shards are pure CSS transforms, no canvas/WebGL.
-- `prefers-reduced-motion`: skip the shatter, fall back to a 250ms cross-fade.
-- Mobile: same effect, shard count halved (~3 per letter) for perf.
+To prevent another janky transition:
+- Avoid `window` scroll listeners for the handoff logic.
+- Keep shatter transforms to `transform` + `opacity`; use minimal blur only if it remains smooth.
+- Keep the pinned scene visually full at every frame — no blank cream screen between sections.
+- Preserve reduced-motion fallback as a quick cross-fade.
 
-Files: new `src/components/asmi/HeroShatter.tsx`, small wiring edits in `src/routes/index.tsx`, and one threshold read in `Act2CallViz.tsx`.
+## Files to update
 
-## 4. Mobile fixes
-
-### 4a. `Act1Opening.tsx` — hero vertical centering
-The sticky container is `h-screen flex flex-col items-center justify-center`, but the absolutely-positioned wordmark (`md:top-[58%]`) plus the in-flow CTA block push the visual center upward on mobile (the headline ends up near the top). Fix:
-- Remove the mobile reliance on `justify-center` for the headline; explicitly position the headline block with `mt-[18vh]` on mobile so it sits closer to optical center for a tall mobile viewport, and keep the wordmark/CTA stacked below.
-- Reduce the headline clamp lower bound so 5 words fit on two lines without dominating the viewport: `clamp(2.2rem, 11vw, 14rem)`.
-- Add `gap-6` between headline and CTA stack on mobile so they read as one centered group.
-
-### 4b. `Act5.tsx` — mobile language cloud
-Currently mobile uses a flex-wrap list. Replace with the same scattered absolute-positioned cloud the desktop uses, scaled to mobile:
-- Render `LANGUAGES` (full list, not filtered) with the existing `langPos` math in an absolutely-positioned container `h-[70vh] max-h-[560px]`.
-- Mobile size map: `sm: 0.85rem`, `md: 1.1rem`, `lg: 1.55rem`, `xl: 2.2rem` so a few words stand out and the rest recede, matching the desktop hierarchy.
-- Tighten `RING_R` to `[10, 22, 32, 42]` only at small widths via a `useIsMobile` branch to keep labels inside the viewport.
-- Drop the `MOBILE_LANGUAGES` filter and the wrap markup.
-
-### 4c. General mobile font sizes
-Sweep the most-visible mobile text and raise the lower bound of each `clamp()` so nothing reads as cramped on a 390px screen:
-- `Act5` section H2s: `clamp(2.4rem, 6vw, 5rem)` → `clamp(2.8rem, 9vw, 5rem)`.
-- `Act5` story headlines: `clamp(24px, 4.5vw, 44px)` → `clamp(26px, 6vw, 44px)`.
-- `Act5` story body: `fontSize: 18` → `clamp(16px, 4.2vw, 18px)`, line-height 1.6.
-- `Act5` Channel word: fixed `48` → `clamp(38px, 9vw, 48px)`.
-- `Act5` Channel caption: `15` → `clamp(15px, 4vw, 16px)`.
-- `Act2CallViz` speech bubble mobile: `1rem` → `1.15rem`; closing beat headline `clamp(2rem, 5vw, 4.4rem)` → `clamp(2.2rem, 7vw, 4.4rem)`.
-
-## Out of scope
-- No copy changes (besides the badge size, copy stays exactly as shown).
-- No palette/typography/library changes.
-- No backend, no new routes.
-
-## Files touched
-- `src/components/asmi/Act2CallViz.tsx`
+- `src/routes/index.tsx`
 - `src/components/asmi/Act1Opening.tsx`
-- `src/components/asmi/Act5.tsx`
+- `src/components/asmi/Act2CallViz.tsx`
+- `src/components/asmi/HeroShatter.tsx`
+
+## Validation
+
+- Desktop: first scroll out of hero immediately reveals the call stage.
+- The call stage stays pinned through the green winner and the final “She never opened an app” beat.
+- No blank seam between hero and Act 2.
+- Shatter effect is visibly present and smooth.
