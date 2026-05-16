@@ -18,7 +18,7 @@ export function Act1Opening() {
 
   return (
     <section ref={ref} className="relative h-[120vh] md:h-[140vh]">
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-5 sm:px-6">
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center md:justify-center overflow-hidden px-5 sm:px-6 pt-[14vh] md:pt-0 gap-6 md:gap-0">
         <AmbientBlobs density={6} />
 
         <motion.div
@@ -28,7 +28,7 @@ export function Act1Opening() {
           <h1
             className="font-serif font-normal text-espresso tracking-[-0.02em]"
             style={{
-              fontSize: "clamp(2.6rem, 13vw, 14rem)",
+              fontSize: "clamp(2.2rem, 11vw, 14rem)",
               lineHeight: 1.02,
               color: "var(--color-espresso)",
             }}
@@ -50,7 +50,7 @@ export function Act1Opening() {
         </motion.div>
 
         <motion.div
-          className="relative z-20 mt-10 sm:mt-14 md:absolute md:left-0 md:right-0 md:px-6 md:mt-0 text-center w-full md:top-[58%]"
+          className="relative z-20 mt-2 sm:mt-14 md:absolute md:left-0 md:right-0 md:px-6 md:mt-0 text-center w-full md:top-[58%]"
           style={{ opacity: wordmarkOpacity, y: wordmarkY }}
         >
           <p
@@ -61,7 +61,7 @@ export function Act1Opening() {
           </p>
           <p
             className="mt-3 sm:mt-4 font-sans font-light text-stone max-w-xl mx-auto px-2"
-            style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+            style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.4vw, 1.2rem)" }}
           >
             AI that handles your personal chores in the physical world.
           </p>

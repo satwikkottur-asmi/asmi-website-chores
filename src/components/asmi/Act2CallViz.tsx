@@ -29,9 +29,9 @@ export function Act2CallViz() {
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.06) setPhase("intro");
-    else if (p < 0.30) setPhase("dialing");
-    else if (p < 0.56) setPhase("resolved");
+    if (p < 0.10) setPhase("intro");
+    else if (p < 0.40) setPhase("dialing");
+    else if (p < 0.78) setPhase("resolved");
     else setPhase("outro");
   });
 
@@ -47,10 +47,10 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.05, 0.82, 0.92], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.04, 0.10, 0.30, 0.40], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.60, 0.72], [1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.52, 0.64], [0, 1]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.06, 0.90, 0.96], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.06, 0.14, 0.34, 0.42], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.82, 0.92], [1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.72, 0.84], [0, 1]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
@@ -66,7 +66,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[185vh] md:h-[168vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[260vh] md:h-[240vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
@@ -87,7 +87,7 @@ export function Act2CallViz() {
             className="font-serif italic"
             style={{
               color: "#6B6560",
-              fontSize: isMobile ? "1rem" : "clamp(1.125rem, 1.8vw, 1.6rem)",
+              fontSize: isMobile ? "1.15rem" : "clamp(1.125rem, 1.8vw, 1.6rem)",
               lineHeight: 1.35,
             }}
           >
@@ -248,7 +248,7 @@ export function Act2CallViz() {
           style={{ opacity: closingOpacity }}
         >
           <div>
-            <p className="font-serif" style={{ color: "var(--color-espresso)", fontSize: "clamp(2rem, 5vw, 4.4rem)", lineHeight: 1.05 }}>
+            <p className="font-serif" style={{ color: "var(--color-espresso)", fontSize: "clamp(2.2rem, 7vw, 4.4rem)", lineHeight: 1.05 }}>
               Sarah found out over iMessage.
             </p>
             <p className="mt-4 font-serif italic" style={{ color: "#5C5349", fontSize: "clamp(1.2rem, 2.6vw, 2.2rem)" }}>
@@ -300,19 +300,21 @@ function EndpointLabel({
             : "translate(-50%, 14px)",
           opacity: labelOpacity,
           transition: "opacity 0.3s ease",
-          maxWidth: "min(86vw, 360px)",
+          maxWidth: "min(70vw, 230px)",
         }}
       >
         <div className="text-center">
           {showResult ? (
             <span
-              className="label-mono inline-block px-3 py-1.5 rounded-md"
+              className="label-mono inline-block px-2 py-1 rounded-md"
               style={{
                 color: "var(--color-sage)",
                 background: "rgba(139,168,136,0.10)",
-                boxShadow: "0 0 24px rgba(139,168,136,0.3)",
+                boxShadow: "0 0 16px rgba(139,168,136,0.25)",
                 whiteSpace: "normal",
                 lineHeight: 1.4,
+                fontSize: 11,
+                letterSpacing: "0.08em",
               }}
             >
               ✓ Bay Area Plumbing · Mike · Today 2pm

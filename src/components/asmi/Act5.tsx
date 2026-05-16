@@ -46,8 +46,6 @@ const LANGUAGES = [
   { name: "Dansk", size: "sm" }, { name: "Català", size: "sm" }, { name: "Punjabi", size: "md" },
 ];
 
-// Mobile hides smallest languages
-const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
 
 // Precompute per-ring positions so each label gets a unique slot on its ring.
 const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
@@ -95,7 +93,7 @@ export function Act5() {
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
         <motion.h2
           className="font-serif mb-20 md:mb-24"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -155,7 +153,7 @@ export function Act5() {
                     className="font-serif flex-1"
                     style={{
                       color: "var(--color-espresso)",
-                      fontSize: "clamp(24px, 4.5vw, 44px)",
+                      fontSize: "clamp(26px, 6vw, 44px)",
                       lineHeight: 1.15,
                       letterSpacing: "-0.01em",
                     }}
@@ -169,7 +167,7 @@ export function Act5() {
 
                 <p
                   className="mt-5 font-sans max-w-2xl"
-                  style={{ color: "#5C5349", fontSize: 18, lineHeight: 1.55 }}
+                  style={{ color: "#5C5349", fontSize: "clamp(16px, 4.2vw, 18px)", lineHeight: 1.6 }}
                 >
                   {s.body}
                 </p>
@@ -191,7 +189,7 @@ export function Act5() {
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
           className="font-serif mb-16 md:mb-20 text-center"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -221,7 +219,7 @@ export function Act5() {
         <div className="text-center mb-12">
           <motion.h2
             className="font-serif"
-            style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+            style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -231,22 +229,30 @@ export function Act5() {
           </motion.h2>
         </div>
 
-        {/* Mobile: organic flowing wrap, no labels smaller than 14px */}
-        <div className="md:hidden px-4 mx-auto max-w-2xl flex flex-wrap justify-center items-center gap-x-4 gap-y-3" style={{ minHeight: 400 }}>
-          {MOBILE_LANGUAGES.map((l, i) => {
-            const sizeMap = { md: "1.15rem", lg: "1.5rem", xl: "2rem" } as Record<string, string>;
-            const colorMap = { md: "#5C5349", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+        {/* Mobile: scattered floating cloud (tighter radii) */}
+        <div className="md:hidden relative mx-auto w-full" style={{ height: "min(70vh, 560px)" }}>
+          {LANGUAGES.map((l, i) => {
+            const p = langPos(i, LANGUAGES.length, l.size);
+            // pull labels inward on mobile
+            const x = 50 + (p.x - 50) * 0.78;
+            const y = 50 + (p.y - 50) * 0.92;
+            const sizeMap = { sm: "0.85rem", md: "1.1rem", lg: "1.55rem", xl: "2.2rem" } as Record<string, string>;
+            const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
               <motion.span
                 key={l.name}
-                className="font-serif"
+                className="absolute font-serif"
                 style={{
-                  fontSize: sizeMap[l.size] || "1rem",
-                  color: colorMap[l.size] || "#5C5349",
-                  opacity: l.size === "md" ? 0.85 : 1,
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: "translate(-50%, -50%)",
+                  fontSize: sizeMap[l.size],
+                  color: colorMap[l.size],
+                  opacity: l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
+                  whiteSpace: "nowrap",
                 }}
-                animate={{ y: [0, -3, 0, 2, 0] }}
-                transition={{ duration: 6 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.3 }}
+                animate={{ y: [0, -6, 0, 4, 0] }}
+                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
               >
                 {l.name}
               </motion.span>
@@ -297,12 +303,12 @@ function Channel({ word, caption, ambient }: { word: string; caption: string; am
     >
       <p
         className="font-serif"
-        style={{ color: "var(--color-espresso)", fontSize: 48, lineHeight: 1, letterSpacing: "-0.02em" }}
+        style={{ color: "var(--color-espresso)", fontSize: "clamp(38px, 9vw, 48px)", lineHeight: 1, letterSpacing: "-0.02em" }}
       >
         {word}
       </p>
       <div className="mt-5 h-7 flex items-center">{ambient}</div>
-      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: 15, lineHeight: 1.5, maxWidth: 280 }}>
+      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: "clamp(15px, 4vw, 16px)", lineHeight: 1.55, maxWidth: 280 }}>
         {caption}
       </p>
     </motion.div>
