@@ -5,17 +5,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type Endpoint = { x: number; y: number; label: string };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 18, y: 28, label: "Bay Area Plumbing" },
-  { x: 82, y: 26, label: "Rapid Rooter" },
-  { x: 14, y: 72, label: "Pacific Plumbing Co" },
-  { x: 86, y: 74, label: "Mr. Fix-It" },
-  { x: 50, y: 88, label: "Joe's Plumbing" },
+  { x: 16, y: 30, label: "Bay Dermatology" },
+  { x: 84, y: 28, label: "Pacific Skin Clinic" },
+  { x: 12, y: 70, label: "Golden Gate Derm" },
+  { x: 88, y: 72, label: "SF Skin Institute" },
+  { x: 50, y: 86, label: "Mission Dermatology" },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 28, label: "Bay Area" },
-  { x: 80, y: 30, label: "Rapid Rooter" },
-  { x: 50, y: 82, label: "Mr. Fix-It" },
+  { x: 18, y: 30, label: "Bay Derm" },
+  { x: 82, y: 32, label: "Pacific Skin" },
+  { x: 50, y: 80, label: "Mission Derm" },
 ];
 
 export function Act2CallViz() {
@@ -87,7 +87,7 @@ export function Act2CallViz() {
               lineHeight: 1.35,
             }}
           >
-            "Sink is leaking. Can you find a plumber today?"
+            "I need to see a dermatologist this week. Can you book it?"
           </p>
         </motion.div>
 
@@ -295,23 +295,25 @@ function EndpointLabel({
             : "translate(-50%, 14px)",
           opacity: labelOpacity,
           transition: "opacity 0.3s ease",
-          maxWidth: "44vw",
+          maxWidth: "min(86vw, 360px)",
         }}
       >
-        <div className="whitespace-nowrap text-center">
+        <div className="text-center">
           {showResult ? (
             <span
-              className="label-mono px-2.5 py-1 rounded-md"
+              className="label-mono inline-block px-3 py-1.5 rounded-md"
               style={{
                 color: "var(--color-sage)",
                 background: "rgba(139,168,136,0.10)",
                 boxShadow: "0 0 24px rgba(139,168,136,0.3)",
+                whiteSpace: "normal",
+                lineHeight: 1.4,
               }}
             >
-              Bay Area Plumbing · Mike · Today 2pm ✓
+              ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
             </span>
           ) : (
-            <span className="label-mono" style={{ color: "#6B6560" }}>
+            <span className="label-mono whitespace-nowrap" style={{ color: "#6B6560" }}>
               {endpoint.label}
             </span>
           )}
