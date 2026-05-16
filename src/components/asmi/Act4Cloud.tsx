@@ -53,17 +53,19 @@ const PILLS: Pill[] = [
   { label: "Internet outage", cat: "home", size: "sm" },
 ];
 
-// Collision-avoiding positions clamped to 5-95% horizontal
+// Collision-avoiding positions clamped to safe inner bounds
 function generatePositions(count: number) {
   const out: { x: number; y: number; delay: number; dur: number }[] = [];
-  const minDist = 11; // % distance in viewport units
+  const minDist = 12;
+  const X_MIN = 8, X_MAX = 88;
+  const Y_MIN = 10, Y_MAX = 88;
   for (let i = 0; i < count; i++) {
     let x = 0, y = 0, ok = false, tries = 0;
-    while (!ok && tries < 80) {
+    while (!ok && tries < 120) {
       const a = Math.sin((i + 1) * 9.31 + tries * 0.7) * 10000;
       const b = Math.cos((i + 1) * 4.27 + tries * 1.3) * 10000;
-      x = ((a - Math.floor(a)) * 88) + 6;
-      y = ((b - Math.floor(b)) * 76) + 12;
+      x = ((a - Math.floor(a)) * (X_MAX - X_MIN)) + X_MIN;
+      y = ((b - Math.floor(b)) * (Y_MAX - Y_MIN)) + Y_MIN;
       ok = out.every((p) => Math.hypot(p.x - x, p.y - y) > minDist);
       tries++;
     }
@@ -127,7 +129,9 @@ export function Act4Cloud() {
             opacity: cloudOpacity,
             scale: cloudScale,
             height: "min(78vh, 720px)",
-            maxWidth: "1400px",
+            maxWidth: "1280px",
+            paddingInline: "24px",
+            overflow: "hidden",
           }}
         >
           {PILLS.map((p, i) => (
@@ -186,7 +190,7 @@ function FloatingPill({
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       const d = Math.hypot(dx, dy);
-      const radius = 120;
+      const radius = 90;
       if (d < radius && d > 0.1) {
         const force = (radius - d) * 0.15;
         setOffset({ x: -(dx / d) * force, y: -(dy / d) * force });
