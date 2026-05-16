@@ -49,7 +49,8 @@ export function Act2CallViz() {
   const stageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const endpoints = isMobile ? MOBILE_ENDPOINTS : DESKTOP_ENDPOINTS;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  // Anchor progress to the sticky travel window: 0 when sticky engages, 1 when it releases.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
 
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -313,9 +314,10 @@ function BranchPath({
   phase: Phase;
 }) {
   const winner = branch.index === 0;
-  // Stagger each plumber's line within the DIAL step (0.34 → 0.58, ~0.24 range)
-  const drawStart = STEPS.dial.start + branch.index * 0.04;
-  const drawEnd = drawStart + 0.06;
+  // Stagger each plumber's line within the DIAL step (0.38 → 0.64, ~0.26 range).
+  // Each branch draws over ~0.07 of progress with ~0.05 gap = clear one-by-one reveal.
+  const drawStart = STEPS.dial.start + branch.index * 0.05;
+  const drawEnd = drawStart + 0.07;
   const pathLength = useTransform(progress, [drawStart, drawEnd], [0, 1]);
 
   const opacity = useTransform(
@@ -355,7 +357,7 @@ function TravelingWave({
   phase: Phase;
 }) {
   const winner = branch.index === 0;
-  const appearStart = STEPS.dial.start + branch.index * 0.04 + 0.04;
+  const appearStart = STEPS.dial.start + branch.index * 0.05 + 0.04;
   const appearEnd = appearStart + 0.05;
   const opacity = useTransform(
     progress,
@@ -412,7 +414,7 @@ function EndpointLabel({
 }) {
   const isMobile = useIsMobile();
   const winner = index === 0;
-  const labelStart = STEPS.dial.start + index * 0.04;
+  const labelStart = STEPS.dial.start + index * 0.05;
 
   // Dot appears with the line
   const dotOpacity = useTransform(
