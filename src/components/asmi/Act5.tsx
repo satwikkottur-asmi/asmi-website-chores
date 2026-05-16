@@ -56,7 +56,7 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5A Stories */}
-      <div className="px-6 py-32 max-w-4xl mx-auto">
+      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
         <motion.h2
           className="font-serif text-espresso mb-20"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
@@ -99,7 +99,7 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5B Available */}
-      <div className="px-6 py-32 max-w-5xl mx-auto text-center">
+      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-5xl mx-auto text-center">
         <motion.h2
           className="font-serif text-espresso mb-16"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.4rem, 6vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
@@ -123,7 +123,7 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5C Languages */}
-      <div className="px-6 py-32">
+      <div className="px-5 sm:px-6 py-20 md:py-32">
         <div className="text-center mb-12">
           <motion.h2
             className="font-serif text-espresso"
