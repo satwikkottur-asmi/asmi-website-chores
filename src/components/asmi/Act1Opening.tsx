@@ -12,7 +12,7 @@ export function Act1Opening() {
   const statementY = useTransform(scrollYProgress, [0.5, 0.9], [0, -120]);
   const wordmarkOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
   const wordmarkY = useTransform(scrollYProgress, [0.55, 0.85], [40, 0]);
-  const brushOpacity = useTransform(scrollYProgress, [0.32, 0.45], [0, 1]);
+  const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
 
   return (
     <section ref={ref} className="relative h-[200vh]">
@@ -25,14 +25,11 @@ export function Act1Opening() {
         >
           <h1 className="font-serif font-normal text-espresso leading-[0.95] tracking-[-0.02em]"
               style={{ fontSize: "clamp(3.2rem, 12vw, 14rem)", color: "var(--color-espresso)" }}>
-            {WORDS.map((w, i) => {
-              const start = 0.06 + i * 0.06;
-              return (
-                <Word key={i} progress={scrollYProgress} start={start}>
-                  {w}{i < WORDS.length - 1 ? " " : ""}
-                </Word>
-              );
-            })}
+            {WORDS.map((w, i) => (
+              <Word key={i} progress={scrollYProgress} index={i} total={WORDS.length}>
+                {w}{i < WORDS.length - 1 ? " " : ""}
+              </Word>
+            ))}
           </h1>
           <div className="mt-10 flex justify-center">
             <motion.div style={{ opacity: brushOpacity }}>
@@ -65,15 +62,22 @@ export function Act1Opening() {
 function Word({
   children,
   progress,
-  start,
+  index,
+  total,
 }: {
   children: React.ReactNode;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
-  start: number;
+  index: number;
+  total: number;
 }) {
-  const opacity = useTransform(progress, [start, start + 0.05], [0, 1]);
-  const y = useTransform(progress, [start, start + 0.06], [30, 0]);
+  // Subtle scroll-led breathing: words start fully visible, drift slightly as you scroll.
+  const dim = useTransform(
+    progress,
+    [0.45, 0.7],
+    [1, index === total - 1 ? 1 : 0.55]
+  );
+  const y = useTransform(progress, [0, 0.5], [0, -(index * 2)]);
   return (
-    <motion.span style={{ opacity, y, display: "inline-block" }}>{children}</motion.span>
+    <motion.span style={{ opacity: dim, y, display: "inline-block" }}>{children}</motion.span>
   );
 }
