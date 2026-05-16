@@ -1,36 +1,58 @@
-# Fix Act 2 scroll sync and missing result state
+# Fixes: Act 2 scroll lock, winner badge, mobile polish
 
-## Problems to fix
+## 1. Act 2 — keep the page locked until the full call story plays
 
-1. **Act 2 is lagging behind scroll.** The sticky animation phases are mapped too late, so the viewer reaches the next section before the dialing story finishes.
-2. **The winner result is inconsistent.** The correct winner label is `✓ Bay Area Plumbing · Mike · Today 2pm`, but another message bubble still shows the dermatology copy later on the page.
-3. **There is too much dead space after Act 2.** The section stays tall after the meaningful animation has ended, creating a blank-feeling gap before the next content takes over.
+Symptom: by the time the winning (green) line appears, the user has already scrolled past — the sticky stage has released too early, so the climax happens off-screen.
 
-## What will change
+Fix in `Act2CallViz.tsx`:
+- Lengthen the sticky scroll window: section height `h-[260vh] md:h-[240vh]` (was 185/168vh). More scroll = longer time the stage stays pinned at `top-0`.
+- Re-tune phase thresholds so the green/winner moment lands mid-scroll, not at the end:
+  - `intro` < 0.10
+  - `dialing` 0.10–0.40
+  - `resolved` 0.40–0.78 (full beat to read the green result)
+  - `outro` ≥ 0.78
+- Re-map opacity transforms to the new ranges so nothing fades while the resolved beat is on screen:
+  - `speechOpacity` `[0.06, 0.14, 0.34, 0.42]`
+  - `vizOpacity` `[0.82, 0.92]` (viz holds through the whole resolved beat)
+  - `closingOpacity` `[0.72, 0.84]`
+  - `captionOpacity` `[0, 0.06, 0.90, 0.96]`
 
-### Act 2 — Scroll timing and waveform behavior
-- Retune the section height and sticky progress mapping so the fan-out, dismissals, winner state, and closing beat all happen earlier and stay visually locked to the user’s scroll.
-- Keep the original plumber story and endpoint labels exactly as requested.
-- Keep the traveling mini waveform mechanic: 3 rectangular bars moving along each branch.
-- Ensure state transitions are clear:
-  - active calls use terracotta waveforms
-  - the confirmed winning line switches to sage green
-  - dismissed lines fade their waveform out over 300ms instead of disappearing abruptly
-  - the winning endpoint label gets the soft green glow
-- Make sure the winner label remains visible during the resolved state instead of dropping out before the section ends.
+Net effect: scroll drives the animation while the page stays put; only after the green winner has been visible for a real beat does the section release and the next section come in.
 
-### Gap between Act 2 and the next section
-- Shorten the effective scroll window for Act 2 so the sticky block releases closer to the end of the story.
-- Align the fade-out of the call visualization with the fade-in of the next section so there is no blank handoff.
+## 2. Winner badge — smaller
 
-### Incorrect text later on the page
-- Replace the dermatology message bubble in the following section with the correct plumbing result so the story stays consistent end-to-end.
+In `EndpointLabel` (resolved/winner branch): drop padding to `px-2 py-1`, set `fontSize: 11px` and `letterSpacing: 0.08em`, tighten `maxWidth` to `min(70vw, 230px)`, and soften the glow to `0 0 16px rgba(139,168,136,0.25)`. Keep the copy `✓ Bay Area Plumbing · Mike · Today 2pm`.
+
+## 3. Mobile fixes
+
+### 3a. `Act1Opening.tsx` — hero vertical centering
+The sticky container is `h-screen flex flex-col items-center justify-center`, but the absolutely-positioned wordmark (`md:top-[58%]`) plus the in-flow CTA block push the visual center upward on mobile (the headline ends up near the top). Fix:
+- Remove the mobile reliance on `justify-center` for the headline; explicitly position the headline block with `mt-[18vh]` on mobile so it sits closer to optical center for a tall mobile viewport, and keep the wordmark/CTA stacked below.
+- Reduce the headline clamp lower bound so 5 words fit on two lines without dominating the viewport: `clamp(2.2rem, 11vw, 14rem)`.
+- Add `gap-6` between headline and CTA stack on mobile so they read as one centered group.
+
+### 3b. `Act5.tsx` — mobile language cloud
+Currently mobile uses a flex-wrap list. Replace with the same scattered absolute-positioned cloud the desktop uses, scaled to mobile:
+- Render `LANGUAGES` (full list, not filtered) with the existing `langPos` math in an absolutely-positioned container `h-[70vh] max-h-[560px]`.
+- Mobile size map: `sm: 0.85rem`, `md: 1.1rem`, `lg: 1.55rem`, `xl: 2.2rem` so a few words stand out and the rest recede, matching the desktop hierarchy.
+- Tighten `RING_R` to `[10, 22, 32, 42]` only at small widths via a `useIsMobile` branch to keep labels inside the viewport.
+- Drop the `MOBILE_LANGUAGES` filter and the wrap markup.
+
+### 3c. General mobile font sizes
+Sweep the most-visible mobile text and raise the lower bound of each `clamp()` so nothing reads as cramped on a 390px screen:
+- `Act5` section H2s: `clamp(2.4rem, 6vw, 5rem)` → `clamp(2.8rem, 9vw, 5rem)`.
+- `Act5` story headlines: `clamp(24px, 4.5vw, 44px)` → `clamp(26px, 6vw, 44px)`.
+- `Act5` story body: `fontSize: 18` → `clamp(16px, 4.2vw, 18px)`, line-height 1.6.
+- `Act5` Channel word: fixed `48` → `clamp(38px, 9vw, 48px)`.
+- `Act5` Channel caption: `15` → `clamp(15px, 4vw, 16px)`.
+- `Act2CallViz` speech bubble mobile: `1rem` → `1.15rem`; closing beat headline `clamp(2rem, 5vw, 4.4rem)` → `clamp(2.2rem, 7vw, 4.4rem)`.
 
 ## Out of scope
-- No redesign of the rest of the homepage.
-- No changes to the Act 2 story copy or endpoint names beyond restoring the correct plumbing result text.
-- No backend or dependency changes.
+- No copy changes (besides the badge size, copy stays exactly as shown).
+- No palette/typography/library changes.
+- No backend, no new routes.
 
-## Technical notes
-- Expected files: `src/components/asmi/Act2CallViz.tsx` and `src/components/asmi/Act3Moments.tsx`.
-- The fix is presentation-only: scroll thresholds, sticky height, fade windows, and consistent result text.
+## Files touched
+- `src/components/asmi/Act2CallViz.tsx`
+- `src/components/asmi/Act1Opening.tsx`
+- `src/components/asmi/Act5.tsx`
