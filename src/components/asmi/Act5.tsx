@@ -46,8 +46,6 @@ const LANGUAGES = [
   { name: "Dansk", size: "sm" }, { name: "Català", size: "sm" }, { name: "Punjabi", size: "md" },
 ];
 
-// Mobile hides smallest languages
-const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
 
 // Precompute per-ring positions so each label gets a unique slot on its ring.
 const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
