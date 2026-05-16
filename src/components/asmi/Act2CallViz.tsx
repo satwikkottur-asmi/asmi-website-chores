@@ -45,10 +45,10 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
-  const captionOpacity = useTransform(scrollYProgress, [0.02, 0.1, 0.78, 0.86], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.14, 0.22, 0.6, 0.7], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.82, 0.92], [1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.84, 0.94], [0, 1]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.05, 0.82, 0.92], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.08, 0.16, 0.55, 0.68], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.88, 0.97], [1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.78, 0.88], [0, 1]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
