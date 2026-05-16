@@ -1,9 +1,9 @@
-import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type Endpoint = { x: number; y: number; label: string };
-type Phase = "ask" | "listen" | "dial" | "confirm" | "close";
+type Phase = "ask" | "listen" | "dial" | "confirm";
 type Branch = {
   id: string;
   d: string;
@@ -31,9 +31,8 @@ const MOBILE_ENDPOINTS: Endpoint[] = [
 const STEPS = {
   ask:     { start: 0.02, in: 0.08, out: 0.22, end: 0.26 },
   listen:  { start: 0.22, in: 0.28, out: 0.36, end: 0.40 },
-  dial:    { start: 0.34, in: 0.42, out: 0.58, end: 0.62 }, // branches draw 0.34→0.58
-  confirm: { start: 0.58, in: 0.66, out: 0.82, end: 0.86 },
-  close:   { start: 0.82, in: 0.88, out: 0.97, end: 1.00 },
+  dial:    { start: 0.34, in: 0.42, out: 0.66, end: 0.70 },
+  confirm: { start: 0.66, in: 0.74, out: 1.00, end: 1.00 },
 };
 
 export function Act2CallViz() {
@@ -41,7 +40,8 @@ export function Act2CallViz() {
   const stageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const endpoints = isMobile ? MOBILE_ENDPOINTS : DESKTOP_ENDPOINTS;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const { scrollY } = useScroll();
+  const scrollYProgress = useMotionValue(0);
 
   const [size, setSize] = useState({ w: 0, h: 0 });
   useEffect(() => {
@@ -54,20 +54,45 @@ export function Act2CallViz() {
     return () => ro.disconnect();
   }, []);
 
+  useEffect(() => {
+    const updateProgress = () => {
+      const el = ref.current;
+      if (!el || typeof window === "undefined") return;
+
+      const rect = el.getBoundingClientRect();
+      const totalScrollable = Math.max(el.offsetHeight - window.innerHeight, 1);
+      const rawProgress = -rect.top / totalScrollable;
+      scrollYProgress.set(Math.max(0, Math.min(1, rawProgress)));
+    };
+
+    updateProgress();
+    window.addEventListener("resize", updateProgress);
+    return () => window.removeEventListener("resize", updateProgress);
+  }, [scrollYProgress]);
+
+  useMotionValueEvent(scrollY, "change", () => {
+    const el = ref.current;
+    if (!el || typeof window === "undefined") return;
+
+    const rect = el.getBoundingClientRect();
+    const totalScrollable = Math.max(el.offsetHeight - window.innerHeight, 1);
+    const rawProgress = -rect.top / totalScrollable;
+    scrollYProgress.set(Math.max(0, Math.min(1, rawProgress)));
+  });
+
   const [phase, setPhase] = useState<Phase>("ask");
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     if (value < STEPS.listen.start) setPhase("ask");
     else if (value < STEPS.dial.start) setPhase("listen");
     else if (value < STEPS.confirm.start) setPhase("dial");
-    else if (value < STEPS.close.start) setPhase("confirm");
-    else setPhase("close");
+    else setPhase("confirm");
   });
 
   // STEP labels — top of the stage, always anchored
   const stepAskOpacity     = useTransform(scrollYProgress, [STEPS.ask.start, STEPS.ask.in, STEPS.ask.out, STEPS.ask.end], [0, 1, 1, 0]);
   const stepListenOpacity  = useTransform(scrollYProgress, [STEPS.listen.start, STEPS.listen.in, STEPS.listen.out, STEPS.listen.end], [0, 1, 1, 0]);
   const stepDialOpacity    = useTransform(scrollYProgress, [STEPS.dial.start, STEPS.dial.in, STEPS.dial.out, STEPS.dial.end], [0, 1, 1, 0]);
-  const stepConfirmOpacity = useTransform(scrollYProgress, [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.out, STEPS.confirm.end], [0, 1, 1, 0]);
+  const stepConfirmOpacity = useTransform(scrollYProgress, [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.end], [0, 1, 1]);
 
   // Speech bubble (Sarah) — appears with ASK, lingers a touch into LISTEN
   const speechOpacity = useTransform(
@@ -79,22 +104,15 @@ export function Act2CallViz() {
   // Asmi orb visible from LISTEN through CONFIRM
   const orbOpacity = useTransform(
     scrollYProgress,
-    [STEPS.ask.out, STEPS.listen.in, STEPS.confirm.out, STEPS.close.in],
-    [0, 1, 1, 0]
+    [STEPS.ask.out, STEPS.listen.in, STEPS.confirm.in, STEPS.confirm.end],
+    [0, 1, 1, 1]
   );
 
   // Branch network visible from DIAL through CONFIRM
   const sceneOpacity = useTransform(
     scrollYProgress,
-    [STEPS.dial.start - 0.02, STEPS.dial.in - 0.02, STEPS.confirm.out, STEPS.close.in],
-    [0, 1, 1, 0]
-  );
-
-  // Closing message
-  const closingOpacity = useTransform(
-    scrollYProgress,
-    [STEPS.close.start, STEPS.close.in, STEPS.close.out, STEPS.close.end],
-    [0, 1, 1, 0]
+    [STEPS.dial.start - 0.02, STEPS.dial.in - 0.02, STEPS.confirm.in, STEPS.confirm.end],
+    [0, 1, 1, 1]
   );
 
   const cx = size.w / 2;
@@ -111,8 +129,12 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[260vh] md:h-[280vh]">
-      <div ref={stageRef} className="sticky top-0 h-screen w-full overflow-hidden relative">
+    <section ref={ref} className="relative h-[155vh] md:h-[170vh]">
+      <div
+        ref={stageRef}
+        className="sticky top-0 h-screen w-full overflow-hidden relative z-20"
+        style={{ background: "linear-gradient(135deg, var(--color-linen), var(--color-sand) 55%, var(--color-morning))" }}
+      >
         {/* Warm radial wash */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -229,31 +251,6 @@ export function Act2CallViz() {
           ))}
         </motion.div>
 
-        {/* Closing message */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center text-center px-6 z-30 pointer-events-none"
-          style={{ opacity: closingOpacity }}
-        >
-          <div>
-            <p
-              className="font-serif"
-              style={{
-                color: "var(--color-espresso)",
-                fontSize: "clamp(2.4rem, 7vw, 5rem)",
-                lineHeight: 1.04,
-                fontWeight: 500,
-              }}
-            >
-              Sarah found out over iMessage.
-            </p>
-            <p
-              className="mt-5 font-serif italic"
-              style={{ color: "var(--color-ink)", fontSize: "clamp(1.35rem, 2.8vw, 2.4rem)" }}
-            >
-              She never opened an app.
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
@@ -313,12 +310,12 @@ function BranchPath({
   const opacity = useTransform(
     progress,
     winner
-      ? [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.close.in]
+      ? [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.confirm.end]
       : [drawStart - 0.02, drawStart, STEPS.confirm.in, STEPS.confirm.out],
     winner ? [0, 0.85, 1, 0] : [0, 0.7, 0.12, 0]
   );
 
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const stroke = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
@@ -352,11 +349,11 @@ function TravelingWave({
   const opacity = useTransform(
     progress,
     winner
-      ? [appearStart, appearEnd, STEPS.confirm.in, STEPS.close.in]
+      ? [appearStart, appearEnd, STEPS.confirm.in, STEPS.confirm.end]
       : [appearStart, appearEnd, STEPS.confirm.in - 0.02, STEPS.confirm.in + 0.02],
     winner ? [0, 1, 1, 0] : [0, 1, 0.6, 0]
   );
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const color = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
@@ -410,7 +407,7 @@ function EndpointLabel({
   const dotOpacity = useTransform(
     progress,
     winner
-      ? [labelStart - 0.02, labelStart + 0.04, STEPS.close.in, STEPS.close.in + 0.02]
+      ? [labelStart - 0.02, labelStart + 0.04, STEPS.confirm.end - 0.001, STEPS.confirm.end]
       : [labelStart - 0.02, labelStart + 0.04, STEPS.confirm.in, STEPS.confirm.out],
     winner ? [0, 1, 1, 0] : [0, 0.95, 0.3, 0]
   );
@@ -432,12 +429,12 @@ function EndpointLabel({
   // Winner's confirmation card
   const resultOpacity = useTransform(
     progress,
-    winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.close.in, STEPS.close.in + 0.02] : [0, 0, 1, 1],
-    [0, 1, 1, 0]
+    winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.end] : [0, 0, 1],
+    winner ? [0, 1, 1] : [0, 0, 1]
   );
   const resultY = useTransform(progress, [STEPS.confirm.start, STEPS.confirm.in], [14, 0]);
 
-  const isConfirmed = phase === "confirm" || phase === "close";
+  const isConfirmed = phase === "confirm";
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
