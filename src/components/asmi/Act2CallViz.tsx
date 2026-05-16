@@ -2,22 +2,110 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type Endpoint = { x: number; y: number; label: string };
+type Endpoint = {
+  x: number;
+  y: number;
+  label: string;
+  labelOffsetX: number;
+  labelOffsetY: number;
+  labelAlign: "left" | "center" | "right";
+  maxWidth?: number;
+};
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 16, y: 30, label: "Bay Area Plumbing" },
-  { x: 84, y: 28, label: "Rapid Rooter" },
-  { x: 12, y: 72, label: "Pacific Plumbing Co" },
-  { x: 88, y: 74, label: "Mr. Fix-It" },
-  { x: 50, y: 88, label: "Joe's Plumbing" },
+  {
+    x: 16,
+    y: 30,
+    label: "Bay Area Plumbing",
+    labelOffsetX: 16,
+    labelOffsetY: -10,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 84,
+    y: 28,
+    label: "Rapid Rooter",
+    labelOffsetX: -16,
+    labelOffsetY: -10,
+    labelAlign: "right",
+    maxWidth: 180,
+  },
+  {
+    x: 12,
+    y: 72,
+    label: "Pacific Plumbing Co",
+    labelOffsetX: 16,
+    labelOffsetY: 8,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 88,
+    y: 74,
+    label: "Mr. Fix-It",
+    labelOffsetX: -16,
+    labelOffsetY: 8,
+    labelAlign: "right",
+    maxWidth: 150,
+  },
+  {
+    x: 50,
+    y: 88,
+    label: "Joe's Plumbing",
+    labelOffsetX: 0,
+    labelOffsetY: 14,
+    labelAlign: "center",
+    maxWidth: 170,
+  },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 22, label: "Bay Area Plumbing" },
-  { x: 80, y: 22, label: "Rapid Rooter" },
-  { x: 14, y: 54, label: "Pacific Plumbing Co" },
-  { x: 86, y: 56, label: "Mr. Fix-It" },
-  { x: 50, y: 84, label: "Joe's Plumbing" },
+  {
+    x: 15,
+    y: 20,
+    label: "Bay Area Plumbing",
+    labelOffsetX: 16,
+    labelOffsetY: -12,
+    labelAlign: "left",
+    maxWidth: 116,
+  },
+  {
+    x: 85,
+    y: 20,
+    label: "Rapid Rooter",
+    labelOffsetX: -16,
+    labelOffsetY: -12,
+    labelAlign: "right",
+    maxWidth: 108,
+  },
+  {
+    x: 11,
+    y: 57,
+    label: "Pacific Plumbing Co",
+    labelOffsetX: 16,
+    labelOffsetY: 8,
+    labelAlign: "left",
+    maxWidth: 112,
+  },
+  {
+    x: 89,
+    y: 58,
+    label: "Mr. Fix-It",
+    labelOffsetX: -16,
+    labelOffsetY: 8,
+    labelAlign: "right",
+    maxWidth: 98,
+  },
+  {
+    x: 50,
+    y: 85,
+    label: "Joe's Plumbing",
+    labelOffsetX: 0,
+    labelOffsetY: 12,
+    labelAlign: "center",
+    maxWidth: 122,
+  },
 ];
 
 const STEPS = [
@@ -100,6 +188,7 @@ export function Act2CallViz() {
         style={{
           background:
             "linear-gradient(135deg, var(--color-linen), var(--color-sand) 55%, var(--color-morning))",
+            paddingInline: isMobile ? 14 : 0,
         }}
       >
         {/* Warm radial wash */}
@@ -140,9 +229,9 @@ export function Act2CallViz() {
               <span
                 className="label-mono"
                 style={{
-                  color: "var(--color-espresso)",
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.22em",
+                  color: "var(--color-espresso-strong)",
+                  fontSize: isMobile ? "0.62rem" : "0.78rem",
+                  letterSpacing: isMobile ? "0.15em" : "0.22em",
                 }}
               >
                 {STEPS[active].label}
@@ -166,17 +255,18 @@ export function Act2CallViz() {
               <div className="text-center">
                 <p
                   className="label-mono mb-3"
-                  style={{ color: "var(--color-terracotta)" }}
+                  style={{ color: "var(--color-terracotta-deep)" }}
                 >
                   Sarah · 9:03 AM
                 </p>
                 <p
                   className="font-serif italic"
                   style={{
-                    color: "var(--color-espresso)",
-                    fontSize: isMobile ? "1.45rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
-                    lineHeight: 1.28,
+                    color: "var(--color-espresso-strong)",
+                    fontSize: isMobile ? "1.28rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
+                    lineHeight: isMobile ? 1.2 : 1.28,
                     fontWeight: 400,
+                    textWrap: "balance",
                   }}
                 >
                   "Sink is leaking. Can you find a plumber today?"
@@ -262,8 +352,8 @@ export function Act2CallViz() {
                 <motion.div
                   className="absolute inset-[39%] rounded-full"
                   style={{
-                    background: "var(--color-terracotta)",
-                    boxShadow: "0 0 50px rgba(194,91,63,0.45)",
+                    background: "var(--color-terracotta-deep)",
+                    boxShadow: "0 0 50px rgba(162,72,48,0.5)",
                   }}
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
@@ -272,7 +362,7 @@ export function Act2CallViz() {
                   className="absolute left-1/2 -translate-x-1/2 label-mono"
                   style={{
                     bottom: -28,
-                    color: "var(--color-terracotta)",
+                    color: "var(--color-terracotta-deep)",
                     whiteSpace: "nowrap",
                   }}
                 >
@@ -299,7 +389,7 @@ export function Act2CallViz() {
       </div>
 
       {/* Invisible step markers — drive the scene via IntersectionObserver */}
-      <div className="relative" style={{ marginTop: "-100svh" }}>
+        <div className="relative" style={{ marginTop: "-100svh" }}>
         {STEPS.map((s, i) => (
           <div
             key={s.key}
@@ -311,7 +401,7 @@ export function Act2CallViz() {
           />
         ))}
         {/* extra tail so the last step holds before release */}
-        <div className="h-[60svh] w-full pointer-events-none" aria-hidden />
+        <div className="h-[36svh] sm:h-[44svh] w-full pointer-events-none" aria-hidden />
       </div>
     </section>
   );
@@ -333,7 +423,7 @@ function BranchLine({
     ? winner
       ? "var(--color-sage-strong)"
       : "rgba(107, 101, 96, 0.18)"
-    : "var(--color-terracotta)";
+    : "var(--color-terracotta-deep)";
   const targetOpacity = isConfirmed ? (winner ? 1 : 0.18) : winner ? 0.9 : 0.75;
 
   return (
@@ -361,7 +451,7 @@ function TravelingWave({
   branch: { id: string; index: number };
   winner?: boolean;
 }) {
-  const color = winner ? "var(--color-sage-strong)" : "var(--color-terracotta)";
+  const color = winner ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)";
   const dur = 2.6 + branch.index * 0.22;
   return (
     <g>
@@ -409,13 +499,17 @@ function EndpointLabel({
 }) {
   const winner = index === 0;
   const delay = 0.18 * index;
-  const above = endpoint.y < 50;
+  const alignStyles = {
+    left: { transform: "translate(0, 0)", textAlign: "left" as const },
+    center: { transform: "translate(-50%, 0)", textAlign: "center" as const },
+    right: { transform: "translate(-100%, 0)", textAlign: "right" as const },
+  }[endpoint.labelAlign];
 
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
       : "rgba(107, 101, 96, 0.22)"
-    : "var(--color-terracotta)";
+    : "var(--color-terracotta-deep)";
 
   return (
     <>
@@ -442,29 +536,34 @@ function EndpointLabel({
       <motion.div
         className="absolute"
         style={{
-          left: `${endpoint.x}%`,
-          top: `${endpoint.y}%`,
-          transform: above
-            ? "translate(-50%, calc(-100% - 18px))"
-            : "translate(-50%, 18px)",
-          maxWidth: "min(70vw, 280px)",
+          left: `calc(${endpoint.x}% + ${endpoint.labelOffsetX}px)`,
+          top: `calc(${endpoint.y}% + ${endpoint.labelOffsetY}px)`,
+          transform: alignStyles.transform,
+          maxWidth: endpoint.maxWidth
+            ? `${endpoint.maxWidth}px`
+            : isMobile
+              ? "8rem"
+              : "12rem",
         }}
-        initial={{ opacity: 0, y: above ? -6 : 6 }}
+        initial={{ opacity: 0, y: endpoint.labelOffsetY < 0 ? -6 : 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: delay + 0.1 }}
       >
-        <div className="text-center">
+        <div style={{ textAlign: alignStyles.textAlign }}>
           {!(winner && isConfirmed) && (
             <span
               className="label-mono inline-block"
               style={{
                 color: isConfirmed
                   ? "var(--color-stone-dim)"
-                  : "var(--color-espresso)",
-                whiteSpace: isMobile ? "normal" : "nowrap",
-                lineHeight: 1.45,
-                maxWidth: isMobile ? "8.5rem" : undefined,
-                fontWeight: 500,
+                  : "var(--color-espresso-strong)",
+                whiteSpace: "normal",
+                lineHeight: isMobile ? 1.35 : 1.45,
+                fontWeight: 600,
+                fontSize: isMobile ? "0.58rem" : "0.72rem",
+                letterSpacing: isMobile ? "0.12em" : "0.16em",
+                textWrap: "balance",
+                textShadow: "0 1px 0 rgba(251,248,243,0.55)",
                 transition: "color 0.4s ease",
               }}
             >
@@ -487,9 +586,11 @@ function EndpointLabel({
                   boxShadow: "0 18px 48px -18px rgba(73,100,78,0.6)",
                   whiteSpace: "normal",
                   lineHeight: 1.45,
-                  fontSize: 11,
-                  letterSpacing: "0.14em",
+                  fontSize: isMobile ? 10 : 11,
+                  letterSpacing: isMobile ? "0.1em" : "0.14em",
                   fontWeight: 600,
+                  maxWidth: isMobile ? "8.75rem" : "none",
+                  textAlign: "center",
                 }}
               >
                 ✓ Mike · Today 2pm
