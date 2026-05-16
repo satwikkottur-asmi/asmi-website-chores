@@ -27,9 +27,9 @@ export function Act2CallViz() {
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.16) setPhase("intro");
-    else if (p < 0.5) setPhase("dialing");
-    else if (p < 0.82) setPhase("resolved");
+    if (p < 0.10) setPhase("intro");
+    else if (p < 0.45) setPhase("dialing");
+    else if (p < 0.78) setPhase("resolved");
     else setPhase("outro");
   });
 
