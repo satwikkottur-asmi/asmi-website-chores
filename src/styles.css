@@ -13,12 +13,14 @@
   --color-sand: #EDE6DC;
   --color-morning: #F2EDE7;
   --color-espresso: #2C2520;
-  --color-stone: #7A6F64;
-  --color-stone-dim: #A89E92;
+  --color-ink: #5C5349;
+  --color-stone: #6B6560;
+  --color-stone-dim: #8A8278;
   --color-terracotta: #C25B3F;
   --color-sage: #8BA888;
   --color-sky: #7EADC2;
   --color-clay: #D4A574;
+  --color-gold: #D4A574;
   --color-cream: #FBF8F3;
 
   --color-background: var(--color-linen);
@@ -59,17 +61,20 @@
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
   body {
     background: linear-gradient(135deg, #F6F1EB, #EDE6DC, #F2EDE7, #F6F1EB);
     background-size: 400% 400%;
     animation: breathe 22s ease-in-out infinite;
     min-height: 100vh;
+    max-width: 100vw;
   }
   ::selection {
     background: var(--color-terracotta);
     color: var(--color-cream);
   }
+  a, button { touch-action: manipulation; }
 }
 
 @keyframes breathe {
@@ -102,6 +107,11 @@
   30% { transform: translateY(-6px); opacity: 1; }
 }
 
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
 .font-serif { font-family: var(--font-serif); }
 .font-sans { font-family: var(--font-sans); }
 .font-mono { font-family: var(--font-mono); }
@@ -110,7 +120,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.95rem 1.75rem;
+  padding: 1rem 2.5rem;
   border-radius: 9999px;
   background: var(--color-terracotta);
   color: var(--color-cream);
@@ -123,7 +133,7 @@
 }
 .btn-pill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 30px -10px rgba(194, 91, 63, 0.45);
+  box-shadow: 0 0 48px rgba(194, 91, 63, 0.32), 0 12px 30px -10px rgba(194, 91, 63, 0.45);
 }
 
 .label-mono {
@@ -131,6 +141,18 @@
   font-size: 0.7rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-terracotta);
+  z-index: 10000;
+  transition: width 0.05s linear;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
