@@ -47,7 +47,7 @@ Files: new `src/components/asmi/HeroShatter.tsx`, small wiring edits in `src/rou
 
 ## 4. Mobile fixes
 
-### 3a. `Act1Opening.tsx` — hero vertical centering
+### 4a. `Act1Opening.tsx` — hero vertical centering
 The sticky container is `h-screen flex flex-col items-center justify-center`, but the absolutely-positioned wordmark (`md:top-[58%]`) plus the in-flow CTA block push the visual center upward on mobile (the headline ends up near the top). Fix:
 - Remove the mobile reliance on `justify-center` for the headline; explicitly position the headline block with `mt-[18vh]` on mobile so it sits closer to optical center for a tall mobile viewport, and keep the wordmark/CTA stacked below.
 - Reduce the headline clamp lower bound so 5 words fit on two lines without dominating the viewport: `clamp(2.2rem, 11vw, 14rem)`.
