@@ -266,6 +266,91 @@ export function Act5() {
   );
 }
 
+function MobileLanguageCloud() {
+  const [tapped, setTapped] = useState<Set<number>>(new Set());
+  const [autoLit, setAutoLit] = useState<number>(-1);
+
+  // Auto-cycle a highlighted word so the cloud feels alive without input
+  useEffect(() => {
+    const id = setInterval(() => {
+      setAutoLit(Math.floor(Math.random() * LANGUAGES.length));
+    }, 1400);
+    return () => clearInterval(id);
+  }, []);
+
+  const sizeMap = { sm: "0.95rem", md: "1.2rem", lg: "1.65rem", xl: "2.25rem" } as Record<string, string>;
+  const colorMap = {
+    sm: "#9A9288",
+    md: "#6B6560",
+    lg: "var(--color-espresso)",
+    xl: "var(--color-espresso)",
+  } as Record<string, string>;
+
+  // Deterministic pseudo-random helpers (stable across renders)
+  const rand = (seed: number) => {
+    const x = Math.sin(seed * 9301 + 49297) * 233280;
+    return x - Math.floor(x);
+  };
+
+  return (
+    <div className="md:hidden relative mx-auto w-full max-w-md px-3" style={{ minHeight: 460 }}>
+      <div
+        className="flex flex-wrap items-center justify-center"
+        style={{ rowGap: "0.55rem", columnGap: "0.85rem" }}
+      >
+        {LANGUAGES.map((l, i) => {
+          const isLit = tapped.has(i) || autoLit === i;
+          const rotate = (rand(i + 1) - 0.5) * 14; // -7deg..7deg
+          const yOffset = (rand(i + 7) - 0.5) * 14; // visual scatter
+          const dur = 5 + rand(i + 3) * 4;
+          const delay = rand(i + 11) * 3;
+
+          return (
+            <motion.span
+              key={l.name}
+              role="button"
+              tabIndex={0}
+              onClick={() =>
+                setTapped((prev) => {
+                  const next = new Set(prev);
+                  next.has(i) ? next.delete(i) : next.add(i);
+                  return next;
+                })
+              }
+              className="font-serif inline-block select-none"
+              style={{
+                fontSize: sizeMap[l.size],
+                color: isLit ? "var(--color-terracotta)" : colorMap[l.size],
+                opacity: isLit ? 1 : l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
+                lineHeight: 1.1,
+                whiteSpace: "nowrap",
+                transform: `translateY(${yOffset}px) rotate(${rotate}deg)`,
+                transition: "color 0.4s ease, opacity 0.4s ease",
+                cursor: "pointer",
+                WebkitTapHighlightColor: "transparent",
+              }}
+              animate={{ y: [0, -4, 0, 3, 0], scale: isLit ? 1.15 : 1 }}
+              transition={{
+                y: { duration: dur, repeat: Infinity, ease: "easeInOut", delay },
+                scale: { duration: 0.35, ease: [0.2, 0.7, 0.2, 1] },
+              }}
+              whileTap={{ scale: 1.25 }}
+            >
+              {l.name}
+            </motion.span>
+          );
+        })}
+      </div>
+      <p
+        className="text-center mt-6 label-mono"
+        style={{ color: "var(--color-stone-dim)", fontSize: "0.65rem" }}
+      >
+        tap any language
+      </p>
+    </div>
+  );
+}
+
 function Channel({ word, caption, ambient }: { word: string; caption: string; ambient: React.ReactNode }) {
   return (
     <motion.div
