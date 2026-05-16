@@ -3,6 +3,7 @@ import { Nav } from "@/components/asmi/Nav";
 import { ScrollProgress } from "@/components/asmi/ScrollProgress";
 import { Act1Opening } from "@/components/asmi/Act1Opening";
 import { Act2CallViz } from "@/components/asmi/Act2CallViz";
+import { HeroShatter } from "@/components/asmi/HeroShatter";
 import { Act3ThreeMoments } from "@/components/asmi/Act3Moments";
 import { Act4Cloud } from "@/components/asmi/Act4Cloud";
 import { Act5 } from "@/components/asmi/Act5";
