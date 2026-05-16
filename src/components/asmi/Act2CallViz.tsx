@@ -188,6 +188,7 @@ export function Act2CallViz() {
         style={{
           background:
             "linear-gradient(135deg, var(--color-linen), var(--color-sand) 55%, var(--color-morning))",
+            paddingInline: isMobile ? 14 : 0,
         }}
       >
         {/* Warm radial wash */}
@@ -228,9 +229,9 @@ export function Act2CallViz() {
               <span
                 className="label-mono"
                 style={{
-                  color: "var(--color-espresso)",
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.22em",
+                  color: "var(--color-espresso-strong)",
+                  fontSize: isMobile ? "0.62rem" : "0.78rem",
+                  letterSpacing: isMobile ? "0.15em" : "0.22em",
                 }}
               >
                 {STEPS[active].label}
@@ -254,17 +255,18 @@ export function Act2CallViz() {
               <div className="text-center">
                 <p
                   className="label-mono mb-3"
-                  style={{ color: "var(--color-terracotta)" }}
+                  style={{ color: "var(--color-terracotta-deep)" }}
                 >
                   Sarah · 9:03 AM
                 </p>
                 <p
                   className="font-serif italic"
                   style={{
-                    color: "var(--color-espresso)",
-                    fontSize: isMobile ? "1.45rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
-                    lineHeight: 1.28,
+                    color: "var(--color-espresso-strong)",
+                    fontSize: isMobile ? "1.28rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
+                    lineHeight: isMobile ? 1.2 : 1.28,
                     fontWeight: 400,
+                    textWrap: "balance",
                   }}
                 >
                   "Sink is leaking. Can you find a plumber today?"
@@ -350,8 +352,8 @@ export function Act2CallViz() {
                 <motion.div
                   className="absolute inset-[39%] rounded-full"
                   style={{
-                    background: "var(--color-terracotta)",
-                    boxShadow: "0 0 50px rgba(194,91,63,0.45)",
+                    background: "var(--color-terracotta-deep)",
+                    boxShadow: "0 0 50px rgba(162,72,48,0.5)",
                   }}
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
@@ -360,7 +362,7 @@ export function Act2CallViz() {
                   className="absolute left-1/2 -translate-x-1/2 label-mono"
                   style={{
                     bottom: -28,
-                    color: "var(--color-terracotta)",
+                    color: "var(--color-terracotta-deep)",
                     whiteSpace: "nowrap",
                   }}
                 >
@@ -387,7 +389,7 @@ export function Act2CallViz() {
       </div>
 
       {/* Invisible step markers — drive the scene via IntersectionObserver */}
-      <div className="relative" style={{ marginTop: "-100svh" }}>
+        <div className="relative" style={{ marginTop: "-100svh" }}>
         {STEPS.map((s, i) => (
           <div
             key={s.key}
@@ -399,7 +401,7 @@ export function Act2CallViz() {
           />
         ))}
         {/* extra tail so the last step holds before release */}
-        <div className="h-[60svh] w-full pointer-events-none" aria-hidden />
+        <div className="h-[36svh] sm:h-[44svh] w-full pointer-events-none" aria-hidden />
       </div>
     </section>
   );
@@ -421,7 +423,7 @@ function BranchLine({
     ? winner
       ? "var(--color-sage-strong)"
       : "rgba(107, 101, 96, 0.18)"
-    : "var(--color-terracotta)";
+    : "var(--color-terracotta-deep)";
   const targetOpacity = isConfirmed ? (winner ? 1 : 0.18) : winner ? 0.9 : 0.75;
 
   return (
@@ -449,7 +451,7 @@ function TravelingWave({
   branch: { id: string; index: number };
   winner?: boolean;
 }) {
-  const color = winner ? "var(--color-sage-strong)" : "var(--color-terracotta)";
+  const color = winner ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)";
   const dur = 2.6 + branch.index * 0.22;
   return (
     <g>
