@@ -35,7 +35,7 @@ export function Act1Opening() {
             })}
           </h1>
           <div className="mt-10 flex justify-center">
-            <motion.div style={{ opacity: useTransform(scrollYProgress, [0.32, 0.45], [0, 1]) }}>
+            <motion.div style={{ opacity: brushOpacity }}>
               <BrushUnderline progress={1} />
             </motion.div>
           </div>
