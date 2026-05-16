@@ -430,7 +430,7 @@ function EndpointLabel({
   const resultOpacity = useTransform(
     progress,
     winner ? [STEPS.confirm.start, STEPS.confirm.in, STEPS.confirm.end] : [0, 0, 1],
-    [0, 1, 1, 0]
+    winner ? [0, 1, 1] : [0, 0, 1]
   );
   const resultY = useTransform(progress, [STEPS.confirm.start, STEPS.confirm.in], [14, 0]);
 
