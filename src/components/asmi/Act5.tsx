@@ -49,20 +49,34 @@ const LANGUAGES = [
 // Mobile hides smallest languages
 const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
 
-// Deterministic 3-ring constellation: large at center, medium mid, small outer.
+// Precompute per-ring positions so each label gets a unique slot on its ring.
+const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
+const RING_R = [12, 26, 38, 48]; // % radius
+const RING_OFFSET = [0, 0.17, 0.41, 0.06];
+const RING_ASPECT = 1.65; // ellipse stretch
+
+const RING_COUNTS = LANGUAGES.reduce<Record<number, number>>((acc, l) => {
+  const r = RING_OF[l.size] ?? 3;
+  acc[r] = (acc[r] || 0) + 1;
+  return acc;
+}, {});
+const RING_INDEX: number[] = [];
+{
+  const seen: Record<number, number> = {};
+  LANGUAGES.forEach((l) => {
+    const r = RING_OF[l.size] ?? 3;
+    RING_INDEX.push(seen[r] || 0);
+    seen[r] = (seen[r] || 0) + 1;
+  });
+}
+
 function langPos(i: number, total: number, size: string) {
-  // Map by size to a ring; jitter index for variety but stay on ring.
-  const ring = size === "xl" ? 0 : size === "lg" ? 1 : size === "md" ? 2 : 3;
-  const radii = [14, 28, 38, 46]; // % from center
-  const r = radii[ring];
-  // Stable rotation offset per ring so rings don't align
-  const offsets = [0, 0.18, 0.42, 0.07];
-  // count of items on this ring approximated; spread evenly using i
-  const ringCount = ring === 0 ? 4 : ring === 1 ? 8 : ring === 2 ? 10 : 14;
-  const slot = i % ringCount;
-  const angle = (slot / ringCount) * Math.PI * 2 + offsets[ring] * Math.PI * 2;
-  const aspect = 1.7; // wider than tall
-  const x = 50 + Math.cos(angle) * r * aspect * 0.55;
+  const ring = RING_OF[size] ?? 3;
+  const slot = RING_INDEX[i];
+  const count = RING_COUNTS[ring] || 1;
+  const angle = (slot / count) * Math.PI * 2 + RING_OFFSET[ring] * Math.PI * 2;
+  const r = RING_R[ring];
+  const x = 50 + Math.cos(angle) * r * RING_ASPECT * 0.55;
   const y = 50 + Math.sin(angle) * r;
   return {
     x: Math.min(94, Math.max(6, x)),
