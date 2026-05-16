@@ -66,7 +66,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[185vh] md:h-[168vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[260vh] md:h-[240vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
