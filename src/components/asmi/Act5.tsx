@@ -49,12 +49,24 @@ const LANGUAGES = [
 // Mobile hides smallest languages
 const MOBILE_LANGUAGES = LANGUAGES.filter((l) => l.size !== "sm").slice(0, 20);
 
-function langPos(i: number, total: number) {
-  const a = Math.sin(i * 12.9898) * 43758.5453;
-  const b = Math.cos(i * 78.233) * 12345.678;
+// Deterministic 3-ring constellation: large at center, medium mid, small outer.
+function langPos(i: number, total: number, size: string) {
+  // Map by size to a ring; jitter index for variety but stay on ring.
+  const ring = size === "xl" ? 0 : size === "lg" ? 1 : size === "md" ? 2 : 3;
+  const radii = [14, 28, 38, 46]; // % from center
+  const r = radii[ring];
+  // Stable rotation offset per ring so rings don't align
+  const offsets = [0, 0.18, 0.42, 0.07];
+  // count of items on this ring approximated; spread evenly using i
+  const ringCount = ring === 0 ? 4 : ring === 1 ? 8 : ring === 2 ? 10 : 14;
+  const slot = i % ringCount;
+  const angle = (slot / ringCount) * Math.PI * 2 + offsets[ring] * Math.PI * 2;
+  const aspect = 1.7; // wider than tall
+  const x = 50 + Math.cos(angle) * r * aspect * 0.55;
+  const y = 50 + Math.sin(angle) * r;
   return {
-    x: Math.min(95, Math.max(5, ((a - Math.floor(a)) * 88) + 6)),
-    y: Math.min(92, Math.max(8, ((b - Math.floor(b)) * 82) + 9)),
+    x: Math.min(94, Math.max(6, x)),
+    y: Math.min(92, Math.max(8, y)),
     delay: (i / total) * 4,
     dur: 8 + (i % 6),
   };
@@ -231,7 +243,7 @@ export function Act5() {
         {/* Desktop: scattered floating cloud */}
         <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
           {LANGUAGES.map((l, i) => {
-            const p = langPos(i, LANGUAGES.length);
+            const p = langPos(i, LANGUAGES.length, l.size);
             const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<string, string>;
             const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
