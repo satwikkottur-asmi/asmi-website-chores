@@ -5,17 +5,17 @@ import { useIsMobile } from "@/hooks/use-mobile";
 type Endpoint = { x: number; y: number; label: string };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 16, y: 30, label: "Bay Dermatology" },
-  { x: 84, y: 28, label: "Pacific Skin Clinic" },
-  { x: 12, y: 70, label: "Golden Gate Derm" },
-  { x: 88, y: 72, label: "SF Skin Institute" },
-  { x: 50, y: 86, label: "Mission Dermatology" },
+  { x: 18, y: 28, label: "Bay Area Plumbing" },
+  { x: 82, y: 26, label: "Rapid Rooter" },
+  { x: 14, y: 72, label: "Pacific Plumbing Co" },
+  { x: 86, y: 74, label: "Mr. Fix-It" },
+  { x: 50, y: 88, label: "Joe's Plumbing" },
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 18, y: 30, label: "Bay Derm" },
-  { x: 82, y: 32, label: "Pacific Skin" },
-  { x: 50, y: 80, label: "Mission Derm" },
+  { x: 20, y: 28, label: "Bay Area" },
+  { x: 80, y: 30, label: "Rapid Rooter" },
+  { x: 50, y: 82, label: "Mr. Fix-It" },
 ];
 
 export function Act2CallViz() {
@@ -87,7 +87,7 @@ export function Act2CallViz() {
               lineHeight: 1.35,
             }}
           >
-            "I need to see a dermatologist this week. Can you book it?"
+            "Sink is leaking. Can you find a plumber today?"
           </p>
         </motion.div>
 
@@ -310,7 +310,7 @@ function EndpointLabel({
                 lineHeight: 1.4,
               }}
             >
-              ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
+              ✓ Bay Area Plumbing · Mike · Today 2pm
             </span>
           ) : (
             <span className="label-mono whitespace-nowrap" style={{ color: "#6B6560" }}>
