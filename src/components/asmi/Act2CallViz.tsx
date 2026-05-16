@@ -24,6 +24,7 @@ export function Act2CallViz() {
   const captionOpacity = useTransform(scrollYProgress, [0.05, 0.12, 0.7, 0.8], [0, 1, 1, 0]);
   const closingOpacity = useTransform(scrollYProgress, [0.82, 0.92], [0, 1]);
   const vizOpacity = useTransform(scrollYProgress, [0.78, 0.9], [1, 0]);
+  const waveOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.55, 0.65], [0, 0.9, 0.9, 0]);
 
   return (
     <section ref={ref} className="relative h-[300vh]">
