@@ -69,12 +69,20 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
 type Particle = {
   x0: number;
   y0: number;
-  size: number;
-  threshold: number; // when (during dissolve) this particle starts moving
+  alpha0: number;
+  threshold: number;
   driftX: number;
   liftY: number;
   jitter: number;
   phase: number;
+};
+
+const H1_STYLE: React.CSSProperties = {
+  fontSize: "clamp(2.2rem, 11vw, 14rem)",
+  lineHeight: 1.02,
+  color: "var(--color-espresso)",
+  margin: 0,
+  letterSpacing: "-0.02em",
 };
 
 function ParticleTitle({
@@ -89,46 +97,44 @@ function ParticleTitle({
   reducedMotion: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const measureRef = useRef<HTMLHeadingElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
+  const dispatchSizeRef = useRef({ w: 0, h: 0, dpr: 1 });
   const dissolveRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
-  const [ready, setReady] = useState(false);
+  const ensureLoopRef = useRef<(() => void) | null>(null);
+  const [built, setBuilt] = useState(false);
 
-  // Sample the rendered text into particles
+  // Build particles from a high-fidelity rasterization of the headline.
   useEffect(() => {
     if (reducedMotion) return;
-    const h1 = h1Ref.current;
-    const wrap = wrapRef.current;
+    const measure = measureRef.current;
     const canvas = canvasRef.current;
-    if (!h1 || !wrap || !canvas) return;
+    if (!measure || !canvas) return;
 
     let cancelled = false;
 
     const build = async () => {
-      // ensure fonts are loaded before sampling
-      if (document.fonts && document.fonts.ready) {
+      if (document.fonts && (document.fonts as any).ready) {
         try {
-          await document.fonts.ready;
+          await (document.fonts as any).ready;
         } catch {}
       }
       if (cancelled) return;
 
-      const rect = h1.getBoundingClientRect();
-      const wrapRect = wrap.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = measure.getBoundingClientRect();
       const w = Math.ceil(rect.width);
       const h = Math.ceil(rect.height);
       if (w === 0 || h === 0) return;
 
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
-      canvas.style.left = `${rect.left - wrapRect.left}px`;
-      canvas.style.top = `${rect.top - wrapRect.top}px`;
+      dispatchSizeRef.current = { w, h, dpr };
 
       const off = document.createElement("canvas");
       off.width = canvas.width;
@@ -136,14 +142,13 @@ function ParticleTitle({
       const octx = off.getContext("2d", { willReadFrequently: true });
       if (!octx) return;
 
-      const cs = window.getComputedStyle(h1);
+      const cs = window.getComputedStyle(measure);
       const fontSize = parseFloat(cs.fontSize);
       octx.scale(dpr, dpr);
       octx.fillStyle = "#2C2520";
       octx.textBaseline = "alphabetic";
       octx.font = `${cs.fontStyle} ${cs.fontWeight} ${fontSize}px ${cs.fontFamily}`;
 
-      // measure to center
       const metrics = octx.measureText(text);
       const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.8;
       const descent = metrics.actualBoundingBoxDescent || fontSize * 0.2;
@@ -154,35 +159,39 @@ function ParticleTitle({
 
       const img = octx.getImageData(0, 0, canvas.width, canvas.height);
       const data = img.data;
-      const step = Math.max(2, Math.round((isMobile ? 5 : 3) * dpr));
+      const cw = canvas.width;
+      const ch = canvas.height;
+
+      // Dense per-device-pixel sampling. Step = 1 device px on mobile-light, else 1.
+      // To keep particle count reasonable, step by `stride` device px.
+      const stride = isMobile ? 2 : 1;
       const particles: Particle[] = [];
-      for (let py = 0; py < canvas.height; py += step) {
-        for (let px = 0; px < canvas.width; px += step) {
-          const idx = (py * canvas.width + px) * 4 + 3;
-          if (data[idx] > 128) {
-            const nx = px / dpr;
-            const ny = py / dpr;
-            particles.push({
-              x0: nx,
-              y0: ny,
-              size: dpr >= 2 ? 1.5 : 1.25,
-              threshold: (nx / w) * 0.55 + Math.random() * 0.12,
-              driftX: 90 + Math.random() * 220,
-              liftY: 40 + Math.random() * 140,
-              jitter: 10 + Math.random() * 24,
-              phase: Math.random() * Math.PI * 2,
-            });
-          }
+      for (let py = 0; py < ch; py += stride) {
+        for (let px = 0; px < cw; px += stride) {
+          const a = data[(py * cw + px) * 4 + 3];
+          if (a < 8) continue;
+          const nx = px / dpr;
+          const ny = py / dpr;
+          particles.push({
+            x0: nx,
+            y0: ny,
+            alpha0: a / 255,
+            threshold: (nx / w) * 0.55 + Math.random() * 0.1,
+            driftX: 110 + Math.random() * 260,
+            liftY: 50 + Math.random() * 180,
+            jitter: 8 + Math.random() * 22,
+            phase: Math.random() * Math.PI * 2,
+          });
         }
       }
       particlesRef.current = particles;
-      setReady(true);
-      draw();
+      setBuilt(true);
+      drawStatic();
     };
 
     build();
     const onResize = () => {
-      setReady(false);
+      setBuilt(false);
       build();
     };
     window.addEventListener("resize", onResize);
@@ -193,105 +202,132 @@ function ParticleTitle({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, isMobile, reducedMotion]);
 
-  const draw = () => {
+  const drawStatic = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const { dpr } = dispatchSizeRef.current;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const particles = particlesRef.current;
+    const dot = 1 / dpr; // 1 device px
+    ctx.fillStyle = "#2C2520";
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      ctx.globalAlpha = p.alpha0;
+      ctx.fillRect(p.x0, p.y0, dot, dot);
+    }
+    ctx.globalAlpha = 1;
+  };
+
+  const drawAnimated = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const { dpr } = dispatchSizeRef.current;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const t = dissolveRef.current;
     if (t <= 0) {
-      if (h1Ref.current) h1Ref.current.style.opacity = "1";
+      drawStatic();
       return;
     }
-    if (h1Ref.current) h1Ref.current.style.opacity = "0";
-    if (t >= 1) return;
-
-    const now = (performance.now() - startTimeRef.current) / 1000;
     const particles = particlesRef.current;
+    const now = (performance.now() - startTimeRef.current) / 1000;
+    const dot = 1 / dpr;
     ctx.fillStyle = "#2C2520";
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
-      const local = (t - p.threshold) / (1 - p.threshold);
+      const local = (t - p.threshold) / Math.max(0.0001, 1 - p.threshold);
       if (local <= 0) {
-        ctx.globalAlpha = 1;
-        ctx.fillRect(p.x0, p.y0, p.size, p.size);
+        ctx.globalAlpha = p.alpha0;
+        ctx.fillRect(p.x0, p.y0, dot, dot);
         continue;
       }
-      const e = local < 1 ? 1 - Math.pow(1 - local, 2) : 1;
+      if (local >= 1) continue;
+      const e = 1 - Math.pow(1 - local, 2);
       const wob = Math.sin(now * 2 + p.phase) * p.jitter * e;
       const x = p.x0 + e * p.driftX + wob;
       const y = p.y0 - e * p.liftY + Math.cos(now * 1.6 + p.phase) * p.jitter * 0.4 * e;
-      const a = Math.max(0, 1 - local);
+      const a = p.alpha0 * (1 - local);
       ctx.globalAlpha = a;
-      ctx.fillRect(x, y, p.size, p.size);
+      ctx.fillRect(x, y, dot, dot);
     }
     ctx.globalAlpha = 1;
   };
 
-  // Animate while dissolving
+  // RAF loop while dissolving
   useEffect(() => {
     if (reducedMotion) return;
     const loop = () => {
-      draw();
+      drawAnimated();
       const t = dissolveRef.current;
       if (t > 0 && t < 1) {
         rafRef.current = requestAnimationFrame(loop);
       } else {
         rafRef.current = null;
+        if (t <= 0) drawStatic();
       }
     };
-    const ensureLoop = () => {
+    ensureLoopRef.current = () => {
       if (rafRef.current == null) {
         startTimeRef.current = performance.now();
         rafRef.current = requestAnimationFrame(loop);
       }
     };
-    // expose via closure on the motion subscription below
-    (ParticleTitle as any)._ensureLoop = ensureLoop;
     return () => {
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
+      ensureLoopRef.current = null;
     };
-  }, [reducedMotion, ready]);
+  }, [reducedMotion, built]);
 
   useMotionValueEvent(progress, "change", (v) => {
     if (reducedMotion) return;
-    // map scroll progress 0..0.25 -> dissolve 0..1 (fully gone well before next section)
     const t = Math.min(1, Math.max(0, v / 0.25));
+    const prev = dissolveRef.current;
     dissolveRef.current = t;
     if (t > 0 && t < 1) {
-      (ParticleTitle as any)._ensureLoop?.();
-    } else {
-      draw();
+      ensureLoopRef.current?.();
+    } else if (t !== prev) {
+      drawAnimated();
     }
   });
 
+  // Reduced-motion fallback: just render the real h1.
+  if (reducedMotion) {
+    return (
+      <div ref={wrapRef} className="relative w-full">
+        <h1
+          className="font-serif font-normal text-espresso tracking-[-0.02em]"
+          style={H1_STYLE}
+        >
+          {text}
+        </h1>
+      </div>
+    );
+  }
+
   return (
     <div ref={wrapRef} className="relative w-full">
+      {/* Sizing/SEO/a11y h1: occupies layout space, invisible. */}
       <h1
-        ref={h1Ref}
+        ref={measureRef}
         className="font-serif font-normal text-espresso tracking-[-0.02em]"
-        style={{
-          fontSize: "clamp(2.2rem, 11vw, 14rem)",
-          lineHeight: 1.02,
-          color: "var(--color-espresso)",
-          margin: 0,
-        }}
+        style={{ ...H1_STYLE, visibility: "hidden" }}
       >
         {text}
       </h1>
-      {!reducedMotion && (
-        <canvas
-          ref={canvasRef}
-          aria-hidden
-          className="pointer-events-none absolute"
-          style={{ left: 0, top: 0 }}
-        />
-      )}
+      {/* Visual rendering lives entirely on this canvas. */}
+      <canvas
+        ref={canvasRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 m-auto"
+        style={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      />
     </div>
   );
 }
