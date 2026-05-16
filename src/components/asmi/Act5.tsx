@@ -231,22 +231,30 @@ export function Act5() {
           </motion.h2>
         </div>
 
-        {/* Mobile: organic flowing wrap, no labels smaller than 14px */}
-        <div className="md:hidden px-4 mx-auto max-w-2xl flex flex-wrap justify-center items-center gap-x-4 gap-y-3" style={{ minHeight: 400 }}>
-          {MOBILE_LANGUAGES.map((l, i) => {
-            const sizeMap = { md: "1.15rem", lg: "1.5rem", xl: "2rem" } as Record<string, string>;
-            const colorMap = { md: "#5C5349", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+        {/* Mobile: scattered floating cloud (tighter radii) */}
+        <div className="md:hidden relative mx-auto w-full" style={{ height: "min(70vh, 560px)" }}>
+          {LANGUAGES.map((l, i) => {
+            const p = langPos(i, LANGUAGES.length, l.size);
+            // pull labels inward on mobile
+            const x = 50 + (p.x - 50) * 0.78;
+            const y = 50 + (p.y - 50) * 0.92;
+            const sizeMap = { sm: "0.85rem", md: "1.1rem", lg: "1.55rem", xl: "2.2rem" } as Record<string, string>;
+            const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
             return (
               <motion.span
                 key={l.name}
-                className="font-serif"
+                className="absolute font-serif"
                 style={{
-                  fontSize: sizeMap[l.size] || "1rem",
-                  color: colorMap[l.size] || "#5C5349",
-                  opacity: l.size === "md" ? 0.85 : 1,
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: "translate(-50%, -50%)",
+                  fontSize: sizeMap[l.size],
+                  color: colorMap[l.size],
+                  opacity: l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
+                  whiteSpace: "nowrap",
                 }}
-                animate={{ y: [0, -3, 0, 2, 0] }}
-                transition={{ duration: 6 + (i % 5), repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.3 }}
+                animate={{ y: [0, -6, 0, 4, 0] }}
+                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
               >
                 {l.name}
               </motion.span>
