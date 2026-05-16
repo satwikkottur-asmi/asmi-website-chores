@@ -310,7 +310,7 @@ function EndpointLabel({
                 lineHeight: 1.4,
               }}
             >
-              ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
+              ✓ Bay Area Plumbing · Mike · Today 2pm
             </span>
           ) : (
             <span className="label-mono whitespace-nowrap" style={{ color: "#6B6560" }}>
