@@ -31,9 +31,9 @@ const MOBILE_ENDPOINTS: Endpoint[] = [
 const STEPS = {
   ask:     { start: 0.02, in: 0.08, out: 0.22, end: 0.26 },
   listen:  { start: 0.22, in: 0.28, out: 0.36, end: 0.40 },
-  dial:    { start: 0.34, in: 0.42, out: 0.58, end: 0.62 }, // branches draw 0.34→0.58
-  confirm: { start: 0.58, in: 0.66, out: 0.82, end: 0.86 },
-  close:   { start: 0.82, in: 0.88, out: 0.97, end: 1.00 },
+  dial:    { start: 0.34, in: 0.42, out: 0.66, end: 0.70 },
+  confirm: { start: 0.66, in: 0.74, out: 0.96, end: 1.00 },
+  close:   { start: 0.97, in: 0.985, out: 0.995, end: 1.00 },
 };
 
 export function Act2CallViz() {
@@ -117,13 +117,6 @@ export function Act2CallViz() {
     [0, 1, 1, 0]
   );
 
-  // Closing message
-  const closingOpacity = useTransform(
-    scrollYProgress,
-    [STEPS.close.start, STEPS.close.in, STEPS.close.out, STEPS.close.end],
-    [0, 1, 1, 0]
-  );
-
   const cx = size.w / 2;
   const cy = size.h / 2;
   const branches: Branch[] = endpoints.map((endpoint, index) => {
@@ -138,8 +131,12 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[185vh] md:h-[205vh]">
-      <div ref={stageRef} className="sticky top-0 h-screen w-full overflow-hidden relative">
+    <section ref={ref} className="relative h-[170vh] md:h-[190vh]">
+      <div
+        ref={stageRef}
+        className="sticky top-0 h-screen w-full overflow-hidden relative z-20"
+        style={{ background: "linear-gradient(135deg, var(--color-linen), var(--color-sand) 55%, var(--color-morning))" }}
+      >
         {/* Warm radial wash */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -256,31 +253,6 @@ export function Act2CallViz() {
           ))}
         </motion.div>
 
-        {/* Closing message */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center text-center px-6 z-30 pointer-events-none"
-          style={{ opacity: closingOpacity }}
-        >
-          <div>
-            <p
-              className="font-serif"
-              style={{
-                color: "var(--color-espresso)",
-                fontSize: "clamp(2.4rem, 7vw, 5rem)",
-                lineHeight: 1.04,
-                fontWeight: 500,
-              }}
-            >
-              Sarah found out over iMessage.
-            </p>
-            <p
-              className="mt-5 font-serif italic"
-              style={{ color: "var(--color-ink)", fontSize: "clamp(1.35rem, 2.8vw, 2.4rem)" }}
-            >
-              She never opened an app.
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
