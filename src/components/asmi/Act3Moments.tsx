@@ -115,7 +115,7 @@ function MessageBubble() {
           justifyContent: "center",
         }}
       >
-        <span>✓ Bay Dermatology. Tomorrow 10am. Dr. Chen.</span>
+        <span style={{ whiteSpace: "normal", lineHeight: 1.4 }}>✓ Bay Area Plumbing · Mike · Today 2pm</span>
       </div>
       <span className="mt-2 font-sans" style={{ fontSize: 11, color: "var(--color-stone-dim)" }}>
         Delivered

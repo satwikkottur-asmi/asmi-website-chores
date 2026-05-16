@@ -13,9 +13,11 @@ const DESKTOP_ENDPOINTS: Endpoint[] = [
 ];
 
 const MOBILE_ENDPOINTS: Endpoint[] = [
-  { x: 20, y: 28, label: "Bay Area" },
-  { x: 80, y: 30, label: "Rapid Rooter" },
-  { x: 50, y: 82, label: "Mr. Fix-It" },
+  { x: 24, y: 24, label: "Bay Area Plumbing" },
+  { x: 76, y: 24, label: "Rapid Rooter" },
+  { x: 18, y: 54, label: "Pacific Plumbing Co" },
+  { x: 82, y: 56, label: "Mr. Fix-It" },
+  { x: 50, y: 82, label: "Joe's Plumbing" },
 ];
 
 export function Act2CallViz() {
@@ -27,9 +29,9 @@ export function Act2CallViz() {
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.10) setPhase("intro");
-    else if (p < 0.45) setPhase("dialing");
-    else if (p < 0.78) setPhase("resolved");
+    if (p < 0.06) setPhase("intro");
+    else if (p < 0.30) setPhase("dialing");
+    else if (p < 0.56) setPhase("resolved");
     else setPhase("outro");
   });
 
@@ -46,9 +48,9 @@ export function Act2CallViz() {
   }, []);
 
   const captionOpacity = useTransform(scrollYProgress, [0.0, 0.05, 0.82, 0.92], [0, 1, 1, 0]);
-  const speechOpacity = useTransform(scrollYProgress, [0.08, 0.16, 0.55, 0.68], [0, 1, 1, 0]);
-  const vizOpacity = useTransform(scrollYProgress, [0.88, 0.97], [1, 0]);
-  const closingOpacity = useTransform(scrollYProgress, [0.78, 0.88], [0, 1]);
+  const speechOpacity = useTransform(scrollYProgress, [0.04, 0.10, 0.30, 0.40], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.60, 0.72], [1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.52, 0.64], [0, 1]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
@@ -56,13 +58,15 @@ export function Act2CallViz() {
   const branches = ENDPOINTS.map((e, i) => {
     const ex = (e.x / 100) * size.w;
     const ey = (e.y / 100) * size.h;
-    const mx = (cx + ex) / 2 + (i - (ENDPOINTS.length - 1) / 2) * (size.w * 0.04);
-    const my = (cy + ey) / 2 + (i % 2 === 0 ? -60 : 60);
+    const mx =
+      (cx + ex) / 2 +
+      (i - (ENDPOINTS.length - 1) / 2) * (size.w * (isMobile ? 0.028 : 0.04));
+    const my = (cy + ey) / 2 + (i % 2 === 0 ? -(isMobile ? 42 : 60) : isMobile ? 42 : 60);
     return { id: `branch-${i}`, d: `M ${cx} ${cy} Q ${mx} ${my}, ${ex} ${ey}`, endpoint: e, index: i };
   });
 
   return (
-    <section ref={ref} className="relative h-[200vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[185vh] md:h-[168vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
@@ -146,7 +150,7 @@ export function Act2CallViz() {
                     transition: "opacity 0.3s ease",
                   }}
                 >
-                  <g transform="translate(-7,-6)">
+                  <g transform="translate(-7,-12)">
                     {[0, 1, 2].map((bar) => (
                       <rect
                         key={bar}
@@ -157,7 +161,7 @@ export function Act2CallViz() {
                         rx={1}
                         fill={color}
                         style={{
-                          transformOrigin: `${bar * 5 + 1}px 6px`,
+                          transformOrigin: `${bar * 5 + 1}px 12px`,
                           animation: `wave-bar 0.7s ease-in-out infinite`,
                           animationDelay: `${bar * 0.12}s`,
                           transition: "fill 0.4s ease",
@@ -260,6 +264,7 @@ export function Act2CallViz() {
 function EndpointLabel({
   endpoint, index, phase,
 }: { endpoint: Endpoint; index: number; phase: "intro" | "dialing" | "resolved" | "outro" }) {
+  const isMobile = useIsMobile();
   const winner = index === 0;
   const visible = phase !== "intro";
   const resolved = phase === "resolved" || phase === "outro";
@@ -313,7 +318,15 @@ function EndpointLabel({
               ✓ Bay Area Plumbing · Mike · Today 2pm
             </span>
           ) : (
-            <span className="label-mono whitespace-nowrap" style={{ color: "#6B6560" }}>
+            <span
+              className="label-mono inline-block"
+              style={{
+                color: "#6B6560",
+                whiteSpace: isMobile ? "normal" : "nowrap",
+                lineHeight: 1.45,
+                maxWidth: isMobile ? "8rem" : undefined,
+              }}
+            >
               {endpoint.label}
             </span>
           )}
