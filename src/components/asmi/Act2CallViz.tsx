@@ -308,7 +308,7 @@ function EndpointLabel({
                 boxShadow: "0 0 24px rgba(139,168,136,0.3)",
               }}
             >
-              Bay Area Plumbing · Mike · Today 2pm ✓
+              ✓ Bay Dermatology · Tomorrow 10am · Dr. Chen
             </span>
           ) : (
             <span className="label-mono" style={{ color: "#6B6560" }}>
