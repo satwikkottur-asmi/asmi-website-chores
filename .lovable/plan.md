@@ -1,63 +1,80 @@
-# Hero title — proper particle dissolve (rebuild)
-
-## What's wrong today
-
-The current implementation renders the title twice:
-- A real DOM `<h1>` (clean serif, antialiased by the browser).
-- A `<canvas>` overlay that re-rasterizes the same text from `getComputedStyle` and samples it on a 3px grid.
-
-Then it crossfades between them as scroll progresses. The canvas version doesn't match the DOM version pixel-for-pixel (different rasterizer, sparse grid → visible dot pattern, slight metric drift), so during the transition you see a "ghost" or "alternate" version of the headline. That's the hacky feel in screenshot 2.
+# Fix plan: replace the fragile sticky scene with a step-based pinned sequence
 
 ## Goal
 
-One single visual representation of the headline from the start. The real text appears to disintegrate into particles that drift away. No duplicate, no crossfade between two renderings.
+Rebuild the call animation so it feels deliberate and readable on desktop and mobile: one scroll beat reveals one piece of information, the scene stays visually locked while the sequence plays, and there is no dead space before or after it.
 
-## Approach
+## Recommended approach
 
-Render the headline entirely on canvas from the moment the page loads, at a density high enough that it looks identical to the native serif `<h1>`. The DOM `<h1>` is kept only for accessibility/SEO (`sr-only`, visually hidden). There is never a moment where both renderings are visible.
+Replace the current single tall sticky section plus manual progress math with a chapter-based scrollytelling scene:
 
-### Concretely
+- A dedicated scene shell controls when the call stage is active.
+- Four or five full-height step markers drive the sequence.
+- The visualization stays fixed only while those markers are being traversed.
+- Each step maps to a discrete state instead of a fragile continuous progress band.
 
-1. **Single source of truth = canvas.**
-   - One `<canvas>` sized to the headline's natural bounding box (measured once via a hidden measuring `<h1>` with identical font styles, then removed/hidden).
-   - `<h1>` element is `sr-only` (kept for screen readers / SEO).
-   - No more crossfade between DOM text and canvas.
+This is more reliable than the current setup because it avoids scroll listener timing drift, reduces mobile viewport issues, and makes the release point exact.
 
-2. **High-fidelity rasterization (no dotted look at rest).**
-   - Render at `devicePixelRatio` (capped at 2).
-   - Wait for `document.fonts.ready` before sampling so the serif (Newsreader) is actually loaded.
-   - Sample every pixel (step = 1 logical px, ~1.5–2 device px) instead of every 3px. At rest the particles pack densely enough to look like solid antialiased text.
-   - Use the sampled alpha as the particle's base alpha (not a hard 0/1 threshold). This preserves the serif's edge antialiasing, so the rendered text reads as crisp type, not a halftone.
-   - Particle color = espresso `#2C2520`; size = 1 device px square (or 1.2 px circle on hi-DPI).
+## 1. Rebuild Act 2 as step chapters instead of one progress scrub
 
-3. **Dissolve driven by scroll.**
-   - `scrollYProgress` 0 → ~0.25 maps to dissolve `t` 0 → 1, completing well before the next section.
-   - Per-particle threshold seeded by `x / width` so the wind sweeps left → right (matches the reference codepen).
-   - Once a particle's local progress > 0: drift right + lift up + sine wobble, alpha fades to 0.
-   - At `t == 0` the canvas renders the headline statically (no animation cost, looks identical to native type).
-   - `requestAnimationFrame` loop only runs while `0 < t < 1`.
+In `src/components/asmi/Act2CallViz.tsx`:
 
-4. **Sizing & layout stay identical.**
-   - The wrapper still reserves the same space the `<h1>` used to take (so the BrushUnderline, CTA, asmi wordmark, and overall hero rhythm don't shift).
-   - Done by keeping a visually-hidden `<h1>` in the flow with `visibility: hidden` (occupies space, not painted) and absolutely positioning the canvas on top of it.
+- Split the narrative into explicit chapters:
+  1. Sarah asks
+  2. Asmi listens
+  3. Asmi calls 5 plumbers
+  4. One confirms
+  5. Result holds, then release
+- Create one viewport-height marker per chapter.
+- Drive the visible state from the active chapter using `IntersectionObserver` or per-step in-view tracking rather than raw `scrollY` math.
+- Keep small within-step easing for polish, but make the sequence fundamentally state-based.
 
-5. **Reduced motion / fallback.**
-   - `prefers-reduced-motion`: render the real `<h1>` normally, no canvas at all. Pure opacity fade as scroll passes.
-   - Same fallback if Canvas 2D unavailable.
+## 2. Use a pinned scene shell that does not depend on the current sticky behavior
 
-6. **Hero pin duration stays at ~2 viewports** (already changed) so dissolve has room to complete before Act 2 appears.
+In `Act2CallViz.tsx`:
 
-## Why this fixes the complaint
+- Replace the current “one section with one sticky child” setup with a scene wrapper that:
+  - becomes fixed to the viewport while Act 2 is active
+  - releases cleanly when the last step completes
+- Use top and bottom sentinels so the pin/unpin timing is explicit.
+- Use `100svh`/`100dvh`-safe sizing for mobile browsers.
+- Ensure no ancestor of the pinned layer applies overflow or transforms that can break pinning.
 
-- No alternate/ghost text — the canvas IS the title, from page load.
-- Dense per-pixel sampling with alpha preserved = at rest, the canvas is visually indistinguishable from the DOM serif. No dotted/stippled look until particles start to scatter.
-- Single render path → no crossfade artifacts, no font/metric drift.
+## 3. Make every scroll beat reveal a single clear event
 
-## Files
+Adjust the animation language so the sequence is easy to consume:
 
-- Rewrite `ParticleTitle` inside `src/components/asmi/Act1Opening.tsx`. No other files touched.
+- Step 1: Sarah’s request appears first, with strong contrast.
+- Step 2: Asmi orb and “listening” state appear.
+- Step 3: Plumber calls fan out one by one with clearer line and label contrast.
+- Step 4: The confirmed plumber turns into the highlighted green result state.
+- Step 5: Hold the confirmed state briefly before the page continues.
 
-## Out of scope
+No step should advance to the next beat until the current one has had readable on-screen time.
 
-- No changes to other Acts, Nav, tokens, or routes.
-- No new dependencies.
+## 4. Remove the dead space before and after the sequence
+
+- Match scene length to the exact number of chapters instead of using an oversized scroll container.
+- Start Act 2 immediately at the seam after Act 1.
+- Reduce or remove any spacer gap before `Act3ThreeMoments`.
+- Keep the final confirmed state visible until release so the section never fades into emptiness.
+
+## 5. Tighten contrast and visual hierarchy in the highlight section
+
+- Deepen the green confirmation palette so it reads clearly against the warm background.
+- Increase contrast for labels and supporting text.
+- Keep colors consistent with the rest of the site while making Act 2 feel like the focal moment.
+
+## Files to update
+
+- `src/components/asmi/Act2CallViz.tsx`
+- `src/routes/index.tsx`
+- `src/components/asmi/Act3Moments.tsx`
+- `src/styles.css` if token adjustments are needed for stronger contrast
+
+## Validation
+
+- Desktop: the scene stays locked while each chapter reveals in order.
+- Mobile: the same sequence remains readable without sticky drift or early release.
+- No large blank gap appears after Act 2.
+- The user can clearly read each beat before the next one begins.
