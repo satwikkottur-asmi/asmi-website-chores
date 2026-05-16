@@ -26,9 +26,12 @@ export function Act1Opening() {
           <h1 className="font-serif font-normal text-espresso leading-[0.95] tracking-[-0.02em]"
               style={{ fontSize: "clamp(3.2rem, 12vw, 14rem)", color: "var(--color-espresso)" }}>
             {WORDS.map((w, i) => (
-              <Word key={i} progress={scrollYProgress} index={i} total={WORDS.length}>
-                {w}{i < WORDS.length - 1 ? " " : ""}
-              </Word>
+              <span key={i}>
+                <Word progress={scrollYProgress} index={i} total={WORDS.length}>
+                  {w}
+                </Word>
+                {i < WORDS.length - 1 ? " " : ""}
+              </span>
             ))}
           </h1>
           <div className="mt-10 flex justify-center">
