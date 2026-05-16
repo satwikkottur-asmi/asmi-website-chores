@@ -25,13 +25,13 @@ export function Act2CallViz() {
   const stageRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const ENDPOINTS = isMobile ? MOBILE_ENDPOINTS : DESKTOP_ENDPOINTS;
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
 
   const [phase, setPhase] = useState<"intro" | "dialing" | "resolved" | "outro">("intro");
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (p < 0.06) setPhase("intro");
-    else if (p < 0.38) setPhase("dialing");
-    else if (p < 0.82) setPhase("resolved");
+    if (p < 0.02) setPhase("intro");
+    else if (p < 0.28) setPhase("dialing");
+    else if (p < 0.78) setPhase("resolved");
     else setPhase("outro");
   });
 
@@ -48,13 +48,10 @@ export function Act2CallViz() {
   }, []);
 
   // Caption is visible almost the entire time so the stage never reads as blank.
-  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.03, 0.92, 0.97], [0, 1, 1, 0]);
-  // Speech bubble comes in fast and stays through dialing.
-  const speechOpacity = useTransform(scrollYProgress, [0.02, 0.08, 0.36, 0.44], [0, 1, 1, 0]);
-  // Call viz holds through resolved + closing, only fades right at the end.
-  const vizOpacity = useTransform(scrollYProgress, [0.0, 0.04, 0.93, 0.99], [0, 1, 1, 0]);
-  // Closing message enters after the green winner has been on screen.
-  const closingOpacity = useTransform(scrollYProgress, [0.70, 0.80, 0.93, 0.99], [0, 1, 1, 0]);
+  const captionOpacity = useTransform(scrollYProgress, [0.0, 0.015, 0.82, 0.9], [0, 1, 1, 0]);
+  const speechOpacity = useTransform(scrollYProgress, [0.0, 0.04, 0.22, 0.3], [0, 1, 1, 0]);
+  const vizOpacity = useTransform(scrollYProgress, [0.0, 0.03, 0.86, 0.93], [0, 1, 1, 0]);
+  const closingOpacity = useTransform(scrollYProgress, [0.56, 0.68, 0.84, 0.92], [0, 1, 1, 0]);
 
   // Build paths in pixel space.
   const cx = size.w / 2;
@@ -70,7 +67,7 @@ export function Act2CallViz() {
   });
 
   return (
-    <section ref={ref} className="relative h-[300vh] md:h-[280vh]" style={{ overflowX: "hidden" }}>
+    <section ref={ref} className="relative h-[210vh] md:h-[220vh]" style={{ overflowX: "hidden" }}>
       <div ref={stageRef} className="sticky top-0 h-screen overflow-hidden relative" style={{ maxWidth: "100vw" }}>
         {/* Caption */}
         <motion.div
