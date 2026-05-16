@@ -60,7 +60,7 @@ Currently mobile uses a flex-wrap list. Replace with the same scattered absolute
 - Tighten `RING_R` to `[10, 22, 32, 42]` only at small widths via a `useIsMobile` branch to keep labels inside the viewport.
 - Drop the `MOBILE_LANGUAGES` filter and the wrap markup.
 
-### 3c. General mobile font sizes
+### 4c. General mobile font sizes
 Sweep the most-visible mobile text and raise the lower bound of each `clamp()` so nothing reads as cramped on a 390px screen:
 - `Act5` section H2s: `clamp(2.4rem, 6vw, 5rem)` → `clamp(2.8rem, 9vw, 5rem)`.
 - `Act5` story headlines: `clamp(24px, 4.5vw, 44px)` → `clamp(26px, 6vw, 44px)`.
