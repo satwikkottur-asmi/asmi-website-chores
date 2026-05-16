@@ -87,7 +87,7 @@ export function Act2CallViz() {
               lineHeight: 1.35,
             }}
           >
-            "I need to see a dermatologist this week. Can you book it?"
+            "Sink is leaking. Can you find a plumber today?"
           </p>
         </motion.div>
 
