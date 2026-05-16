@@ -6,8 +6,8 @@ function Moment({
 }: { index: number; headline: string; subtext: React.ReactNode; ambient: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const opacity = useTransform(scrollYProgress, [0.02, 0.18, 0.68, 0.84], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0.02, 0.28], [28, 0]);
+  const opacity = useTransform(scrollYProgress, [0.0, 0.22, 0.72, 0.92], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0.0, 0.28], [24, 0]);
   return (
     <div ref={ref} className="h-screen flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">{ambient}</div>
