@@ -1,33 +1,33 @@
-import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from "motion/react";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { RefObject, useRef } from "react";
 import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const WORDS = ["The", "screen", "era", "is", "over."];
 
-export function Act1Opening() {
-  const ref = useRef<HTMLElement>(null);
+export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement | null> }) {
+  const internalRef = useRef<HTMLElement>(null);
+  const ref = sectionRef ?? internalRef;
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const statementOpacity = useTransform(scrollYProgress, [0.5, 0.7], [1, 0.2]);
-  const statementY = useTransform(scrollYProgress, [0.5, 0.9], [0, isMobile ? -60 : -120]);
-  const statementScale = useTransform(scrollYProgress, [0.72, 0.96], [1, prefersReducedMotion ? 0.98 : 1.06]);
-  const statementBlur = useTransform(scrollYProgress, [0.78, 0.96], [0, prefersReducedMotion ? 0 : 5]);
-  const statementFilter = useMotionTemplate`blur(${statementBlur}px)`;
-  const wordmarkOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
+  // Hero exits faster so shatter+Act 2 take over right at the seam.
+  const statementOpacity = useTransform(scrollYProgress, [0.55, 0.82], [1, 0]);
+  const statementY = useTransform(scrollYProgress, [0.55, 0.9], [0, isMobile ? -50 : -100]);
+  const statementScale = useTransform(scrollYProgress, [0.7, 0.9], [1, prefersReducedMotion ? 0.98 : 1.04]);
+  const wordmarkOpacity = useTransform(scrollYProgress, [0.5, 0.7, 0.82], [0, 1, 0]);
   const wordmarkY = useTransform(scrollYProgress, [0.55, 0.85], [40, 0]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
 
   return (
-    <section ref={ref} className="relative h-[120vh] md:h-[140vh]">
+    <section ref={ref} className="relative h-[110vh] md:h-[120vh]">
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center md:justify-center overflow-hidden px-5 sm:px-6 pt-[14vh] md:pt-0 gap-6 md:gap-0">
         <AmbientBlobs density={6} />
 
         <motion.div
           className="relative z-10 text-center w-full"
-          style={{ opacity: statementOpacity, y: statementY, scale: statementScale, filter: statementFilter }}
+          style={{ opacity: statementOpacity, y: statementY, scale: statementScale }}
         >
           <h1
             className="font-serif font-normal text-espresso tracking-[-0.02em]"
