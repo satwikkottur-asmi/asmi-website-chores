@@ -131,10 +131,10 @@ export function Act2CallViz() {
           }}
         />
 
-        {/* Step label (top) — stacks of overlapping labels */}
+        {/* Step label (top) — pushed below the fixed nav */}
         <div
           className="absolute left-1/2 -translate-x-1/2 text-center z-30 pointer-events-none"
-          style={{ top: "6%" }}
+          style={{ top: "11%" }}
         >
           <StepLabel index={1} text="The ask" opacity={stepAskOpacity} />
           <StepLabel index={2} text="Asmi listens" opacity={stepListenOpacity} />
