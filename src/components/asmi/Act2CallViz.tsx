@@ -243,36 +243,41 @@ export function Act2CallViz() {
         {/* Sarah's speech bubble */}
         <AnimatePresence>
           {active === 0 && (
-            <motion.div
-              key="ask"
-              className="absolute left-1/2 px-6 w-full max-w-3xl z-20 pointer-events-none"
-              style={{ top: isMobile ? "20%" : "22%", transform: "translateX(-50%)" }}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+            <div
+              className="absolute left-0 right-0 z-20 pointer-events-none flex justify-center px-5"
+              style={{ top: isMobile ? "18%" : "22%" }}
             >
-              <div className="text-center">
-                <p
-                  className="label-mono mb-3"
-                  style={{ color: "var(--color-terracotta-deep)" }}
-                >
-                  Sarah · 9:03 AM
-                </p>
-                <p
-                  className="font-serif italic"
-                  style={{
-                    color: "var(--color-espresso-strong)",
-                    fontSize: isMobile ? "1.28rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
-                    lineHeight: isMobile ? 1.2 : 1.28,
-                    fontWeight: 400,
-                    textWrap: "balance",
-                  }}
-                >
-                  "Sink is leaking. Can you find a plumber today?"
-                </p>
-              </div>
-            </motion.div>
+              <motion.div
+                key="ask"
+                className="w-full max-w-3xl"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+              >
+                <div className="text-center">
+                  <p
+                    className="label-mono mb-3"
+                    style={{ color: "var(--color-terracotta-deep)" }}
+                  >
+                    Sarah · 9:03 AM
+                  </p>
+                  <p
+                    className="font-serif italic mx-auto"
+                    style={{
+                      color: "var(--color-espresso-strong)",
+                      fontSize: isMobile ? "1.5rem" : "clamp(1.7rem, 2.4vw, 2.3rem)",
+                      lineHeight: isMobile ? 1.25 : 1.28,
+                      fontWeight: 400,
+                      textWrap: "balance",
+                      maxWidth: isMobile ? "20rem" : undefined,
+                    }}
+                  >
+                    "Sink is leaking. Can you find a plumber today?"
+                  </p>
+                </div>
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>
 
