@@ -7,10 +7,16 @@ function Moment({
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const opacity = useTransform(scrollYProgress, [0.02, 0.18, 0.68, 0.84], [0, 1, 1, 0]);
+  const ambientOpacity = useTransform(scrollYProgress, [0.2, 0.32, 0.68, 0.84], [0, 1, 1, 0]);
   const y = useTransform(scrollYProgress, [0.02, 0.28], [28, 0]);
   return (
     <div ref={ref} className="h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">{ambient}</div>
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{ opacity: ambientOpacity }}
+      >
+        {ambient}
+      </motion.div>
       <motion.div className="relative text-center px-5 sm:px-6 max-w-3xl w-full" style={{ opacity, y }}>
         <p className="label-mono mb-5 sm:mb-6" style={{ color: "var(--color-stone-dim)" }}>0{index}</p>
         <h2
