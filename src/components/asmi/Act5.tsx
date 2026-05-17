@@ -83,11 +83,26 @@ export function Act5() {
     <section id="stories" className="relative">
       <OrganicDivider />
 
-      {/* 5A Stories */}
-      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
+      {/* 5A Stories — voicemail waveforms */}
+      <div className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto">
+        <motion.p
+          className="label-mono mb-5"
+          style={{ color: "var(--color-stone-dim)" }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+        >
+          Recent
+        </motion.p>
         <motion.h2
-          className="font-serif mb-20 md:mb-24"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          className="font-serif mb-20 md:mb-28"
+          style={{
+            color: "var(--color-espresso)",
+            fontSize: "clamp(2.8rem, 9vw, 5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+          }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -96,83 +111,9 @@ export function Act5() {
           This happened this week.
         </motion.h2>
 
-        <div className="flex flex-col gap-[100px] md:gap-[120px]">
+        <div className="flex flex-col gap-16 md:gap-24">
           {STORIES.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.9, delay: i * 0.1 }}
-              className="relative md:pl-8"
-              style={{ minHeight: 1 }}
-            >
-              {/* Ghost number - desktop only */}
-              <span
-                className="hidden md:block absolute font-serif pointer-events-none select-none"
-                style={{
-                  top: -40,
-                  left: -10,
-                  fontSize: 180,
-                  lineHeight: 1,
-                  color: "var(--color-espresso)",
-                  opacity: 0.035,
-                  fontWeight: 400,
-                  zIndex: 0,
-                }}
-                aria-hidden
-              >
-                {s.num}
-              </span>
-
-              {/* Left vertical accent line */}
-              <span
-                className="hidden md:block absolute"
-                style={{
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 2,
-                  background: s.accent,
-                  opacity: 0.55,
-                }}
-                aria-hidden
-              />
-
-              <div className="relative" style={{ zIndex: 1 }}>
-                <p className="label-mono mb-4" style={{ color: s.catColor }}>{s.cat}</p>
-
-                <div className="flex items-start gap-4 md:gap-6">
-                  <h3
-                    className="font-serif flex-1"
-                    style={{
-                      color: "var(--color-espresso)",
-                      fontSize: "clamp(26px, 6vw, 44px)",
-                      lineHeight: 1.15,
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {s.headline}
-                  </h3>
-                  <div className="mt-1">
-                    <AudioPlayButton color={s.accent} />
-                  </div>
-                </div>
-
-                <p
-                  className="mt-5 font-sans max-w-2xl"
-                  style={{ color: "#5C5349", fontSize: "clamp(16px, 4.2vw, 18px)", lineHeight: 1.6 }}
-                >
-                  {s.body}
-                </p>
-                <p
-                  className="mt-4 label-mono"
-                  style={{ color: s.accent, fontSize: 14, letterSpacing: "0.14em" }}
-                >
-                  {s.result}
-                </p>
-              </div>
-            </motion.div>
+            <VoicemailRow key={i} story={s} index={i} />
           ))}
         </div>
       </div>
