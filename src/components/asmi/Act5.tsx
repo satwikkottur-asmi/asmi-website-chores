@@ -369,3 +369,190 @@ function Ripples() {
     </div>
   );
 }
+
+// =============================================================
+// Voicemail waveform row (Act 5A)
+// =============================================================
+
+type Story = {
+  meta: string;
+  duration: string;
+  outcome: string;
+  accent: string;
+  seed: number;
+};
+
+// Seeded pseudo-random for stable, "real-looking" waveforms across renders
+function seededRand(seed: number, i: number) {
+  const x = Math.sin(seed * 9301 + i * 49297) * 233280;
+  return x - Math.floor(x);
+}
+
+function VoicemailRow({ story, index }: { story: Story; index: number }) {
+  const BARS = 96;
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0); // 0..1 playhead
+  const rafRef = useRef<number>(0);
+  const startRef = useRef<number>(0);
+
+  // Parse duration "m:ss" → seconds for the visual playback timer
+  const totalSec = (() => {
+    const [m, s] = story.duration.split(":").map(Number);
+    return (m || 0) * 60 + (s || 0);
+  })();
+
+  useEffect(() => {
+    if (!playing) {
+      cancelAnimationFrame(rafRef.current);
+      return;
+    }
+    startRef.current = performance.now() - progress * totalSec * 1000;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - startRef.current) / (totalSec * 1000));
+      setProgress(p);
+      if (p >= 1) {
+        setPlaying(false);
+        setProgress(0);
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [playing, totalSec]);
+
+  // Build bar heights once (seeded), 0.18..1.0
+  const heights = Array.from({ length: BARS }, (_, i) => {
+    const r1 = seededRand(story.seed, i);
+    const r2 = seededRand(story.seed + 1, i * 3);
+    // Slight envelope so it looks like speech, not noise
+    const env = 0.65 + 0.35 * Math.sin((i / BARS) * Math.PI);
+    return Math.max(0.14, Math.min(1, (r1 * 0.7 + r2 * 0.5) * env));
+  });
+
+  const playedCount = Math.floor(progress * BARS);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.8, delay: index * 0.08 }}
+    >
+      {/* Meta line */}
+      <p
+        className="label-mono mb-4"
+        style={{ color: "var(--color-stone-dim)", fontSize: "0.7rem" }}
+      >
+        {story.meta}
+      </p>
+
+      {/* Play button + waveform row */}
+      <button
+        type="button"
+        onClick={() => {
+          if (playing) {
+            setPlaying(false);
+          } else {
+            setProgress(0);
+            setPlaying(true);
+          }
+        }}
+        aria-label={playing ? "Pause recording" : "Play recording"}
+        className="group relative flex items-center gap-4 md:gap-6 w-full text-left"
+        style={{ WebkitTapHighlightColor: "transparent" }}
+      >
+        {/* Play / pause glyph */}
+        <span
+          className="shrink-0 inline-flex items-center justify-center rounded-full transition-transform"
+          style={{
+            width: 44,
+            height: 44,
+            border: `1.5px solid ${story.accent}`,
+            background: playing ? story.accent : "transparent",
+            transition: "background 0.3s ease, transform 0.3s ease",
+          }}
+        >
+          {playing ? (
+            <span className="flex gap-[3px]">
+              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
+              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
+            </span>
+          ) : (
+            <span
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: `11px solid ${story.accent}`,
+                borderTop: "7px solid transparent",
+                borderBottom: "7px solid transparent",
+                marginLeft: 3,
+              }}
+            />
+          )}
+        </span>
+
+        {/* Waveform */}
+        <span
+          className="relative flex-1 flex items-center"
+          style={{ height: 64, gap: 2 }}
+        >
+          <span className="flex items-center w-full justify-between" style={{ height: "100%" }}>
+            {heights.map((h, i) => {
+              const isPlayed = playing && i < playedCount;
+              const isHead = playing && i === playedCount;
+              return (
+                <span
+                  key={i}
+                  className="block rounded-full"
+                  style={{
+                    width: 2,
+                    height: `${h * 100}%`,
+                    background: isPlayed || isHead ? story.accent : "var(--color-stone-dim)",
+                    opacity: isPlayed ? 0.95 : isHead ? 1 : 0.42,
+                    transform: isHead ? "scaleY(1.15)" : "scaleY(1)",
+                    transition: "background 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+                    animation: !playing
+                      ? `wave-bar ${3 + (i % 7) * 0.15}s ease-in-out ${i * 0.012}s infinite`
+                      : undefined,
+                    transformOrigin: "center",
+                  }}
+                />
+              );
+            })}
+          </span>
+        </span>
+
+        {/* Duration */}
+        <span
+          className="font-mono shrink-0 tabular-nums"
+          style={{
+            color: playing ? story.accent : "var(--color-stone-dim)",
+            fontSize: 13,
+            letterSpacing: "0.04em",
+            minWidth: 42,
+            textAlign: "right",
+            transition: "color 0.3s ease",
+          }}
+        >
+          {story.duration}
+        </span>
+      </button>
+
+      {/* Outcome line */}
+      <p
+        className="mt-5 md:mt-6 font-serif italic"
+        style={{
+          color: "var(--color-espresso-strong)",
+          fontSize: "clamp(1.15rem, 2.4vw, 1.5rem)",
+          lineHeight: 1.4,
+          letterSpacing: "-0.005em",
+          paddingLeft: 60, // align with waveform start (button width + gap)
+          maxWidth: "44rem",
+        }}
+      >
+        {story.outcome}
+      </p>
+    </motion.div>
+  );
+}
