@@ -360,18 +360,18 @@ function PlumberRow({
   name,
   note,
   isConfirmed,
-  active,
+  activeKey,
 }: {
   index: number;
   name: string;
   note: string;
   isConfirmed: boolean;
-  active: number;
+  activeKey: StepKey;
 }) {
   const winner = index === 0;
   const [tapped, setTapped] = useState(false);
-  // Stagger row reveal during the "dial" step
-  const delay = active === 2 ? index * 0.14 : 0;
+  // Faster mobile stagger
+  const delay = activeKey === "dial" ? index * 0.08 : 0;
 
   // Color/state logic
   const dim = isConfirmed && !winner;
