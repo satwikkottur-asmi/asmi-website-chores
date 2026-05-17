@@ -118,9 +118,9 @@ export function Act2CallViz() {
           }}
         />
         {isMobile ? (
-          <MobileScene active={active} />
+          <MobileScene active={active} activeKey={activeKey} steps={steps} />
         ) : (
-          <DesktopScene active={active} />
+          <DesktopScene active={active} activeKey={activeKey} steps={steps} />
         )}
       </div>
     </section>
@@ -131,8 +131,16 @@ export function Act2CallViz() {
 // Shared step header
 // =============================================================
 
-function StepHeader({ active, top }: { active: number; top: string }) {
-  const activeKey: StepKey = STEPS[active].key;
+function StepHeader({
+  active,
+  steps,
+  top,
+}: {
+  active: number;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+  top: string;
+}) {
+  const step = steps[active] ?? steps[0];
   return (
     <div
       className="absolute left-1/2 -translate-x-1/2 z-30 text-center pointer-events-none w-full px-4"
@@ -140,7 +148,7 @@ function StepHeader({ active, top }: { active: number; top: string }) {
     >
       <AnimatePresence mode="wait">
         <motion.div
-          key={activeKey}
+          key={step.key}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -150,24 +158,24 @@ function StepHeader({ active, top }: { active: number; top: string }) {
           <span
             className="label-mono inline-flex items-center justify-center rounded-full"
             style={{
-              width: 28,
-              height: 28,
+              width: 26,
+              height: 26,
               background: "var(--color-terracotta)",
               color: "var(--color-cream)",
-              fontSize: 12,
+              fontSize: 11,
             }}
           >
             {active + 1}
           </span>
           <span
-            className="label-mono"
+            className="font-serif italic"
             style={{
               color: "var(--color-espresso-strong)",
-              fontSize: "0.9rem",
-              letterSpacing: "0.2em",
+              fontSize: "clamp(1.05rem, 2.2vw, 1.4rem)",
+              letterSpacing: "-0.01em",
             }}
           >
-            {STEPS[active].label}
+            {step.label}
           </span>
         </motion.div>
       </AnimatePresence>
