@@ -33,16 +33,22 @@ const MOBILE_PLUMBERS = [
   { name: "Joe's Plumbing", note: "no answer" },
 ];
 
-const STEPS = [
-  { key: "ask", label: "The ask" },
-  { key: "listen", label: "Asmi listens" },
-  { key: "dial", label: "Asmi calls 5 plumbers" },
-  { key: "confirm", label: "One confirms" },
+const DESKTOP_STEPS = [
+  { key: "ask", label: "Morning, 9:03." },
+  { key: "listen", label: "Asmi picks it up." },
+  { key: "dial", label: "Asmi works the phones." },
+  { key: "confirm", label: "Done by 9:11." },
 ] as const;
-type StepKey = typeof STEPS[number]["key"];
+const MOBILE_STEPS = [
+  { key: "ask", label: "Morning, 9:03." },
+  { key: "dial", label: "Asmi works the phones." },
+  { key: "confirm", label: "Done by 9:11." },
+] as const;
+type StepKey = "ask" | "listen" | "dial" | "confirm";
 
 export function Act2CallViz() {
   const isMobile = useIsMobile();
+  const steps = isMobile ? MOBILE_STEPS : DESKTOP_STEPS;
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -53,23 +59,30 @@ export function Act2CallViz() {
     const pin = pinRef.current;
     if (!section || !pin) return;
 
+    const stepCount = steps.length;
+    const pinViewports = isMobile ? 2 : stepCount;
+
     const ctx = gsap.context(() => {
       ScrollTrigger.config({ ignoreMobileResize: true });
 
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => "+=" + window.innerHeight * (STEPS.length - 0.4),
+        end: () => "+=" + window.innerHeight * pinViewports,
         pin: pin,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: isMobile ? 0.3 : 0.5,
         anticipatePin: 1,
         onUpdate: (self) => {
+          const p = self.progress;
           const idx = Math.min(
-            STEPS.length - 1,
-            Math.max(0, Math.round(self.progress * (STEPS.length - 1) + 0.0001))
+            stepCount - 1,
+            Math.max(0, Math.round(p * (stepCount - 1) + 0.0001))
           );
           setActive((prev) => (prev === idx ? prev : idx));
+          // Fade the entire pinned stage over the last 8% so it doesn't collide with Act 3
+          const fade = p > 0.92 ? Math.max(0, 1 - (p - 0.92) / 0.08) : 1;
+          pin.style.opacity = String(fade);
         },
       });
 
@@ -79,10 +92,16 @@ export function Act2CallViz() {
     }, section);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile, steps.length]);
+
+  const activeKey = (steps[active]?.key ?? "ask") as StepKey;
 
   return (
-    <section ref={sectionRef} className="relative" style={{ height: `${STEPS.length * 100}svh` }}>
+    <section
+      ref={sectionRef}
+      className="relative"
+      style={{ height: `${(isMobile ? 2 : steps.length) * 100}svh` }}
+    >
       <div
         ref={pinRef}
         className="relative h-[100svh] w-full overflow-hidden"
