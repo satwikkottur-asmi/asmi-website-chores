@@ -1,35 +1,28 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { OrganicDivider } from "./Atmosphere";
-import { AudioPlayButton } from "./AudioPlayButton";
 
 const STORIES = [
   {
-    num: "01",
-    cat: "HEALTHCARE",
-    catColor: "#C25B3F",
-    accent: "#C25B3F",
-    headline: "Three clinics called. Opening found. Insurance pre-authorized.",
-    body: "Needed a specialist. Asmi called three clinics, compared wait times, booked the earliest opening, then called insurance to pre-authorize. Done before breakfast.",
-    result: "→ CONFIRMED: DR. CHEN, TOMORROW 10AM.",
+    meta: "HEALTHCARE · TUE 7:14 AM",
+    duration: "0:47",
+    outcome: "dr chen, derm. tomorrow 10am. insurance pre-auth'd.",
+    accent: "var(--color-terracotta)",
+    seed: 17,
   },
   {
-    num: "02",
-    cat: "HOME REPAIR",
-    catColor: "#8BA888",
-    accent: "#8BA888",
-    headline: "Five contractors called. Quotes compared. Best one booked.",
-    body: "AC broke in July. Asmi called five HVAC contractors, compared availability and pricing, and confirmed the best option for Saturday morning.",
-    result: "→ BOOKED: SATURDAY 9AM, $150 DIAGNOSTIC.",
+    meta: "HOME REPAIR · WED 6:48 AM",
+    duration: "1:12",
+    outcome: "five hvac quotes. saturday 9am. $150 diagnostic.",
+    accent: "var(--color-sage-strong)",
+    seed: 41,
   },
   {
-    num: "03",
-    cat: "FAMILY CARE",
-    catColor: "#D4A574",
-    accent: "#D4A574",
-    headline: "Twice-daily check-ins. Italian. SF to Rome.",
-    body: "Asmi calls his mother in Rome every morning and evening. In Italian. Tracks medications. Reorders when needed.",
-    result: "→ THREE YEARS. NEVER MISSED A CALL.",
+    meta: "FAMILY CARE · DAILY · IT-IT",
+    duration: "3:20",
+    outcome: "mom in rome. twice a day. three years. never missed.",
+    accent: "var(--color-clay)",
+    seed: 73,
   },
 ];
 
