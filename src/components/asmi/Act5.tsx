@@ -313,13 +313,14 @@ function MobileLanguageCloud() {
               key={l.name}
               role="button"
               tabIndex={0}
-              onClick={() =>
+              onClick={() => {
+                lastTapRef.current = Date.now();
                 setTapped((prev) => {
                   const next = new Set(prev);
                   next.has(i) ? next.delete(i) : next.add(i);
                   return next;
-                })
-              }
+                });
+              }}
               className="font-serif inline-block select-none"
               style={{
                 fontSize: sizeMap[l.size],
