@@ -187,18 +187,27 @@ function StepHeader({
 // MOBILE — vertical call-log layout, tap interactive
 // =============================================================
 
-function MobileScene({ active }: { active: number }) {
-  const showOrb = active >= 1;
-  const showList = active >= 2;
-  const isConfirmed = active >= 3;
+function MobileScene({
+  active,
+  activeKey,
+  steps,
+}: {
+  active: number;
+  activeKey: StepKey;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+}) {
+  // Mobile chapters: ask → dial → confirm (listens collapsed into dial via orb pulse)
+  const showOrb = activeKey !== "ask";
+  const showList = activeKey === "dial" || activeKey === "confirm";
+  const isConfirmed = activeKey === "confirm";
 
   return (
     <>
-      <StepHeader active={active} top="5%" />
+      <StepHeader active={active} steps={steps} top="5%" />
 
       {/* Sarah's ask */}
       <AnimatePresence>
-        {active === 0 && (
+        {activeKey === "ask" && (
           <motion.div
             key="ask"
             className="absolute left-0 right-0 z-20 pointer-events-none flex justify-center px-5"
@@ -230,23 +239,19 @@ function MobileScene({ active }: { active: number }) {
         )}
       </AnimatePresence>
 
-      {/* Orb — top center for mobile, smaller */}
+      {/* Orb — top center for mobile */}
       <AnimatePresence>
         {showOrb && (
           <motion.div
             key="orb-m"
             className="absolute left-1/2 -translate-x-1/2 z-10"
-            style={{ top: active === 1 ? "32%" : "16%" }}
+            style={{ top: "16%" }}
             initial={{ opacity: 0, scale: 0.85 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              top: active === 1 ? "32%" : "16%",
-            }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
           >
-            <MobileOrb size={active === 1 ? 140 : 96} confirmed={isConfirmed} />
+            <MobileOrb size={104} confirmed={isConfirmed} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -271,7 +276,7 @@ function MobileScene({ active }: { active: number }) {
                   name={p.name}
                   note={p.note}
                   isConfirmed={isConfirmed}
-                  active={active}
+                  activeKey={activeKey}
                 />
               ))}
             </div>
