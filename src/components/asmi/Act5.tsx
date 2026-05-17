@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OrganicDivider } from "./Atmosphere";
 import { AudioPlayButton } from "./AudioPlayButton";
 
