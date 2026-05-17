@@ -30,6 +30,7 @@ function Index() {
       <Nav />
       <Act1Opening sectionRef={heroRef} />
       <Act2CallViz />
+      <div aria-hidden style={{ height: "40svh" }} />
       <Act3ThreeMoments />
       <OrganicDivider />
       <Act4Cloud />

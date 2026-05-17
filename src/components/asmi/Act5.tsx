@@ -1,35 +1,28 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { OrganicDivider } from "./Atmosphere";
-import { AudioPlayButton } from "./AudioPlayButton";
 
 const STORIES = [
   {
-    num: "01",
-    cat: "HEALTHCARE",
-    catColor: "#C25B3F",
-    accent: "#C25B3F",
-    headline: "Three clinics called. Opening found. Insurance pre-authorized.",
-    body: "Needed a specialist. Asmi called three clinics, compared wait times, booked the earliest opening, then called insurance to pre-authorize. Done before breakfast.",
-    result: "→ CONFIRMED: DR. CHEN, TOMORROW 10AM.",
+    meta: "HEALTHCARE · TUE 7:14 AM",
+    duration: "0:47",
+    outcome: "dr chen, derm. tomorrow 10am. insurance pre-auth'd.",
+    accent: "var(--color-terracotta)",
+    seed: 17,
   },
   {
-    num: "02",
-    cat: "HOME REPAIR",
-    catColor: "#8BA888",
-    accent: "#8BA888",
-    headline: "Five contractors called. Quotes compared. Best one booked.",
-    body: "AC broke in July. Asmi called five HVAC contractors, compared availability and pricing, and confirmed the best option for Saturday morning.",
-    result: "→ BOOKED: SATURDAY 9AM, $150 DIAGNOSTIC.",
+    meta: "HOME REPAIR · WED 6:48 AM",
+    duration: "1:12",
+    outcome: "five hvac quotes. saturday 9am. $150 diagnostic.",
+    accent: "var(--color-sage-strong)",
+    seed: 41,
   },
   {
-    num: "03",
-    cat: "FAMILY CARE",
-    catColor: "#D4A574",
-    accent: "#D4A574",
-    headline: "Twice-daily check-ins. Italian. SF to Rome.",
-    body: "Asmi calls his mother in Rome every morning and evening. In Italian. Tracks medications. Reorders when needed.",
-    result: "→ THREE YEARS. NEVER MISSED A CALL.",
+    meta: "FAMILY CARE · DAILY · IT-IT",
+    duration: "3:20",
+    outcome: "mom in rome. twice a day. three years. never missed.",
+    accent: "var(--color-clay)",
+    seed: 73,
   },
 ];
 
@@ -90,11 +83,26 @@ export function Act5() {
     <section id="stories" className="relative">
       <OrganicDivider />
 
-      {/* 5A Stories */}
-      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-4xl mx-auto">
+      {/* 5A Stories — voicemail waveforms */}
+      <div className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto">
+        <motion.p
+          className="label-mono mb-5"
+          style={{ color: "var(--color-stone-dim)" }}
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+        >
+          Recent
+        </motion.p>
         <motion.h2
-          className="font-serif mb-20 md:mb-24"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          className="font-serif mb-20 md:mb-28"
+          style={{
+            color: "var(--color-espresso)",
+            fontSize: "clamp(2.8rem, 9vw, 5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+          }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -103,83 +111,9 @@ export function Act5() {
           This happened this week.
         </motion.h2>
 
-        <div className="flex flex-col gap-[100px] md:gap-[120px]">
+        <div className="flex flex-col gap-16 md:gap-24">
           {STORIES.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.9, delay: i * 0.1 }}
-              className="relative md:pl-8"
-              style={{ minHeight: 1 }}
-            >
-              {/* Ghost number - desktop only */}
-              <span
-                className="hidden md:block absolute font-serif pointer-events-none select-none"
-                style={{
-                  top: -40,
-                  left: -10,
-                  fontSize: 180,
-                  lineHeight: 1,
-                  color: "var(--color-espresso)",
-                  opacity: 0.035,
-                  fontWeight: 400,
-                  zIndex: 0,
-                }}
-                aria-hidden
-              >
-                {s.num}
-              </span>
-
-              {/* Left vertical accent line */}
-              <span
-                className="hidden md:block absolute"
-                style={{
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 2,
-                  background: s.accent,
-                  opacity: 0.55,
-                }}
-                aria-hidden
-              />
-
-              <div className="relative" style={{ zIndex: 1 }}>
-                <p className="label-mono mb-4" style={{ color: s.catColor }}>{s.cat}</p>
-
-                <div className="flex items-start gap-4 md:gap-6">
-                  <h3
-                    className="font-serif flex-1"
-                    style={{
-                      color: "var(--color-espresso)",
-                      fontSize: "clamp(26px, 6vw, 44px)",
-                      lineHeight: 1.15,
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {s.headline}
-                  </h3>
-                  <div className="mt-1">
-                    <AudioPlayButton color={s.accent} />
-                  </div>
-                </div>
-
-                <p
-                  className="mt-5 font-sans max-w-2xl"
-                  style={{ color: "#5C5349", fontSize: "clamp(16px, 4.2vw, 18px)", lineHeight: 1.6 }}
-                >
-                  {s.body}
-                </p>
-                <p
-                  className="mt-4 label-mono"
-                  style={{ color: s.accent, fontSize: 14, letterSpacing: "0.14em" }}
-                >
-                  {s.result}
-                </p>
-              </div>
-            </motion.div>
+            <VoicemailRow key={i} story={s} index={i} />
           ))}
         </div>
       </div>
@@ -433,5 +367,192 @@ function Ripples() {
       ))}
       <span className="block rounded-full" style={{ width: 8, height: 8, background: "var(--color-terracotta)" }} />
     </div>
+  );
+}
+
+// =============================================================
+// Voicemail waveform row (Act 5A)
+// =============================================================
+
+type Story = {
+  meta: string;
+  duration: string;
+  outcome: string;
+  accent: string;
+  seed: number;
+};
+
+// Seeded pseudo-random for stable, "real-looking" waveforms across renders
+function seededRand(seed: number, i: number) {
+  const x = Math.sin(seed * 9301 + i * 49297) * 233280;
+  return x - Math.floor(x);
+}
+
+function VoicemailRow({ story, index }: { story: Story; index: number }) {
+  const BARS = 96;
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0); // 0..1 playhead
+  const rafRef = useRef<number>(0);
+  const startRef = useRef<number>(0);
+
+  // Parse duration "m:ss" → seconds for the visual playback timer
+  const totalSec = (() => {
+    const [m, s] = story.duration.split(":").map(Number);
+    return (m || 0) * 60 + (s || 0);
+  })();
+
+  useEffect(() => {
+    if (!playing) {
+      cancelAnimationFrame(rafRef.current);
+      return;
+    }
+    startRef.current = performance.now() - progress * totalSec * 1000;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - startRef.current) / (totalSec * 1000));
+      setProgress(p);
+      if (p >= 1) {
+        setPlaying(false);
+        setProgress(0);
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [playing, totalSec]);
+
+  // Build bar heights once (seeded), 0.18..1.0
+  const heights = Array.from({ length: BARS }, (_, i) => {
+    const r1 = seededRand(story.seed, i);
+    const r2 = seededRand(story.seed + 1, i * 3);
+    // Slight envelope so it looks like speech, not noise
+    const env = 0.65 + 0.35 * Math.sin((i / BARS) * Math.PI);
+    return Math.max(0.14, Math.min(1, (r1 * 0.7 + r2 * 0.5) * env));
+  });
+
+  const playedCount = Math.floor(progress * BARS);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.8, delay: index * 0.08 }}
+    >
+      {/* Meta line */}
+      <p
+        className="label-mono mb-4"
+        style={{ color: "var(--color-stone-dim)", fontSize: "0.7rem" }}
+      >
+        {story.meta}
+      </p>
+
+      {/* Play button + waveform row */}
+      <button
+        type="button"
+        onClick={() => {
+          if (playing) {
+            setPlaying(false);
+          } else {
+            setProgress(0);
+            setPlaying(true);
+          }
+        }}
+        aria-label={playing ? "Pause recording" : "Play recording"}
+        className="group relative flex items-center gap-4 md:gap-6 w-full text-left"
+        style={{ WebkitTapHighlightColor: "transparent" }}
+      >
+        {/* Play / pause glyph */}
+        <span
+          className="shrink-0 inline-flex items-center justify-center rounded-full transition-transform"
+          style={{
+            width: 44,
+            height: 44,
+            border: `1.5px solid ${story.accent}`,
+            background: playing ? story.accent : "transparent",
+            transition: "background 0.3s ease, transform 0.3s ease",
+          }}
+        >
+          {playing ? (
+            <span className="flex gap-[3px]">
+              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
+              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
+            </span>
+          ) : (
+            <span
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: `11px solid ${story.accent}`,
+                borderTop: "7px solid transparent",
+                borderBottom: "7px solid transparent",
+                marginLeft: 3,
+              }}
+            />
+          )}
+        </span>
+
+        {/* Waveform */}
+        <span
+          className="relative flex-1 flex items-center"
+          style={{ height: 64, gap: 2 }}
+        >
+          <span className="flex items-center w-full justify-between" style={{ height: "100%" }}>
+            {heights.map((h, i) => {
+              const isPlayed = playing && i < playedCount;
+              const isHead = playing && i === playedCount;
+              return (
+                <span
+                  key={i}
+                  className="block rounded-full"
+                  style={{
+                    width: 2,
+                    height: `${h * 100}%`,
+                    background: isPlayed || isHead ? story.accent : "var(--color-stone-dim)",
+                    opacity: isPlayed ? 0.95 : isHead ? 1 : 0.42,
+                    transform: isHead ? "scaleY(1.15)" : "scaleY(1)",
+                    transition: "background 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
+                    animation: !playing
+                      ? `wave-bar ${3 + (i % 7) * 0.15}s ease-in-out ${i * 0.012}s infinite`
+                      : undefined,
+                    transformOrigin: "center",
+                  }}
+                />
+              );
+            })}
+          </span>
+        </span>
+
+        {/* Duration */}
+        <span
+          className="font-mono shrink-0 tabular-nums"
+          style={{
+            color: playing ? story.accent : "var(--color-stone-dim)",
+            fontSize: 13,
+            letterSpacing: "0.04em",
+            minWidth: 42,
+            textAlign: "right",
+            transition: "color 0.3s ease",
+          }}
+        >
+          {story.duration}
+        </span>
+      </button>
+
+      {/* Outcome line */}
+      <p
+        className="mt-5 md:mt-6 font-serif italic"
+        style={{
+          color: "var(--color-espresso-strong)",
+          fontSize: "clamp(1.15rem, 2.4vw, 1.5rem)",
+          lineHeight: 1.4,
+          letterSpacing: "-0.005em",
+          paddingLeft: 60, // align with waveform start (button width + gap)
+          maxWidth: "44rem",
+        }}
+      >
+        {story.outcome}
+      </p>
+    </motion.div>
   );
 }

@@ -33,16 +33,22 @@ const MOBILE_PLUMBERS = [
   { name: "Joe's Plumbing", note: "no answer" },
 ];
 
-const STEPS = [
-  { key: "ask", label: "The ask" },
-  { key: "listen", label: "Asmi listens" },
-  { key: "dial", label: "Asmi calls 5 plumbers" },
-  { key: "confirm", label: "One confirms" },
+const DESKTOP_STEPS = [
+  { key: "ask", label: "Morning, 9:03." },
+  { key: "listen", label: "Asmi picks it up." },
+  { key: "dial", label: "Asmi works the phones." },
+  { key: "confirm", label: "Done by 9:11." },
 ] as const;
-type StepKey = typeof STEPS[number]["key"];
+const MOBILE_STEPS = [
+  { key: "ask", label: "Morning, 9:03." },
+  { key: "dial", label: "Asmi works the phones." },
+  { key: "confirm", label: "Done by 9:11." },
+] as const;
+type StepKey = "ask" | "listen" | "dial" | "confirm";
 
 export function Act2CallViz() {
   const isMobile = useIsMobile();
+  const steps = isMobile ? MOBILE_STEPS : DESKTOP_STEPS;
   const sectionRef = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -53,23 +59,30 @@ export function Act2CallViz() {
     const pin = pinRef.current;
     if (!section || !pin) return;
 
+    const stepCount = steps.length;
+    const pinViewports = isMobile ? 2 : stepCount;
+
     const ctx = gsap.context(() => {
       ScrollTrigger.config({ ignoreMobileResize: true });
 
       const trigger = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => "+=" + window.innerHeight * (STEPS.length - 0.4),
+        end: () => "+=" + window.innerHeight * pinViewports,
         pin: pin,
         pinSpacing: true,
-        scrub: 0.5,
+        scrub: isMobile ? 0.3 : 0.5,
         anticipatePin: 1,
         onUpdate: (self) => {
+          const p = self.progress;
           const idx = Math.min(
-            STEPS.length - 1,
-            Math.max(0, Math.round(self.progress * (STEPS.length - 1) + 0.0001))
+            stepCount - 1,
+            Math.max(0, Math.round(p * (stepCount - 1) + 0.0001))
           );
           setActive((prev) => (prev === idx ? prev : idx));
+          // Fade the entire pinned stage over the last 8% so it doesn't collide with Act 3
+          const fade = p > 0.92 ? Math.max(0, 1 - (p - 0.92) / 0.08) : 1;
+          pin.style.opacity = String(fade);
         },
       });
 
@@ -79,10 +92,16 @@ export function Act2CallViz() {
     }, section);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile, steps.length]);
+
+  const activeKey = (steps[active]?.key ?? "ask") as StepKey;
 
   return (
-    <section ref={sectionRef} className="relative" style={{ height: `${STEPS.length * 100}svh` }}>
+    <section
+      ref={sectionRef}
+      className="relative"
+      style={{ height: `${(isMobile ? 2 : steps.length) * 100}svh` }}
+    >
       <div
         ref={pinRef}
         className="relative h-[100svh] w-full overflow-hidden"
@@ -99,9 +118,9 @@ export function Act2CallViz() {
           }}
         />
         {isMobile ? (
-          <MobileScene active={active} />
+          <MobileScene active={active} activeKey={activeKey} steps={steps} />
         ) : (
-          <DesktopScene active={active} />
+          <DesktopScene active={active} activeKey={activeKey} steps={steps} />
         )}
       </div>
     </section>
@@ -112,8 +131,16 @@ export function Act2CallViz() {
 // Shared step header
 // =============================================================
 
-function StepHeader({ active, top }: { active: number; top: string }) {
-  const activeKey: StepKey = STEPS[active].key;
+function StepHeader({
+  active,
+  steps,
+  top,
+}: {
+  active: number;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+  top: string;
+}) {
+  const step = steps[active] ?? steps[0];
   return (
     <div
       className="absolute left-1/2 -translate-x-1/2 z-30 text-center pointer-events-none w-full px-4"
@@ -121,7 +148,7 @@ function StepHeader({ active, top }: { active: number; top: string }) {
     >
       <AnimatePresence mode="wait">
         <motion.div
-          key={activeKey}
+          key={step.key}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -131,24 +158,24 @@ function StepHeader({ active, top }: { active: number; top: string }) {
           <span
             className="label-mono inline-flex items-center justify-center rounded-full"
             style={{
-              width: 28,
-              height: 28,
+              width: 26,
+              height: 26,
               background: "var(--color-terracotta)",
               color: "var(--color-cream)",
-              fontSize: 12,
+              fontSize: 11,
             }}
           >
             {active + 1}
           </span>
           <span
-            className="label-mono"
+            className="font-serif italic"
             style={{
               color: "var(--color-espresso-strong)",
-              fontSize: "0.9rem",
-              letterSpacing: "0.2em",
+              fontSize: "clamp(1.05rem, 2.2vw, 1.4rem)",
+              letterSpacing: "-0.01em",
             }}
           >
-            {STEPS[active].label}
+            {step.label}
           </span>
         </motion.div>
       </AnimatePresence>
@@ -160,18 +187,27 @@ function StepHeader({ active, top }: { active: number; top: string }) {
 // MOBILE — vertical call-log layout, tap interactive
 // =============================================================
 
-function MobileScene({ active }: { active: number }) {
-  const showOrb = active >= 1;
-  const showList = active >= 2;
-  const isConfirmed = active >= 3;
+function MobileScene({
+  active,
+  activeKey,
+  steps,
+}: {
+  active: number;
+  activeKey: StepKey;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+}) {
+  // Mobile chapters: ask → dial → confirm (listens collapsed into dial via orb pulse)
+  const showOrb = activeKey !== "ask";
+  const showList = activeKey === "dial" || activeKey === "confirm";
+  const isConfirmed = activeKey === "confirm";
 
   return (
     <>
-      <StepHeader active={active} top="5%" />
+      <StepHeader active={active} steps={steps} top="5%" />
 
       {/* Sarah's ask */}
       <AnimatePresence>
-        {active === 0 && (
+        {activeKey === "ask" && (
           <motion.div
             key="ask"
             className="absolute left-0 right-0 z-20 pointer-events-none flex justify-center px-5"
@@ -203,23 +239,19 @@ function MobileScene({ active }: { active: number }) {
         )}
       </AnimatePresence>
 
-      {/* Orb — top center for mobile, smaller */}
+      {/* Orb — top center for mobile */}
       <AnimatePresence>
         {showOrb && (
           <motion.div
             key="orb-m"
             className="absolute left-1/2 -translate-x-1/2 z-10"
-            style={{ top: active === 1 ? "32%" : "16%" }}
+            style={{ top: "16%" }}
             initial={{ opacity: 0, scale: 0.85 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              top: active === 1 ? "32%" : "16%",
-            }}
+            animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
           >
-            <MobileOrb size={active === 1 ? 140 : 96} confirmed={isConfirmed} />
+            <MobileOrb size={104} confirmed={isConfirmed} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -244,7 +276,7 @@ function MobileScene({ active }: { active: number }) {
                   name={p.name}
                   note={p.note}
                   isConfirmed={isConfirmed}
-                  active={active}
+                  activeKey={activeKey}
                 />
               ))}
             </div>
@@ -328,18 +360,18 @@ function PlumberRow({
   name,
   note,
   isConfirmed,
-  active,
+  activeKey,
 }: {
   index: number;
   name: string;
   note: string;
   isConfirmed: boolean;
-  active: number;
+  activeKey: StepKey;
 }) {
   const winner = index === 0;
   const [tapped, setTapped] = useState(false);
-  // Stagger row reveal during the "dial" step
-  const delay = active === 2 ? index * 0.14 : 0;
+  // Faster mobile stagger
+  const delay = activeKey === "dial" ? index * 0.08 : 0;
 
   // Color/state logic
   const dim = isConfirmed && !winner;
@@ -387,13 +419,13 @@ function PlumberRow({
           className="absolute inset-0 rounded-full"
           style={{ background: dotColor, transition: "background 0.5s ease" }}
           animate={
-            !isConfirmed && active === 2
+            activeKey === "dial"
               ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }
               : { scale: 1, opacity: 1 }
           }
           transition={{
             duration: 1.2,
-            repeat: !isConfirmed && active === 2 ? Infinity : 0,
+            repeat: activeKey === "dial" ? Infinity : 0,
             ease: "easeInOut",
             delay: index * 0.18,
           }}
@@ -472,7 +504,15 @@ function PlumberRow({
 // DESKTOP — radial fan (refined)
 // =============================================================
 
-function DesktopScene({ active }: { active: number }) {
+function DesktopScene({
+  active,
+  activeKey,
+  steps,
+}: {
+  active: number;
+  activeKey: StepKey;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -493,9 +533,9 @@ function DesktopScene({ active }: { active: number }) {
     };
   }, []);
 
-  const showOrb = active >= 1;
-  const showBranches = active >= 2;
-  const isConfirmed = active >= 3;
+  const showOrb = activeKey !== "ask";
+  const showBranches = activeKey === "dial" || activeKey === "confirm";
+  const isConfirmed = activeKey === "confirm";
 
   const cx = size.w / 2;
   const cy = size.h / 2;
@@ -520,7 +560,7 @@ function DesktopScene({ active }: { active: number }) {
 
   return (
     <div ref={stageRef} className="absolute inset-0">
-      <StepHeader active={active} top="5.5%" />
+      <StepHeader active={active} steps={steps} top="5.5%" />
 
       <AnimatePresence>
         {active === 0 && (
