@@ -1,80 +1,110 @@
-# Fix plan: replace the fragile sticky scene with a step-based pinned sequence
+# Act 2 rewrite: GSAP ScrollTrigger + mobile-first density & interactivity
 
 ## Goal
 
-Rebuild the call animation so it feels deliberate and readable on desktop and mobile: one scroll beat reveals one piece of information, the scene stays visually locked while the sequence plays, and there is no dead space before or after it.
+Make the "Asmi calls 5 plumbers" scene feel deliberate, premium, and rock-solid on mobile. Replace the fragile sticky+IntersectionObserver setup with GSAP ScrollTrigger pinning, cut mobile density, and add real touch interactivity so the scene feels alive — not just a scrubbed cutscene.
 
-## Recommended approach
+## 1. Swap sticky + IO for GSAP ScrollTrigger
 
-Replace the current single tall sticky section plus manual progress math with a chapter-based scrollytelling scene:
+Replace the current `position: sticky` stage + invisible step markers + IntersectionObserver with a single pinned section driven by GSAP ScrollTrigger.
 
-- A dedicated scene shell controls when the call stage is active.
-- Four or five full-height step markers drive the sequence.
-- The visualization stays fixed only while those markers are being traversed.
-- Each step maps to a discrete state instead of a fragile continuous progress band.
+- One `<section>` of known height (`steps * 100svh + tail`).
+- `ScrollTrigger.create({ trigger, start: "top top", end: "+=N", pin: true, scrub: 0.6 })`.
+- A GSAP timeline maps scroll progress → discrete chapter index (0–4) via `snap` or progress thresholds.
+- Chapter state still drives Framer Motion enter/exit for the inner elements (orb, lines, labels, Sarah's quote) — GSAP only owns pinning + progress.
+- Use `ScrollTrigger.config({ ignoreMobileResize: true })` so iOS Safari URL-bar collapse doesn't re-trigger pin math.
+- Refresh on resize via `ScrollTrigger.refresh()` debounced.
 
-This is more reliable than the current setup because it avoids scroll listener timing drift, reduces mobile viewport issues, and makes the release point exact.
+Why this fixes drift: pinning is deterministic, end is an absolute pixel distance, and the dynamic viewport toolbar no longer shifts the active band.
 
-## 1. Rebuild Act 2 as step chapters instead of one progress scrub
+## 2. Cut mobile density
 
-In `src/components/asmi/Act2CallViz.tsx`:
+5 endpoints around a 124px orb in a 360px viewport will always feel cramped. On mobile:
 
-- Split the narrative into explicit chapters:
-  1. Sarah asks
-  2. Asmi listens
-  3. Asmi calls 5 plumbers
-  4. One confirms
-  5. Result holds, then release
-- Create one viewport-height marker per chapter.
-- Drive the visible state from the active chapter using `IntersectionObserver` or per-step in-view tracking rather than raw `scrollY` math.
-- Keep small within-step easing for polish, but make the sequence fundamentally state-based.
+- Show **3 plumbers**, not 5 (Bay Area, Rapid Rooter, Mr. Fix-It). Copy still says "Asmi calls 5 plumbers" — the visual is representative, not literal. Alternative: keep 5 but arrange as a vertical list instead of radial fan.
+- Recommendation: vertical stacked list on mobile (each plumber a row with dot + name + status), radial fan stays for desktop. Reads like a live call log, scales naturally, no overlap math needed.
+- Increase orb to ~140px on mobile so it remains the focal point.
 
-## 2. Use a pinned scene shell that does not depend on the current sticky behavior
+## 3. Bump mobile typography
 
-In `Act2CallViz.tsx`:
+- Step label: 0.78rem → 0.9rem, tracking 0.18em.
+- Endpoint / row labels: 0.7rem → 0.88rem.
+- Sarah's quote: keep 1.5rem but tighten line-height to 1.2.
+- Confirm pill: 10px → 12px.
 
-- Replace the current “one section with one sticky child” setup with a scene wrapper that:
-  - becomes fixed to the viewport while Act 2 is active
-  - releases cleanly when the last step completes
-- Use top and bottom sentinels so the pin/unpin timing is explicit.
-- Use `100svh`/`100dvh`-safe sizing for mobile browsers.
-- Ensure no ancestor of the pinned layer applies overflow or transforms that can break pinning.
+## 4. Real touch interactivity
 
-## 3. Make every scroll beat reveal a single clear event
+Currently zero interaction during the scene. Add:
 
-Adjust the animation language so the sequence is easy to consume:
+- **Tap a plumber row/dot** → that row pulses, plays a short "ring" wave, shows a mini status ("ringing…"). Doesn't change the scripted outcome (Mike still wins), just makes the scene feel responsive.
+- **Orb tap** → ripple pulse + subtle haptic-feel scale.
+- **Confirm pill tap** → bounce + checkmark redraw.
+- All taps use `whileTap` + a tiny audio-less "tick" animation. `WebkitTapHighlightColor: transparent` everywhere.
 
-- Step 1: Sarah’s request appears first, with strong contrast.
-- Step 2: Asmi orb and “listening” state appear.
-- Step 3: Plumber calls fan out one by one with clearer line and label contrast.
-- Step 4: The confirmed plumber turns into the highlighted green result state.
-- Step 5: Hold the confirmed state briefly before the page continues.
+## 5. Performance pass
 
-No step should advance to the next beat until the current one has had readable on-screen time.
+- Pause all 5 traveling waves once `isConfirmed` (already partially done) and only render the winner wave.
+- During `dial`, cap concurrent waves to 3 on mobile.
+- Replace `<animateMotion>` SVG waves (heavy on mobile Safari) with a single GSAP `motionPath` tween per branch, paused/killed on chapter exit.
+- Memoize `branches` with stable refs; debounce `ResizeObserver` to 150ms.
+- Lower orb pulse FPS via `transition.repeatDelay`.
 
-## 4. Remove the dead space before and after the sequence
+## 6. Confirm-state visual hierarchy
 
-- Match scene length to the exact number of chapters instead of using an oversized scroll container.
-- Start Act 2 immediately at the seam after Act 1.
-- Reduce or remove any spacer gap before `Act3ThreeMoments`.
-- Keep the final confirmed state visible until release so the section never fades into emptiness.
+- Non-winners: opacity 0.5 + 60% desaturation (not 0.18 — that reads as broken).
+- Winner: keep sage pill, add a soft sage glow ring around its dot.
+- Background warm-wash subtly shifts toward sage-tinted on confirm to reinforce success.
 
-## 5. Tighten contrast and visual hierarchy in the highlight section
+## 7. Act 5 mobile cloud polish (carry-over)
 
-- Deepen the green confirmation palette so it reads clearly against the warm background.
-- Increase contrast for labels and supporting text.
-- Keep colors consistent with the rest of the site while making Act 2 feel like the focal moment.
+While in the area:
 
-## Files to update
+- Replace `Math.sin(index)` pseudo-scatter with a seeded random per word so positions actually look scattered.
+- Suppress autoLit on a word the user has tapped for 4s (respect user intent).
+- Add `layout` prop on motion spans for smoother reflow.
 
-- `src/components/asmi/Act2CallViz.tsx`
-- `src/routes/index.tsx`
-- `src/components/asmi/Act3Moments.tsx`
-- `src/styles.css` if token adjustments are needed for stronger contrast
+## Technical details
+
+**Files to update**
+- `src/components/asmi/Act2CallViz.tsx` — full rewrite of scene shell, new `MobilePlumberList` component, GSAP timeline.
+- `src/components/asmi/Act5.tsx` — scatter + autoLit tweaks.
+- `src/styles.css` — minor token adds if needed (sage glow, desaturated stone).
+- `package.json` — add `gsap` (free ScrollTrigger is included in the standard package).
+
+**New deps**
+- `gsap` (~70kb gzipped, tree-shakeable; only import `gsap` + `ScrollTrigger`).
+
+**GSAP skeleton**
+
+```text
+useLayoutEffect(() => {
+  const ctx = gsap.context(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "+=" + window.innerHeight * 4,
+        pin: pinRef.current,
+        scrub: 0.6,
+        snap: { snapTo: [0, 0.25, 0.5, 0.75, 1], duration: 0.3 },
+        onUpdate: (self) => setActive(Math.round(self.progress * 4)),
+      },
+    });
+  }, sectionRef);
+  return () => ctx.revert();
+}, []);
+```
 
 ## Validation
 
-- Desktop: the scene stays locked while each chapter reveals in order.
-- Mobile: the same sequence remains readable without sticky drift or early release.
-- No large blank gap appears after Act 2.
-- The user can clearly read each beat before the next one begins.
+- Desktop: scene pins, 5 chapters reveal in order, releases cleanly into Act 3.
+- iOS Safari (real device): URL bar collapse does not break pin or skip steps.
+- Android Chrome mid-range: 60fps during dial chapter.
+- Mobile: no label overlap, all text legible at arm's length, tapping plumbers gives clear feedback.
+- No blank gap between Act 2 and Act 3.
+
+## Out of scope
+
+- Copy changes to Sarah's quote or step labels.
+- Act 1/3/4/6 changes.
+- New colors beyond minor sage/stone tweaks.
