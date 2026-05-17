@@ -504,7 +504,15 @@ function PlumberRow({
 // DESKTOP — radial fan (refined)
 // =============================================================
 
-function DesktopScene({ active }: { active: number }) {
+function DesktopScene({
+  active,
+  activeKey,
+  steps,
+}: {
+  active: number;
+  activeKey: StepKey;
+  steps: ReadonlyArray<{ key: string; label: string }>;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -525,9 +533,9 @@ function DesktopScene({ active }: { active: number }) {
     };
   }, []);
 
-  const showOrb = active >= 1;
-  const showBranches = active >= 2;
-  const isConfirmed = active >= 3;
+  const showOrb = activeKey !== "ask";
+  const showBranches = activeKey === "dial" || activeKey === "confirm";
+  const isConfirmed = activeKey === "confirm";
 
   const cx = size.w / 2;
   const cy = size.h / 2;
@@ -552,7 +560,7 @@ function DesktopScene({ active }: { active: number }) {
 
   return (
     <div ref={stageRef} className="absolute inset-0">
-      <StepHeader active={active} top="5.5%" />
+      <StepHeader active={active} steps={steps} top="5.5%" />
 
       <AnimatePresence>
         {active === 0 && (
