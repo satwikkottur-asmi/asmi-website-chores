@@ -269,10 +269,13 @@ export function Act5() {
 function MobileLanguageCloud() {
   const [tapped, setTapped] = useState<Set<number>>(new Set());
   const [autoLit, setAutoLit] = useState<number>(-1);
+  const lastTapRef = useRef<number>(0);
 
-  // Auto-cycle a highlighted word so the cloud feels alive without input
+  // Auto-cycle a highlighted word so the cloud feels alive without input.
+  // Pause auto-cycle for 4s after a tap so user intent is respected.
   useEffect(() => {
     const id = setInterval(() => {
+      if (Date.now() - lastTapRef.current < 4000) return;
       setAutoLit(Math.floor(Math.random() * LANGUAGES.length));
     }, 1400);
     return () => clearInterval(id);
