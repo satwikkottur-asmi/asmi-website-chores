@@ -419,13 +419,13 @@ function PlumberRow({
           className="absolute inset-0 rounded-full"
           style={{ background: dotColor, transition: "background 0.5s ease" }}
           animate={
-            !isConfirmed && active === 2
+            activeKey === "dial"
               ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }
               : { scale: 1, opacity: 1 }
           }
           transition={{
             duration: 1.2,
-            repeat: !isConfirmed && active === 2 ? Infinity : 0,
+            repeat: activeKey === "dial" ? Infinity : 0,
             ease: "easeInOut",
             delay: index * 0.18,
           }}
