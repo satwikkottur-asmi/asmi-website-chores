@@ -1,55 +1,55 @@
-# Fix scroll pacing between Act 2 (calls) and Act 3 (moments)
+# Fix the Act 2 → Act 3 scroll jump (keep Act 2 pacing intact)
 
 ## The problem
 
-Two things compound to create the "slow then sudden skip" feeling around the calls scene:
+Act 2 pacing (the calls scene) is deliberately slow — keep it. The break happens at the handoff into Act 3:
 
-1. **Act 2 is over-pinned.** The pinned scene reserves one full viewport of scroll per step (`pinViewports = stepCount`), so on desktop the four steps (`ask → listen → dial → confirm`) consume ~4 viewports. The middle "Asmi works the phones" step feels like wading because nothing changes for ~33% of the pin distance. On mobile it's 2 viewports for 3 steps — same issue, smaller scale.
-2. **The handoff into Act 3 collapses.** The last 8% of the pin fades the whole stage out, then there's only a 40svh spacer, then Act 3 Moment 1 (`01 — Asmi calls you`) doesn't fade its headline in until `scrollYProgress` 0.18 of its own section. So the user scrolls through: fading Act 2 → empty spacer → empty top half of Act 3 → headline pops in. Reads as "I just skipped 3–4 screens."
+1. Act 2's pin fades the whole stage out over the last 8% of its scroll, so "Done by 9:11" disappears while the user is still scrolling.
+2. Then a 40svh empty spacer.
+3. Then Act 3 Moment 1 (`01 — Asmi calls you`) keeps its headline invisible until `scrollYProgress` 0.18 of its own section (with `offset: ["start end", "end start"]`, that's well after the section enters view).
+
+The three empty stretches stack. On mobile (shorter viewport, faster flicks) the user blows past all of Moment 1 and lands on Moment 2 or 3, feeling like 3 screens were skipped.
+
+Act 2 itself is not touched.
 
 ## The fix
 
-Three small, coordinated adjustments. No new components, no copy changes.
+Three coordinated, minimal changes — only the handoff, not the pinned scene.
 
-### 1. Tighten Act 2 pin distance
+### 1. Don't fade Act 2 out so early
 
-`src/components/asmi/Act2CallViz.tsx`
+`src/components/asmi/Act2CallViz.tsx` (the `onUpdate` inside the ScrollTrigger, ~line 84)
 
-- Desktop: `pinViewports = stepCount - 1` (so 4 steps → 3 viewports of scroll instead of 4). Each step transition still gets ~1 viewport, but the final "Done by 9:11" hold no longer eats a dedicated viewport.
-- Mobile: `pinViewports = 1.5` (was 2) — 3 steps over 1.5 viewports feels brisk, not skimmed.
-- Increase `scrub` slightly (desktop `0.5 → 0.7`, mobile `0.3 → 0.5`) so the wheel-to-step mapping feels smoother, not snappier.
-- Update the `<section>` height to match (`${pinViewports + 1} * 100svh` — the `+1` reserves the visible pinned viewport itself; today it uses `steps.length * 100svh` which double-counts).
+- Change the fade window from "last 8% (p > 0.92)" to "last 4% (p > 0.96)" so the final "Done by 9:11" frame stays fully visible right up to the pin release. No change to pin duration, scrub, or step mapping.
 
-### 2. Soften the Act 2 → Act 3 handoff
+### 2. Shrink the dead spacer between Act 2 and Act 3
 
-`src/components/asmi/Act2CallViz.tsx`
+`src/routes/index.tsx` (the `<div aria-hidden style={{ height: "40svh" }} />` between `Act2CallViz` and `Act3ThreeMoments`)
 
-- Replace the abrupt last-8% opacity fade with a gentler last-15% fade, and clamp the floor at `0.0` only at `p >= 0.99` (was `> 0.92`). This keeps "Done by 9:11" legible right up to the handoff instead of vanishing while the user is still mid-scroll.
+- Reduce from `40svh` to `12svh`. Just enough breath — not a blank screen.
 
-`src/routes/index.tsx`
+### 3. Bring Act 3 moment content in as soon as the section enters view
 
-- Reduce the post-Act 2 spacer from `40svh` to `16svh`. The Act 2 pin already releases on a held final frame; the big spacer is what makes the next scroll feel like a jump cut.
+`src/components/asmi/Act3Moments.tsx` (`Moment` component, `useTransform` ranges)
 
-### 3. Bring Act 3 moments in sooner
+- Headline `opacity`: `[0.02, 0.18, 0.68, 0.84]` → `[0.02, 0.10, 0.74, 0.90]`. Becomes readable when the section enters, holds longer before fading out.
+- Headline `y` rise: `[0.02, 0.28]` → `[0.02, 0.16]` so the lift settles by the time it's mid-viewport instead of still moving.
+- Ambient layer `opacity`: `[0.2, 0.32, 0.68, 0.84]` → `[0.08, 0.20, 0.74, 0.90]` so the backdrop is already there when the headline appears.
 
-`src/components/asmi/Act3Moments.tsx`
-
-- Move the headline fade-in window earlier: `opacity` keyframes `[0.02, 0.18, 0.68, 0.84]` → `[0.02, 0.10, 0.72, 0.88]`. Headline becomes readable as soon as the section enters the viewport instead of waiting until it's near center.
-- Match the `y` rise: `[0.02, 0.28]` → `[0.02, 0.18]`.
-- Ambient layer fade-in: `[0.2, 0.32, ...]` → `[0.10, 0.22, ...]` so the visual backdrop arrives with the headline, not after it.
+This is especially important on mobile, where each `h-screen` moment is short and a fast flick easily covers two of them — pulling the visible window earlier guarantees the user sees the headline of Moment 1 (and 2 and 3) instead of arriving at an empty frame.
 
 ## Out of scope
 
-- Copy, typography, Act 1, Act 4, Act 5, Act 6.
-- Real audio wiring, field-note cards, languages cloud.
-- Reduced-motion handling (already covered globally in `src/styles.css`).
+- Act 2 step pacing, pin duration, scrub, or step copy — explicitly preserved.
+- Act 1, Act 4, Act 5, Act 6.
+- Mobile-specific Act 3 layout, real audio, field-note cards, languages cloud.
 
 ## Technical notes
 
-Files edited:
+Files edited (3, surgical):
 
-- `src/components/asmi/Act2CallViz.tsx` — `pinViewports`, `scrub`, section height, fade-out window.
-- `src/routes/index.tsx` — spacer height between `Act2CallViz` and `Act3ThreeMoments`.
+- `src/components/asmi/Act2CallViz.tsx` — fade-window threshold only.
+- `src/routes/index.tsx` — spacer height between Act 2 and Act 3.
 - `src/components/asmi/Act3Moments.tsx` — `useTransform` keyframe ranges inside `Moment`.
 
-No dependency or token changes. ScrollTrigger config (`ignoreMobileResize`, `anticipatePin`) stays as-is.
+No dependency, token, layout, or copy changes. No new components.
