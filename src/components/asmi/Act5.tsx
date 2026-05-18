@@ -361,6 +361,26 @@ function Channel({ word, caption, ambient }: { word: string; caption: string; am
   );
 }
 
+function ChannelCompact({ word, ambient }: { word: string; ambient: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6 }}
+      className="flex-1 flex flex-col items-center gap-3"
+    >
+      <div className="h-5 flex items-end">{ambient}</div>
+      <p
+        className="font-serif"
+        style={{ color: "var(--color-espresso)", fontSize: "clamp(22px, 6vw, 28px)", lineHeight: 1, letterSpacing: "-0.02em" }}
+      >
+        {word}
+      </p>
+    </motion.div>
+  );
+}
+
 function MiniWave() {
   return (
     <div className="flex items-end gap-[3px]" style={{ height: 24 }}>
