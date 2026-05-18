@@ -82,9 +82,7 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
             AI that handles your personal chores in the physical world.
           </p>
           <div className="mt-6 sm:mt-8 flex justify-center px-4">
-            <a href="#start" className="btn-pill w-full max-w-xs sm:w-auto justify-center">
-              Start with an iMessage →
-            </a>
+            <WaitlistForm />
           </div>
         </motion.div>
       </div>
