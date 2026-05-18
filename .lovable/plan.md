@@ -1,40 +1,55 @@
-# Three small fixes: copy + mobile channels layout
+# Fix scroll pacing between Act 2 (calls) and Act 3 (moments)
 
-## 1. "Delivered" → "Booked" (Act 3)
+## The problem
 
-`src/components/asmi/Act3Moments.tsx` line 127. One-word swap. No layout impact.
+Two things compound to create the "slow then sudden skip" feeling around the calls scene:
 
-## 2. "a few things she handled" → "a few things it handled" (Act 5A)
+1. **Act 2 is over-pinned.** The pinned scene reserves one full viewport of scroll per step (`pinViewports = stepCount`), so on desktop the four steps (`ask → listen → dial → confirm`) consume ~4 viewports. The middle "Asmi works the phones" step feels like wading because nothing changes for ~33% of the pin distance. On mobile it's 2 viewports for 3 steps — same issue, smaller scale.
+2. **The handoff into Act 3 collapses.** The last 8% of the pin fades the whole stage out, then there's only a 40svh spacer, then Act 3 Moment 1 (`01 — Asmi calls you`) doesn't fade its headline in until `scrollYProgress` 0.18 of its own section. So the user scrolls through: fading Act 2 → empty spacer → empty top half of Act 3 → headline pops in. Reads as "I just skipped 3–4 screens."
 
-`src/components/asmi/Act5.tsx` line 141. Headline above the field-note cards. One-word swap.
+## The fix
 
-## 3. Declutter "No app. No new habit." on mobile (Act 5B)
+Three small, coordinated adjustments. No new components, no copy changes.
 
-The three channels (Call / Text / Listen) currently stack as a tall vertical column on mobile, each one centered with a 48px serif word, an ambient mark, and a caption — plus generous `gap-12` between them. On a 390px viewport this reads as ~3 full screens of repeated structure and feels cluttered.
+### 1. Tighten Act 2 pin distance
 
-Redesign for mobile only (desktop row layout stays as-is):
+`src/components/asmi/Act2CallViz.tsx`
 
-- Switch from a stacked centered column to a **horizontal 3-up row** on mobile, since the three items are peers and shorter side-by-side reads as one unit instead of three sections.
-- Shrink the channel word from `clamp(38px, 9vw, 48px)` to `clamp(22px, 6vw, 28px)` on mobile so three fit comfortably.
-- Move the ambient mark (wave / dots / ripples) **above** the word, smaller (~16–18px tall) so the row has a compact icon-over-label rhythm.
-- Drop the per-channel caption on mobile. Replace the three captions with one combined line below the row: *"Call, text, or just talk — iMessage, WhatsApp, or a phone call."* (keeps the substance, removes the repetition).
-- Tighten section vertical padding on mobile (`py-20` → `py-14`) and the headline-to-row gap (`mb-16` → `mb-10`).
-- Keep the existing closing line *"Same intelligence. Every surface. No app."* but reduce its top margin on mobile (`mt-16` → `mt-10`).
-- Desktop (`md:` and up) keeps the current 3-column layout, full-size word, individual captions, and existing spacing — no regression.
+- Desktop: `pinViewports = stepCount - 1` (so 4 steps → 3 viewports of scroll instead of 4). Each step transition still gets ~1 viewport, but the final "Done by 9:11" hold no longer eats a dedicated viewport.
+- Mobile: `pinViewports = 1.5` (was 2) — 3 steps over 1.5 viewports feels brisk, not skimmed.
+- Increase `scrub` slightly (desktop `0.5 → 0.7`, mobile `0.3 → 0.5`) so the wheel-to-step mapping feels smoother, not snappier.
+- Update the `<section>` height to match (`${pinViewports + 1} * 100svh` — the `+1` reserves the visible pinned viewport itself; today it uses `steps.length * 100svh` which double-counts).
 
-### Technical details
+### 2. Soften the Act 2 → Act 3 handoff
 
-Files to edit:
+`src/components/asmi/Act2CallViz.tsx`
 
-- `src/components/asmi/Act3Moments.tsx` — change "Delivered" to "Booked".
-- `src/components/asmi/Act5.tsx`:
-  - Line 141: "she handled" → "it handled".
-  - Lines 162–186 (5B block): add a mobile-specific compact layout for the three `Channel`s and the combined caption; gate the existing desktop markup with `hidden md:flex` / `hidden md:block`.
-  - `Channel` component stays unchanged for desktop; add a sibling `ChannelCompact` (or inline JSX) for the mobile row.
+- Replace the abrupt last-8% opacity fade with a gentler last-15% fade, and clamp the floor at `0.0` only at `p >= 0.99` (was `> 0.92`). This keeps "Done by 9:11" legible right up to the handoff instead of vanishing while the user is still mid-scroll.
 
-No new dependencies. No token changes.
+`src/routes/index.tsx`
+
+- Reduce the post-Act 2 spacer from `40svh` to `16svh`. The Act 2 pin already releases on a held final frame; the big spacer is what makes the next scroll feel like a jump cut.
+
+### 3. Bring Act 3 moments in sooner
+
+`src/components/asmi/Act3Moments.tsx`
+
+- Move the headline fade-in window earlier: `opacity` keyframes `[0.02, 0.18, 0.68, 0.84]` → `[0.02, 0.10, 0.72, 0.88]`. Headline becomes readable as soon as the section enters the viewport instead of waiting until it's near center.
+- Match the `y` rise: `[0.02, 0.28]` → `[0.02, 0.18]`.
+- Ambient layer fade-in: `[0.2, 0.32, ...]` → `[0.10, 0.22, ...]` so the visual backdrop arrives with the headline, not after it.
 
 ## Out of scope
 
-- Field-note cards, languages cloud, Act 1/2/3/4/6.
-- Real audio wiring (already prepared via `src` prop).
+- Copy, typography, Act 1, Act 4, Act 5, Act 6.
+- Real audio wiring, field-note cards, languages cloud.
+- Reduced-motion handling (already covered globally in `src/styles.css`).
+
+## Technical notes
+
+Files edited:
+
+- `src/components/asmi/Act2CallViz.tsx` — `pinViewports`, `scrub`, section height, fade-out window.
+- `src/routes/index.tsx` — spacer height between `Act2CallViz` and `Act3ThreeMoments`.
+- `src/components/asmi/Act3Moments.tsx` — `useTransform` keyframe ranges inside `Moment`.
+
+No dependency or token changes. ScrollTrigger config (`ignoreMobileResize`, `anticipatePin`) stays as-is.
