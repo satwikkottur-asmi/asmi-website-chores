@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useRef } from "react";
 import { AmbientBlobs } from "./Atmosphere";
+import { WaitlistForm } from "./WaitlistForm";
 
 export function Act6Close() {
   const ref = useRef<HTMLElement>(null);
