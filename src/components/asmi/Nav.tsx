@@ -43,8 +43,8 @@ export function Nav() {
                  onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Languages</a>
             </div>
             <a href="#start" className="btn-pill" style={{ padding: "0.55rem 1.1rem", fontSize: "0.82rem" }}>
-              <span className="hidden sm:inline">Start with iMessage</span>
-              <span className="sm:hidden">iMessage</span>
+              <span className="hidden sm:inline">Join waitlist</span>
+              <span className="sm:hidden">Waitlist</span>
             </a>
           </div>
         </motion.nav>
