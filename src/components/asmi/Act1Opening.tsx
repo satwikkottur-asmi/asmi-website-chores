@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "motion/react"
 import { RefObject, useRef } from "react";
 import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WaitlistForm } from "./WaitlistForm";
 
 const WORDS = ["The", "screen", "era", "is", "over."];
 
@@ -82,9 +83,7 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
             AI that handles your personal chores in the physical world.
           </p>
           <div className="mt-6 sm:mt-8 flex justify-center px-4">
-            <a href="#start" className="btn-pill w-full max-w-xs sm:w-auto justify-center">
-              Start with an iMessage →
-            </a>
+            <WaitlistForm />
           </div>
         </motion.div>
       </div>

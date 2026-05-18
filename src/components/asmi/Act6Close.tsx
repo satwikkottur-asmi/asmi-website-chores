@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useRef } from "react";
 import { AmbientBlobs } from "./Atmosphere";
+import { WaitlistForm } from "./WaitlistForm";
 
 export function Act6Close() {
   const ref = useRef<HTMLElement>(null);
@@ -75,18 +76,7 @@ export function Act6Close() {
             transition={{ duration: 0.7, ease: "easeOut", delay: 0.5 }}
           >
             <div className="mt-8 flex justify-center px-4">
-              <a
-                href="#start"
-                className="btn-pill"
-                style={{
-                  padding: "16px 40px",
-                  width: "100%",
-                  maxWidth: 320,
-                  justifyContent: "center",
-                }}
-              >
-                Start with an iMessage →
-              </a>
+              <WaitlistForm size="lg" />
             </div>
             <p className="mt-6 label-mono text-center" style={{ color: "var(--color-stone-dim)", fontSize: 12 }}>
               No app to download.
