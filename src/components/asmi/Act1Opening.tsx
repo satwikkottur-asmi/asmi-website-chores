@@ -21,40 +21,53 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
 
   return (
     <section ref={ref} className="relative h-[100vh] md:h-[105vh]">
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center md:justify-center overflow-hidden px-5 sm:px-6 pt-[14vh] md:pt-0 gap-6 md:gap-0">
+      <div className="sticky top-0 h-screen overflow-hidden px-5 sm:px-6">
         <AmbientBlobs density={6} />
 
+        {/* Headline — absolutely centered in the viewport so it doesn't shift when the wordmark mounts */}
         <motion.div
-          className="relative z-10 text-center w-full"
-          style={{ opacity: statementOpacity, y: statementY, scale: statementScale }}
+          className="absolute left-0 right-0 px-5 sm:px-6 z-10 text-center"
+          style={{
+            top: "50%",
+            transform: "translateY(-50%)",
+            opacity: statementOpacity,
+          }}
         >
-          <h1
-            className="font-serif font-normal text-espresso tracking-[-0.02em]"
-            style={{
-              fontSize: "clamp(2.2rem, 11vw, 14rem)",
-              lineHeight: 1.02,
-              color: "var(--color-espresso)",
-            }}
-          >
-            {WORDS.map((w, i) => (
-              <span key={i}>
-                <Word progress={scrollYProgress} index={i} total={WORDS.length}>
-                  {w}
-                </Word>
-                {i < WORDS.length - 1 ? " " : ""}
-              </span>
-            ))}
-          </h1>
-          <div className="mt-6 sm:mt-10 flex justify-center">
-            <motion.div style={{ opacity: brushOpacity }} className="w-full max-w-[24rem] sm:max-w-[40rem]">
-              <BrushUnderline progress={1} />
-            </motion.div>
-          </div>
+          <motion.div style={{ y: statementY, scale: statementScale }}>
+            <h1
+              className="font-serif font-normal text-espresso tracking-[-0.02em]"
+              style={{
+                fontSize: "clamp(2.2rem, 11vw, 14rem)",
+                lineHeight: 1.02,
+                color: "var(--color-espresso)",
+              }}
+            >
+              {WORDS.map((w, i) => (
+                <span key={i}>
+                  <Word progress={scrollYProgress} index={i} total={WORDS.length}>
+                    {w}
+                  </Word>
+                  {i < WORDS.length - 1 ? " " : ""}
+                </span>
+              ))}
+            </h1>
+            <div className="mt-6 sm:mt-10 flex justify-center">
+              <motion.div style={{ opacity: brushOpacity }} className="w-full max-w-[24rem] sm:max-w-[40rem]">
+                <BrushUnderline progress={1} />
+              </motion.div>
+            </div>
+          </motion.div>
         </motion.div>
 
+        {/* Wordmark block — absolutely positioned on every breakpoint, anchored to lower portion */}
         <motion.div
-          className="relative z-20 mt-2 sm:mt-14 md:absolute md:left-0 md:right-0 md:px-6 md:mt-0 text-center w-full md:top-[58%]"
-          style={{ opacity: wordmarkOpacity, y: wordmarkY }}
+          className="absolute left-0 right-0 px-5 sm:px-6 z-20 text-center"
+          style={{
+            bottom: isMobile ? "9svh" : undefined,
+            top: isMobile ? undefined : "62%",
+            opacity: wordmarkOpacity,
+            y: wordmarkY,
+          }}
         >
           <p
             className="font-serif italic text-espresso tracking-tight"
