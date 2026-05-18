@@ -51,9 +51,11 @@ Three cards, each with its own accent wash (terracotta / sage / clay) bleeding f
 
 Copy (rewritten in Asmi's voice — first-person, soft, specific):
 
-1. *tuesday morning* — "called Dr. Chen's office. got Sarah on the derm waitlist. tomorrow, 10am." · pre-auth cleared
+1. *tuesday morning* — "called Dr. Weng's office. got Sarah on the primary care waitlist. tomorrow, 10am." · pre-auth cleared
 2. *wednesday, before coffee* — "got five HVAC quotes. booked the one Marco liked. saturday, 9am." · $150 diagnostic
-3. *every morning · in italian* — "called mom in Rome. she's eating. she misses you." · three years, never missed
+3. *every morning · in Nigerian* — "called mom in Nigeria. she's eating. she misses you." · 3 weeks, never missed
+
+Each card accepts an optional `src` prop for the real recording. When `src` is provided, the type-reveal animation syncs to `audio.currentTime` (phrase timestamps mapped to fractions of duration). Until then, visual playback runs on a timer so the interaction works today.
 
 ### The "wow" playback interaction (mobile-first, fitting the theme)
 
