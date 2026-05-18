@@ -1,40 +1,36 @@
-# Three small fixes: copy + mobile channels layout
+# Scroll-staged reveal for "Your day, handled." (Act 6)
 
-## 1. "Delivered" → "Booked" (Act 3)
+Right now the closing section uses `whileInView` with `once: true`, so once any part of it crosses the viewport margin everything fades in together over ~1 second and then sits static. The earlier feel was a true scroll-driven cinematic — each line earning its place as the user moved down the page.
 
-`src/components/asmi/Act3Moments.tsx` line 127. One-word swap. No layout impact.
+## What to change
 
-## 2. "a few things she handled" → "a few things it handled" (Act 5A)
+Drive every element off the section's own scroll progress instead of a one-shot in-view trigger, so the closing reads as a slow, deliberate unveiling synced to the user's gesture.
 
-`src/components/asmi/Act5.tsx` line 141. Headline above the field-note cards. One-word swap.
+Staged sequence as scroll progress goes 0 → 1 through the section:
 
-## 3. Declutter "No app. No new habit." on mobile (Act 5B)
+1. **0.00 – 0.15** — ambient blobs deepen from faint to full warmth, a soft horizon glow rises from the bottom.
+2. **0.10 – 0.30** — "Your day," rises from +40px with a gentle blur-to-sharp, letter tracking eases from loose to set.
+3. **0.25 – 0.50** — "handled." swings in italic, slightly later and slower, with the terracotta color warming from muted to full saturation. A hairline brush underline draws across underneath.
+4. **0.45 – 0.65** — "Join thousands who talk to Asmi every morning." fades up.
+5. **0.60 – 0.80** — Waitlist form rises and settles; subtle scale from 0.96 → 1.
+6. **0.78 – 0.95** — "No app to download." monogram caption fades in last.
 
-The three channels (Call / Text / Listen) currently stack as a tall vertical column on mobile, each one centered with a 48px serif word, an ambient mark, and a caption — plus generous `gap-12` between them. On a 390px viewport this reads as ~3 full screens of repeated structure and feels cluttered.
+To make scroll actually drive this, the section needs scroll runway. Increase its height to ~180vh and pin the inner content with `sticky top-0 h-screen` so the user scrolls *through* the reveal while the composition stays centered. On mobile, compress runway to ~150vh and shorten each stage slightly so it doesn't feel like dead scrolling.
 
-Redesign for mobile only (desktop row layout stays as-is):
+Respect `useReducedMotion`: fall back to a single soft fade-in (no transforms, no pinning) when reduced motion is on.
 
-- Switch from a stacked centered column to a **horizontal 3-up row** on mobile, since the three items are peers and shorter side-by-side reads as one unit instead of three sections.
-- Shrink the channel word from `clamp(38px, 9vw, 48px)` to `clamp(22px, 6vw, 28px)` on mobile so three fit comfortably.
-- Move the ambient mark (wave / dots / ripples) **above** the word, smaller (~16–18px tall) so the row has a compact icon-over-label rhythm.
-- Drop the per-channel caption on mobile. Replace the three captions with one combined line below the row: *"Call, text, or just talk — iMessage, WhatsApp, or a phone call."* (keeps the substance, removes the repetition).
-- Tighten section vertical padding on mobile (`py-20` → `py-14`) and the headline-to-row gap (`mb-16` → `mb-10`).
-- Keep the existing closing line *"Same intelligence. Every surface. No app."* but reduce its top margin on mobile (`mt-16` → `mt-10`).
-- Desktop (`md:` and up) keeps the current 3-column layout, full-size word, individual captions, and existing spacing — no regression.
+## Technical details
 
-### Technical details
+File: `src/components/asmi/Act6Close.tsx`.
 
-Files to edit:
-
-- `src/components/asmi/Act3Moments.tsx` — change "Delivered" to "Booked".
-- `src/components/asmi/Act5.tsx`:
-  - Line 141: "she handled" → "it handled".
-  - Lines 162–186 (5B block): add a mobile-specific compact layout for the three `Channel`s and the combined caption; gate the existing desktop markup with `hidden md:flex` / `hidden md:block`.
-  - `Channel` component stays unchanged for desktop; add a sibling `ChannelCompact` (or inline JSX) for the mobile row.
-
-No new dependencies. No token changes.
+- Use `useScroll({ target: ref, offset: ["start end", "end start"] })` to get `scrollYProgress` for the whole section pass.
+- For each element create a `useTransform` mapping its sub-range of progress to `opacity`, `y`, and (where noted) `filter: blur()`, `scale`, or color.
+- Replace the current flex centering with a `sticky top-0 h-screen flex items-center` wrapper inside a tall outer `<section>` (≈180vh desktop, ≈150vh mobile via `clamp` or `h-[180vh] md:h-[200vh]` style).
+- Keep existing copy, colors, typography, and `WaitlistForm` usage unchanged.
+- Remove all `whileInView` / `viewport` props on the staged elements.
+- Add a thin SVG brush stroke under "handled." driven by `pathLength` tied to progress 0.30 → 0.55, reusing the terracotta tone.
+- Guard with `const prefersReducedMotion = useReducedMotion();` — when true, render the old simple `initial`/`animate` fade without scroll binding or sticky pin.
 
 ## Out of scope
 
-- Field-note cards, languages cloud, Act 1/2/3/4/6.
-- Real audio wiring (already prepared via `src` prop).
+- Other acts (1–5), `WaitlistForm` internals, copy changes, color tokens.
