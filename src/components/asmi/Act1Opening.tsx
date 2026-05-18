@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "motion/react"
 import { RefObject, useRef } from "react";
 import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { WaitlistForm } from "./WaitlistForm";
 
 const WORDS = ["The", "screen", "era", "is", "over."];
 
