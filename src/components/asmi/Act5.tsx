@@ -1,28 +1,57 @@
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { OrganicDivider } from "./Atmosphere";
 
-const STORIES = [
+type Story = {
+  kicker: string;        // "tuesday morning"
+  phrases: string[];     // body text, one phrase per line
+  tag: string;           // "pre-auth cleared"
+  duration: string;      // "0:47"
+  accent: string;        // css color
+  tint: string;          // soft wash color
+  tilt: number;          // deg
+  src?: string;          // optional real audio
+};
+
+const STORIES: Story[] = [
   {
-    meta: "HEALTHCARE · TUE 7:14 AM",
+    kicker: "tuesday morning",
+    phrases: [
+      "called Dr. Weng's office.",
+      "got Sarah on the primary care waitlist.",
+      "tomorrow, 10am.",
+    ],
+    tag: "pre-auth cleared",
     duration: "0:47",
-    outcome: "dr chen, derm. tomorrow 10am. insurance pre-auth'd.",
     accent: "var(--color-terracotta)",
-    seed: 17,
+    tint: "rgba(194, 91, 63, 0.10)",
+    tilt: -1.5,
   },
   {
-    meta: "HOME REPAIR · WED 6:48 AM",
+    kicker: "wednesday, before coffee",
+    phrases: [
+      "got five HVAC quotes.",
+      "booked the one Marco liked.",
+      "saturday, 9am.",
+    ],
+    tag: "$150 diagnostic",
     duration: "1:12",
-    outcome: "five hvac quotes. saturday 9am. $150 diagnostic.",
     accent: "var(--color-sage-strong)",
-    seed: 41,
+    tint: "rgba(95, 131, 101, 0.12)",
+    tilt: 1.1,
   },
   {
-    meta: "FAMILY CARE · DAILY · IT-IT",
+    kicker: "every morning · in Nigerian",
+    phrases: [
+      "called mom in Nigeria.",
+      "she's eating.",
+      "she misses you.",
+    ],
+    tag: "3 weeks, never missed",
     duration: "3:20",
-    outcome: "mom in rome. twice a day. three years. never missed.",
     accent: "var(--color-clay)",
-    seed: 73,
+    tint: "rgba(212, 165, 116, 0.16)",
+    tilt: -0.8,
   },
 ];
 
@@ -41,11 +70,10 @@ const LANGUAGES = [
 ];
 
 
-// Precompute per-ring positions so each label gets a unique slot on its ring.
 const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
-const RING_R = [12, 26, 38, 48]; // % radius
+const RING_R = [12, 26, 38, 48];
 const RING_OFFSET = [0, 0.17, 0.41, 0.06];
-const RING_ASPECT = 1.65; // ellipse stretch
+const RING_ASPECT = 1.65;
 
 const RING_COUNTS = LANGUAGES.reduce<Record<number, number>>((acc, l) => {
   const r = RING_OF[l.size] ?? 3;
@@ -79,27 +107,29 @@ function langPos(i: number, total: number, size: string) {
 }
 
 export function Act5() {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   return (
     <section id="stories" className="relative">
       <OrganicDivider />
 
-      {/* 5A Stories — voicemail waveforms */}
-      <div className="px-5 sm:px-8 py-20 md:py-32 max-w-5xl mx-auto">
+      {/* 5A Stories — field notes from Asmi */}
+      <div className="px-5 sm:px-8 py-20 md:py-32 max-w-4xl mx-auto">
         <motion.p
-          className="label-mono mb-5"
-          style={{ color: "var(--color-stone-dim)" }}
+          className="font-serif italic mb-3"
+          style={{ color: "var(--color-stone-dim)", fontSize: "clamp(0.95rem, 2.2vw, 1.1rem)" }}
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
         >
-          Recent
+          this week with asmi —
         </motion.p>
         <motion.h2
-          className="font-serif mb-20 md:mb-28"
+          className="font-serif mb-16 md:mb-24"
           style={{
             color: "var(--color-espresso)",
-            fontSize: "clamp(2.8rem, 9vw, 5rem)",
+            fontSize: "clamp(2.6rem, 8.5vw, 4.6rem)",
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
           }}
@@ -108,12 +138,20 @@ export function Act5() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
         >
-          This happened this week.
+          a few things she handled.
         </motion.h2>
 
-        <div className="flex flex-col gap-16 md:gap-24">
+        <div className="flex flex-col gap-10 md:gap-14">
           {STORIES.map((s, i) => (
-            <VoicemailRow key={i} story={s} index={i} />
+            <FieldNoteCard
+              key={i}
+              story={s}
+              index={i}
+              isActive={activeIndex === i}
+              isDimmed={activeIndex !== null && activeIndex !== i}
+              onPlay={() => setActiveIndex(i)}
+              onStop={() => setActiveIndex(null)}
+            />
           ))}
         </div>
       </div>
@@ -135,7 +173,7 @@ export function Act5() {
 
         <div className="flex flex-col md:flex-row gap-12 md:gap-8">
           <Channel word="Call" caption="Every morning. Asmi calls you." ambient={<MiniWave />} />
-          <Channel word="Text" caption="iMessage mid-day. Same context." ambient={<TypingDots />} />
+          <Channel word="Text" caption="iMessage or WhatsApp anytime." ambient={<TypingDots />} />
           <Channel word="Listen" caption="Call Asmi directly. Always on." ambient={<Ripples />} />
         </div>
 
@@ -164,11 +202,8 @@ export function Act5() {
           </motion.h2>
         </div>
 
-        {/* Mobile: scattered floating cloud with tap-to-light interaction */}
         <MobileLanguageCloud />
 
-
-        {/* Desktop: scattered floating cloud */}
         <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
           {LANGUAGES.map((l, i) => {
             const p = langPos(i, LANGUAGES.length, l.size);
@@ -205,8 +240,6 @@ function MobileLanguageCloud() {
   const [autoLit, setAutoLit] = useState<number>(-1);
   const lastTapRef = useRef<number>(0);
 
-  // Auto-cycle a highlighted word so the cloud feels alive without input.
-  // Pause auto-cycle for 4s after a tap so user intent is respected.
   useEffect(() => {
     const id = setInterval(() => {
       if (Date.now() - lastTapRef.current < 4000) return;
@@ -223,7 +256,6 @@ function MobileLanguageCloud() {
     xl: "var(--color-espresso)",
   } as Record<string, string>;
 
-  // Deterministic pseudo-random helpers (stable across renders)
   const rand = (seed: number) => {
     const x = Math.sin(seed * 9301 + 49297) * 233280;
     return x - Math.floor(x);
@@ -237,8 +269,8 @@ function MobileLanguageCloud() {
       >
         {LANGUAGES.map((l, i) => {
           const isLit = tapped.has(i) || autoLit === i;
-          const rotate = (rand(i + 1) - 0.5) * 14; // -7deg..7deg
-          const yOffset = (rand(i + 7) - 0.5) * 14; // visual scatter
+          const rotate = (rand(i + 1) - 0.5) * 14;
+          const yOffset = (rand(i + 7) - 0.5) * 14;
           const dur = 5 + rand(i + 3) * 4;
           const delay = rand(i + 11) * 3;
 
@@ -371,188 +403,400 @@ function Ripples() {
 }
 
 // =============================================================
-// Voicemail waveform row (Act 5A)
+// Field Note Card — postcard from Asmi (Act 5A)
 // =============================================================
 
-type Story = {
-  meta: string;
-  duration: string;
-  outcome: string;
-  accent: string;
-  seed: number;
-};
-
-// Seeded pseudo-random for stable, "real-looking" waveforms across renders
-function seededRand(seed: number, i: number) {
-  const x = Math.sin(seed * 9301 + i * 49297) * 233280;
-  return x - Math.floor(x);
+function durationToSeconds(d: string) {
+  const [m, s] = d.split(":").map(Number);
+  return (m || 0) * 60 + (s || 0);
 }
 
-function VoicemailRow({ story, index }: { story: Story; index: number }) {
-  const BARS = 96;
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0); // 0..1 playhead
+function FieldNoteCard({
+  story,
+  index,
+  isActive,
+  isDimmed,
+  onPlay,
+  onStop,
+}: {
+  story: Story;
+  index: number;
+  isActive: boolean;
+  isDimmed: boolean;
+  onPlay: () => void;
+  onStop: () => void;
+}) {
+  const [progress, setProgress] = useState(0); // 0..1
+  const [finished, setFinished] = useState(false);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number>(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Parse duration "m:ss" → seconds for the visual playback timer
-  const totalSec = (() => {
-    const [m, s] = story.duration.split(":").map(Number);
-    return (m || 0) * 60 + (s || 0);
-  })();
+  // Visual playback duration (real audio overrides when story.src is provided)
+  const baseDuration = durationToSeconds(story.duration);
+  // Cap visual-only playback so even "3:20" doesn't bore the user
+  const visualDuration = Math.min(baseDuration, 8);
 
   useEffect(() => {
-    if (!playing) {
+    if (story.src) {
+      const a = new Audio(story.src);
+      a.preload = "none";
+      audioRef.current = a;
+      const onEnd = () => {
+        setFinished(true);
+        onStop();
+      };
+      a.addEventListener("ended", onEnd);
+      return () => {
+        a.pause();
+        a.removeEventListener("ended", onEnd);
+      };
+    }
+  }, [story.src, onStop]);
+
+  useEffect(() => {
+    if (!isActive) {
       cancelAnimationFrame(rafRef.current);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
       return;
     }
-    startRef.current = performance.now() - progress * totalSec * 1000;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - startRef.current) / (totalSec * 1000));
-      setProgress(p);
-      if (p >= 1) {
-        setPlaying(false);
-        setProgress(0);
-        return;
-      }
+
+    setFinished(false);
+
+    if (audioRef.current && story.src) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+      const tick = () => {
+        const a = audioRef.current!;
+        const p = a.duration ? Math.min(1, a.currentTime / a.duration) : 0;
+        setProgress(p);
+        if (!a.paused && !a.ended) rafRef.current = requestAnimationFrame(tick);
+      };
       rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
+    } else {
+      // Visual-only playback
+      startRef.current = performance.now();
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - startRef.current) / (visualDuration * 1000));
+        setProgress(p);
+        if (p >= 1) {
+          setFinished(true);
+          onStop();
+          return;
+        }
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    }
+
     return () => cancelAnimationFrame(rafRef.current);
-  }, [playing, totalSec]);
+  }, [isActive, visualDuration, story.src, onStop]);
 
-  // Build bar heights once (seeded), 0.18..1.0
-  const heights = Array.from({ length: BARS }, (_, i) => {
-    const r1 = seededRand(story.seed, i);
-    const r2 = seededRand(story.seed + 1, i * 3);
-    // Slight envelope so it looks like speech, not noise
-    const env = 0.65 + 0.35 * Math.sin((i / BARS) * Math.PI);
-    return Math.max(0.14, Math.min(1, (r1 * 0.7 + r2 * 0.5) * env));
-  });
+  useEffect(() => {
+    if (!isActive) {
+      setProgress(0);
+    }
+  }, [isActive]);
 
-  const playedCount = Math.floor(progress * BARS);
+  const handleToggle = () => {
+    if (isActive) {
+      onStop();
+      setProgress(0);
+    } else {
+      setProgress(0);
+      onPlay();
+    }
+  };
+
+  // Reveal phrases progressively
+  const phraseCount = story.phrases.length;
+  const phraseProgress = progress * phraseCount;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.8, delay: index * 0.08 }}
+      transition={{ duration: 0.8, delay: index * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
+      style={{
+        filter: isDimmed ? "blur(3px)" : "none",
+        opacity: isDimmed ? 0.35 : 1,
+        transition: "filter 0.4s ease, opacity 0.4s ease",
+      }}
     >
-      {/* Meta line */}
-      <p
-        className="label-mono mb-4"
-        style={{ color: "var(--color-stone-dim)", fontSize: "0.7rem" }}
-      >
-        {story.meta}
-      </p>
-
-      {/* Play button + waveform row */}
-      <button
+      <motion.button
         type="button"
-        onClick={() => {
-          if (playing) {
-            setPlaying(false);
-          } else {
-            setProgress(0);
-            setPlaying(true);
-          }
+        onClick={handleToggle}
+        aria-label={isActive ? "Stop recording" : "Play recording"}
+        className="relative block w-full text-left rounded-[22px] overflow-hidden paper-grain"
+        style={{
+          background: "var(--color-cream)",
+          padding: "clamp(22px, 5vw, 38px)",
+          paddingBottom: "clamp(70px, 14vw, 90px)",
+          boxShadow: isActive
+            ? "0 30px 60px -20px rgba(44,37,32,0.25), 0 8px 20px -10px rgba(44,37,32,0.15)"
+            : "0 14px 30px -18px rgba(44,37,32,0.18), 0 4px 10px -6px rgba(44,37,32,0.08)",
+          WebkitTapHighlightColor: "transparent",
+          cursor: "pointer",
         }}
-        aria-label={playing ? "Pause recording" : "Play recording"}
-        className="group relative flex items-center gap-4 md:gap-6 w-full text-left"
-        style={{ WebkitTapHighlightColor: "transparent" }}
+        animate={{
+          rotate: isActive ? 0 : story.tilt,
+          scale: isActive ? 1.02 : 1,
+          y: isActive ? -4 : 0,
+        }}
+        transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
       >
-        {/* Play / pause glyph */}
+        {/* Accent wash — corner bloom that sweeps across during playback */}
         <span
-          className="shrink-0 inline-flex items-center justify-center rounded-full transition-transform"
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
           style={{
-            width: 44,
-            height: 44,
-            border: `1.5px solid ${story.accent}`,
-            background: playing ? story.accent : "transparent",
-            transition: "background 0.3s ease, transform 0.3s ease",
+            background: `radial-gradient(120% 90% at 0% 0%, ${story.tint} 0%, transparent 55%)`,
+            transition: "opacity 0.6s ease",
+            opacity: isActive ? 0 : 1,
           }}
-        >
-          {playing ? (
-            <span className="flex gap-[3px]">
-              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
-              <span style={{ width: 3, height: 13, background: "var(--color-cream)" }} />
-            </span>
-          ) : (
-            <span
+        />
+        <span
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `linear-gradient(115deg, ${story.tint} 0%, ${story.tint} 35%, transparent 70%)`,
+            opacity: isActive ? 1 : 0,
+            transform: isActive
+              ? `translateX(${(progress - 0.5) * 30}%)`
+              : "translateX(-40%)",
+            transition: "opacity 0.7s ease",
+            mixBlendMode: "multiply",
+          }}
+        />
+
+        {/* Soft ambient bloom behind text during playback */}
+        <AnimatePresence>
+          {isActive && (
+            <motion.span
+              aria-hidden
+              className="absolute pointer-events-none rounded-full"
               style={{
-                width: 0,
-                height: 0,
-                borderLeft: `11px solid ${story.accent}`,
-                borderTop: "7px solid transparent",
-                borderBottom: "7px solid transparent",
-                marginLeft: 3,
+                left: "50%",
+                top: "55%",
+                width: "70%",
+                height: "70%",
+                transform: "translate(-50%, -50%)",
+                background: `radial-gradient(circle, ${story.tint} 0%, transparent 65%)`,
+                filter: "blur(40px)",
+              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: [0.9, 1.05, 0.95, 1.05] }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{
+                opacity: { duration: 0.5 },
+                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
               }}
             />
           )}
-        </span>
+        </AnimatePresence>
 
-        {/* Waveform */}
-        <span
-          className="relative flex-1 flex items-center"
-          style={{ height: 64, gap: 2 }}
-        >
-          <span className="flex items-center w-full justify-between" style={{ height: "100%" }}>
-            {heights.map((h, i) => {
-              const isPlayed = playing && i < playedCount;
-              const isHead = playing && i === playedCount;
-              return (
-                <span
-                  key={i}
-                  className="block rounded-full"
-                  style={{
-                    width: 2,
-                    height: `${h * 100}%`,
-                    background: isPlayed || isHead ? story.accent : "var(--color-stone-dim)",
-                    opacity: isPlayed ? 0.95 : isHead ? 1 : 0.42,
-                    transform: isHead ? "scaleY(1.15)" : "scaleY(1)",
-                    transition: "background 0.15s ease, opacity 0.15s ease, transform 0.15s ease",
-                    animation: !playing
-                      ? `wave-bar ${3 + (i % 7) * 0.15}s ease-in-out ${i * 0.012}s infinite`
-                      : undefined,
-                    transformOrigin: "center",
-                  }}
-                />
-              );
-            })}
-          </span>
-        </span>
-
-        {/* Duration */}
-        <span
-          className="font-mono shrink-0 tabular-nums"
+        {/* Kicker */}
+        <p
+          className="font-serif italic relative"
           style={{
-            color: playing ? story.accent : "var(--color-stone-dim)",
-            fontSize: 13,
-            letterSpacing: "0.04em",
-            minWidth: 42,
-            textAlign: "right",
+            color: "var(--color-stone-dim)",
+            fontSize: "clamp(0.95rem, 2.4vw, 1.1rem)",
+            letterSpacing: "0.005em",
+          }}
+        >
+          <span
+            aria-hidden
+            className="inline-block rounded-full mr-2 align-middle"
+            style={{
+              width: 5,
+              height: 5,
+              background: story.accent,
+              opacity: 0.6,
+              transform: "translateY(-2px)",
+            }}
+          />
+          {story.kicker}
+        </p>
+
+        {/* Body — phrases */}
+        <div
+          className="mt-5 md:mt-6 relative font-serif"
+          style={{
+            color: "var(--color-espresso-strong)",
+            fontSize: "clamp(1.35rem, 4.4vw, 1.9rem)",
+            lineHeight: 1.35,
+            letterSpacing: "-0.005em",
+          }}
+        >
+          {story.phrases.map((phrase, pi) => {
+            // Each phrase fades in based on its slice of progress
+            const localStart = pi / phraseCount;
+            const localEnd = (pi + 1) / phraseCount;
+            let phraseOpacity = isActive
+              ? Math.max(0.25, Math.min(1, (progress - localStart + 0.05) / 0.15))
+              : 1;
+            const isCurrent =
+              isActive && phraseProgress >= pi && phraseProgress < pi + 1;
+
+            return (
+              <motion.span
+                key={pi}
+                className="block"
+                style={{
+                  color: isCurrent ? story.accent : undefined,
+                  opacity: phraseOpacity,
+                  transition: "color 0.5s ease, opacity 0.4s ease",
+                }}
+                animate={
+                  isCurrent
+                    ? { y: [-2, 0], opacity: [0.5, 1] }
+                    : { y: 0 }
+                }
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                {phrase}
+              </motion.span>
+            );
+          })}
+        </div>
+
+        {/* Hand-drawn divider + tag */}
+        <div className="mt-6 md:mt-7 flex items-center gap-3">
+          <svg
+            width="48"
+            height="8"
+            viewBox="0 0 48 8"
+            preserveAspectRatio="none"
+            aria-hidden
+            style={{ flexShrink: 0 }}
+          >
+            <path
+              d="M1 4 C 8 1, 16 7, 24 4 S 40 1, 47 5"
+              stroke={story.accent}
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              fill="none"
+              opacity="0.7"
+            />
+          </svg>
+          <span
+            className="font-mono"
+            style={{
+              color: "var(--color-stone)",
+              fontSize: "0.72rem",
+              letterSpacing: "0.12em",
+              textTransform: "lowercase",
+            }}
+          >
+            {story.tag}
+          </span>
+        </div>
+
+        {/* Bottom-left: play pill */}
+        <div
+          className="absolute flex items-center gap-3"
+          style={{
+            left: "clamp(22px, 5vw, 38px)",
+            bottom: "clamp(22px, 5vw, 30px)",
+          }}
+        >
+          <span
+            className="inline-flex items-center justify-center rounded-full"
+            style={{
+              width: 36,
+              height: 36,
+              border: `1.5px solid ${story.accent}`,
+              background: isActive ? story.accent : "transparent",
+              transition: "background 0.3s ease",
+            }}
+          >
+            {isActive ? (
+              <span className="flex gap-[3px]">
+                <span style={{ width: 3, height: 11, background: "var(--color-cream)" }} />
+                <span style={{ width: 3, height: 11, background: "var(--color-cream)" }} />
+              </span>
+            ) : finished ? (
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+                <path
+                  d="M2 7 L6 11 L12 3"
+                  stroke={story.accent}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </svg>
+            ) : (
+              <span
+                style={{
+                  width: 0,
+                  height: 0,
+                  borderLeft: `9px solid ${story.accent}`,
+                  borderTop: "6px solid transparent",
+                  borderBottom: "6px solid transparent",
+                  marginLeft: 3,
+                }}
+              />
+            )}
+          </span>
+          <span
+            className="font-serif italic"
+            style={{
+              color: isActive ? story.accent : "var(--color-stone)",
+              fontSize: "0.95rem",
+              transition: "color 0.3s ease",
+            }}
+          >
+            {isActive ? "listening" : finished ? "played" : "listen"}
+          </span>
+
+          {/* Breathing dots — audio presence cue */}
+          <AnimatePresence>
+            {isActive && (
+              <motion.span
+                className="flex items-center gap-1 ml-1"
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -4 }}
+              >
+                {[0, 1, 2].map((i) => (
+                  <motion.span
+                    key={i}
+                    className="block rounded-full"
+                    style={{ width: 4, height: 4, background: story.accent }}
+                    animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                    transition={{
+                      duration: 1.4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: i * 0.18,
+                    }}
+                  />
+                ))}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom-right: duration */}
+        <span
+          className="absolute font-mono tabular-nums"
+          style={{
+            right: "clamp(22px, 5vw, 38px)",
+            bottom: "clamp(28px, 5.5vw, 36px)",
+            color: isActive ? story.accent : "var(--color-stone-dim)",
+            fontSize: "0.78rem",
+            letterSpacing: "0.06em",
             transition: "color 0.3s ease",
           }}
         >
           {story.duration}
         </span>
-      </button>
-
-      {/* Outcome line */}
-      <p
-        className="mt-5 md:mt-6 font-serif italic"
-        style={{
-          color: "var(--color-espresso-strong)",
-          fontSize: "clamp(1.15rem, 2.4vw, 1.5rem)",
-          lineHeight: 1.4,
-          letterSpacing: "-0.005em",
-          paddingLeft: 60, // align with waveform start (button width + gap)
-          maxWidth: "44rem",
-        }}
-      >
-        {story.outcome}
-      </p>
+      </motion.button>
     </motion.div>
   );
 }
