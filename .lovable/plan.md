@@ -1,93 +1,40 @@
-# Three polish fixes: hero alignment, channel copy, "This happened" redesign
+# Three small fixes: copy + mobile channels layout
 
-## 1. Fix "The screen era is over" jump on load (Act 1)
+## 1. "Delivered" → "Booked" (Act 3)
 
-The headline starts perfectly centered, then snaps upward the moment the `asmi` wordmark + subhead + CTA fade in below it. Cause: on mobile the wordmark block is in normal flow (`md:absolute`), so when it mounts it pushes the h1 up. On desktop the headline column also re-centers because the parent is a flex column with `justify-center` and a second child appears.
+`src/components/asmi/Act3Moments.tsx` line 127. One-word swap. No layout impact.
 
-Fix:
+## 2. "a few things she handled" → "a few things it handled" (Act 5A)
 
-- Reserve the wordmark block's space from first paint so nothing shifts. Two options; pick one in implementation:
-  - **Preferred:** make the wordmark absolutely positioned on mobile too (`absolute bottom-[12svh] left-0 right-0`) so it never participates in the centering math. The h1 stays the only flex child and remains visually centered.
-  - Alternative: render the wordmark block with `visibility: hidden` reserving height from t=0, then fade in via opacity only.
-- Lock the h1 vertical anchor to the viewport center using `position: absolute; top: 50%; transform: translateY(-50%)` inside the sticky stage, so scroll-driven `y` transforms move it relative to a fixed anchor instead of a shifting flex baseline.
-- Verify on 390px viewport: headline must not move between t=0 and t=0.3 of scroll.
+`src/components/asmi/Act5.tsx` line 141. Headline above the field-note cards. One-word swap.
 
-## 2. Swap channel caption (Act 5B)
+## 3. Declutter "No app. No new habit." on mobile (Act 5B)
 
-In `Act5.tsx`, the middle `<Channel>` caption:
+The three channels (Call / Text / Listen) currently stack as a tall vertical column on mobile, each one centered with a 48px serif word, an ambient mark, and a caption — plus generous `gap-12` between them. On a 390px viewport this reads as ~3 full screens of repeated structure and feels cluttered.
 
-```text
-"iMessage mid-day. Same context."  →  "iMessage or WhatsApp anytime."
-```
+Redesign for mobile only (desktop row layout stays as-is):
 
-One-line copy change. No layout impact.
+- Switch from a stacked centered column to a **horizontal 3-up row** on mobile, since the three items are peers and shorter side-by-side reads as one unit instead of three sections.
+- Shrink the channel word from `clamp(38px, 9vw, 48px)` to `clamp(22px, 6vw, 28px)` on mobile so three fit comfortably.
+- Move the ambient mark (wave / dots / ripples) **above** the word, smaller (~16–18px tall) so the row has a compact icon-over-label rhythm.
+- Drop the per-channel caption on mobile. Replace the three captions with one combined line below the row: *"Call, text, or just talk — iMessage, WhatsApp, or a phone call."* (keeps the substance, removes the repetition).
+- Tighten section vertical padding on mobile (`py-20` → `py-14`) and the headline-to-row gap (`mb-16` → `mb-10`).
+- Keep the existing closing line *"Same intelligence. Every surface. No app."* but reduce its top margin on mobile (`mt-16` → `mt-10`).
+- Desktop (`md:` and up) keeps the current 3-column layout, full-size word, individual captions, and existing spacing — no regression.
 
-## 3. Redesign "This happened this week" — warm, consumer, on-theme
-
-The current voicemail-waveform treatment reads as scientific/technical (bars + timestamps + mono labels). The rest of the site is serif, warm, paper-textured, hand-drawn. The section needs to feel like *postcards from Asmi* — small artifacts of real things she handled — not a call log.
-
-### New concept: "Field notes from Asmi"
-
-Each story becomes a **handwritten-feeling note card** with paper grain, a soft accent wash, and a single play affordance. The visual metaphor is a stack of journal entries or polaroid backs, not a dashboard.
-
-Composition per card (mobile-first, full-width, ~stacked vertically with overlap):
-
-```text
-┌─────────────────────────────────────┐
-│  ·  tuesday morning                 │  ← italic serif, lowercase
-│                                     │
-│  called Dr. Chen's office.          │  ← serif, conversational
-│  got Sarah on the derm waitlist.    │
-│  tomorrow, 10am.                    │
-│                                     │
-│  ───── pre-auth cleared ─────       │  ← hand-drawn divider
-│                                     │
-│     ▶  listen  ·  0:47              │  ← terracotta pill, bottom-left
-└─────────────────────────────────────┘
-   (soft drop shadow, 2deg tilt, paper texture overlay)
-```
-
-Three cards, each with its own accent wash (terracotta / sage / clay) bleeding from one corner. Slight alternating tilt (-1.5°, +1°, -0.8°) so the stack feels human, not aligned-to-grid. Generous vertical spacing; on desktop they can stagger horizontally with a subtle parallax on scroll. The "RECENT" eyebrow stays but moves to a smaller italic "this week with asmi —" lead-in.
-
-Copy (rewritten in Asmi's voice — first-person, soft, specific):
-
-1. *tuesday morning* — "called Dr. Weng's office. got Sarah on the primary care waitlist. tomorrow, 10am." · pre-auth cleared
-2. *wednesday, before coffee* — "got five HVAC quotes. booked the one Marco liked. saturday, 9am." · $150 diagnostic
-3. *every morning · in Nigerian* — "called mom in Nigeria. she's eating. she misses you." · 3 weeks, never missed
-
-Each card accepts an optional `src` prop for the real recording. When `src` is provided, the type-reveal animation syncs to `audio.currentTime` (phrase timestamps mapped to fractions of duration). Until then, visual playback runs on a timer so the interaction works today.
-
-### The "wow" playback interaction (mobile-first, fitting the theme)
-
-When the user taps the play pill, the card **transforms into a living moment** rather than scrubbing a waveform:
-
-1. **Card lifts** — slight scale (1 → 1.03), shadow deepens, tilt straightens to 0°. Other cards dim to 40% and blur 4px. ~400ms.
-2. **Paper "opens"** — the accent wash sweeps across the card surface left→right like a wash of watercolor (CSS mask + gradient), revealing a **soft ambient bloom** behind the text. Not a waveform — an organic, breathing aura.
-3. **Type "speaks"** — the body text re-renders one phrase at a time with a gentle fade + 4px upward drift, synced to the duration. Each phrase glows briefly with the accent color as it "lands." Feels like Asmi is telling you what she did.
-4. **A subtle audio-presence cue** — three tiny serif dots `· · ·` pulse at the bottom in the accent color, breathing in/out (no bars, no graph). Tap the dots or anywhere on the card to stop.
-5. **End state** — the wash recedes back to corner, card settles, dots fade. Time pill flips to a small ✓.
-
-All animation in Framer Motion + CSS. No real audio file needed; the experience IS the audio. If we later wire `AudioPlayButton` underneath, the visual stays the same and just syncs to `audio.currentTime`.
-
-Why this fits:
-
-- Serif type + lowercase voice + paper textures matches Act 1 / Act 3 / footer.
-- No graph, no bars, no mono labels — nothing reads "dashboard."
-- The play interaction is the payoff: tap = a memory unfolds. That's the consumer story.
-- Mobile-first by construction (single column, large tap targets, motion within one card).
-
-## Out of scope
-
-- Real audio recordings (visual playback is enough).
-- Act 2, 3, 4, 6.
-- The "No app. No new habit." channels grid stays as-is apart from the one copy swap.
-
-## Technical details
+### Technical details
 
 Files to edit:
 
-- `src/components/asmi/Act1Opening.tsx` — absolutely position wordmark block on mobile; anchor h1 to viewport center inside the sticky stage.
-- `src/components/asmi/Act5.tsx` — replace `STORIES` content + `VoicemailRow` with a new `FieldNoteCard` component (paper texture, tilt, accent wash, type-reveal playback). Update 5B middle caption.
-- `src/styles.css` — add `@keyframes wash-sweep`, `@keyframes dots-breathe`, and a `.paper-grain` utility (subtle SVG noise data-URI background) if not reusable from existing tokens.
+- `src/components/asmi/Act3Moments.tsx` — change "Delivered" to "Booked".
+- `src/components/asmi/Act5.tsx`:
+  - Line 141: "she handled" → "it handled".
+  - Lines 162–186 (5B block): add a mobile-specific compact layout for the three `Channel`s and the combined caption; gate the existing desktop markup with `hidden md:flex` / `hidden md:block`.
+  - `Channel` component stays unchanged for desktop; add a sibling `ChannelCompact` (or inline JSX) for the mobile row.
 
-No new dependencies. Reuses existing color tokens (`--color-terracotta`, `--color-sage-strong`, `--color-clay`, `--color-cream`, `--color-espresso`).
+No new dependencies. No token changes.
+
+## Out of scope
+
+- Field-note cards, languages cloud, Act 1/2/3/4/6.
+- Real audio wiring (already prepared via `src` prop).
