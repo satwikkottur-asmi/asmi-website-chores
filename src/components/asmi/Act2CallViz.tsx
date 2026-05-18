@@ -80,8 +80,8 @@ export function Act2CallViz() {
             Math.max(0, Math.round(p * (stepCount - 1) + 0.0001))
           );
           setActive((prev) => (prev === idx ? prev : idx));
-          // Fade the entire pinned stage over the last 8% so it doesn't collide with Act 3
-          const fade = p > 0.92 ? Math.max(0, 1 - (p - 0.92) / 0.08) : 1;
+          // Fade the entire pinned stage over the last 4% so the final frame stays legible until release
+          const fade = p > 0.96 ? Math.max(0, 1 - (p - 0.96) / 0.04) : 1;
           pin.style.opacity = String(fade);
         },
       });
