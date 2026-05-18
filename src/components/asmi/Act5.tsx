@@ -159,9 +159,9 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5B Available everywhere */}
-      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
+      <div className="px-5 sm:px-6 py-14 md:py-32 max-w-6xl mx-auto">
         <motion.h2
-          className="font-serif mb-16 md:mb-20 text-center"
+          className="font-serif mb-10 md:mb-20 text-center"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -171,19 +171,36 @@ export function Act5() {
           No app. No new habit.
         </motion.h2>
 
-        <div className="flex flex-col md:flex-row gap-12 md:gap-8">
+        {/* Desktop: full 3-column with captions */}
+        <div className="hidden md:flex flex-row gap-8">
           <Channel word="Call" caption="Every morning. Asmi calls you." ambient={<MiniWave />} />
           <Channel word="Text" caption="iMessage or WhatsApp anytime." ambient={<TypingDots />} />
           <Channel word="Listen" caption="Call Asmi directly. Always on." ambient={<Ripples />} />
         </div>
 
+        {/* Mobile: compact 3-up row + single combined caption */}
+        <div className="md:hidden">
+          <div className="flex flex-row items-end justify-between gap-3">
+            <ChannelCompact word="Call" ambient={<MiniWave />} />
+            <ChannelCompact word="Text" ambient={<TypingDots />} />
+            <ChannelCompact word="Listen" ambient={<Ripples />} />
+          </div>
+          <p
+            className="mt-8 font-sans text-center mx-auto"
+            style={{ color: "#6B6560", fontSize: 14, lineHeight: 1.55, maxWidth: 300 }}
+          >
+            Call, text, or just talk — iMessage, WhatsApp, or a phone call.
+          </p>
+        </div>
+
         <p
-          className="mt-16 md:mt-20 font-sans text-center"
+          className="mt-10 md:mt-20 font-sans text-center"
           style={{ color: "var(--color-espresso)", fontSize: 16, fontWeight: 400 }}
         >
           Same intelligence. Every surface. No app.
         </p>
       </div>
+
 
       <OrganicDivider />
 
