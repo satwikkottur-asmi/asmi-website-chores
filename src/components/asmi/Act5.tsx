@@ -138,7 +138,7 @@ export function Act5() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
         >
-          a few things she handled.
+          a few things it handled.
         </motion.h2>
 
         <div className="flex flex-col gap-10 md:gap-14">
