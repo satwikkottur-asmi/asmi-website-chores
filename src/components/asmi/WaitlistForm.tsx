@@ -12,8 +12,9 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handle = (e: FormEvent) => {
+  const handle = async (e: FormEvent) => {
     e.preventDefault();
     const v = email.trim();
     if (!EMAIL_RE.test(v) || v.length > 255) {
@@ -21,7 +22,29 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
       return;
     }
     setError(null);
-    setSubmitted(true);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("https://prospective.asmiai.com/prospective/waitlist/join/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: v }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Failed to join waitlist. Please try again.");
+        setIsLoading(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError("Network error. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   const pad = size === "lg" ? "py-4 px-5" : "py-3 px-4";
@@ -112,10 +135,11 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
             />
             <button
               type="submit"
-              className={`btn-pill justify-center ${btnPad}`}
+              disabled={isLoading}
+              className={`btn-pill justify-center ${btnPad} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
               style={{ padding: undefined }}
             >
-              Join waitlist →
+              {isLoading ? "Joining..." : "Join waitlist →"}
             </button>
           </motion.form>
         )}
