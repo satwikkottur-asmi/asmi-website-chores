@@ -331,12 +331,6 @@ function MobileLanguageCloud() {
           );
         })}
       </div>
-      <p
-        className="text-center mt-6 label-mono"
-        style={{ color: "var(--color-stone-dim)", fontSize: "0.65rem" }}
-      >
-        tap any language
-      </p>
     </div>
   );
 }
@@ -468,6 +462,7 @@ function FieldNoteCard({
 }) {
   const [progress, setProgress] = useState(0); // 0..1
   const [finished, setFinished] = useState(false);
+  const [audioReady, setAudioReady] = useState(!story.src);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number>(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -480,15 +475,21 @@ function FieldNoteCard({
   useEffect(() => {
     if (story.src) {
       const a = new Audio(story.src);
-      a.preload = "none";
+      a.preload = "auto";
+      a.load();
       audioRef.current = a;
+      const markReady = () => setAudioReady(true);
       const onEnd = () => {
         setFinished(true);
         onStop();
       };
+      a.addEventListener("loadeddata", markReady);
+      a.addEventListener("canplay", markReady);
       a.addEventListener("ended", onEnd);
       return () => {
         a.pause();
+        a.removeEventListener("loadeddata", markReady);
+        a.removeEventListener("canplay", markReady);
         a.removeEventListener("ended", onEnd);
       };
     }
@@ -603,11 +604,11 @@ function FieldNoteCard({
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(115deg, ${story.tint} 0%, ${story.tint} 35%, transparent 70%)`,
-            opacity: isActive ? 1 : 0,
+            background: `linear-gradient(110deg, transparent 0%, transparent 28%, ${story.tint} 46%, transparent 68%)`,
+            opacity: isActive ? 0.95 : 0,
             transform: isActive
-              ? `translateX(${-60 + progress * 120}%)`
-              : "translateX(-60%)",
+              ? `translateX(${-115 + progress * 230}%)`
+              : "translateX(-115%)",
             transition: "opacity 0.7s ease, transform 80ms linear",
             mixBlendMode: "multiply",
           }}
@@ -786,12 +787,12 @@ function FieldNoteCard({
           <span
             className="font-serif italic"
             style={{
-              color: isActive ? story.accent : "var(--color-stone)",
+              color: isActive ? story.accent : audioReady ? "var(--color-stone)" : "var(--color-stone-dim)",
               fontSize: "0.95rem",
               transition: "color 0.3s ease",
             }}
           >
-            {isActive ? "listening" : finished ? "played" : "listen"}
+            {isActive ? "listening" : finished ? "played" : audioReady ? "listen" : "loading"}
           </span>
 
           {/* Breathing dots — audio presence cue */}
