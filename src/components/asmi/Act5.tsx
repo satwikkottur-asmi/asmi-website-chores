@@ -162,9 +162,9 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5B Available everywhere */}
-      <div className="px-5 sm:px-6 py-14 md:py-32 max-w-6xl mx-auto">
+      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
-          className="font-serif mb-10 md:mb-20 text-center"
+          className="font-serif mb-16 md:mb-20 text-center"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
