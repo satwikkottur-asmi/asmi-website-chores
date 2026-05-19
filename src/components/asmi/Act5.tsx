@@ -162,9 +162,9 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5B Available everywhere */}
-      <div className="px-5 sm:px-6 py-14 md:py-32 max-w-6xl mx-auto">
+      <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
-          className="font-serif mb-10 md:mb-20 text-center"
+          className="font-serif mb-16 md:mb-20 text-center"
           style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -189,7 +189,7 @@ export function Act5() {
             <ChannelCompact word="Listen" ambient={<Ripples />} />
           </div>
           <p
-            className="mt-8 font-sans text-center mx-auto"
+            className="mt-10 font-sans text-center mx-auto"
             style={{ color: "#6B6560", fontSize: 14, lineHeight: 1.55, maxWidth: 300 }}
           >
             Call, text, or just talk — iMessage, WhatsApp, or a phone call.
@@ -197,7 +197,7 @@ export function Act5() {
         </div>
 
         <p
-          className="mt-10 md:mt-20 font-sans text-center"
+          className="mt-14 md:mt-20 font-sans text-center"
           style={{ color: "var(--color-espresso)", fontSize: 16, fontWeight: 400 }}
         >
           Same intelligence. Every surface. No app.
@@ -208,8 +208,8 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5C Languages */}
-      <div id="languages" className="px-5 sm:px-6 pt-16 pb-10 md:py-32">
-        <div className="text-center mb-12 md:mb-16">
+      <div id="languages" className="px-5 sm:px-6 pt-20 pb-16 md:py-32">
+        <div className="text-center mb-16 md:mb-16">
           <motion.h2
             className="font-serif"
             style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
