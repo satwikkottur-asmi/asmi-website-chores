@@ -32,6 +32,7 @@ function Index() {
       <Act2CallViz />
       <div aria-hidden style={{ height: "40svh" }} />
       <Act3ThreeMoments />
+      <Act5Stories />
       <OrganicDivider />
       <Act4Cloud />
       <Act5 />
