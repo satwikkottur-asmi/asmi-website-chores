@@ -609,27 +609,16 @@ function FieldNoteCard({
             opacity: isActive ? 0 : 1,
           }}
         />
-        {/* Hairline progress bar — pinned to bottom, fills left-to-right with playback */}
         <span
           aria-hidden
-          className="absolute left-0 right-0 bottom-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            height: 2,
-            background: "rgba(44,37,32,0.06)",
+            background: `linear-gradient(110deg, transparent 0%, transparent 20%, ${story.wash} 50%, transparent 80%, transparent 100%)`,
             opacity: isActive ? 1 : 0,
-            transition: "opacity 0.4s ease",
-          }}
-        />
-        <span
-          aria-hidden
-          className="absolute left-0 bottom-0 pointer-events-none"
-          style={{
-            height: 2,
-            width: `${progress * 100}%`,
-            background: `linear-gradient(90deg, transparent 0%, ${story.accent} 35%, ${story.accent} 100%)`,
-            boxShadow: isActive ? `0 0 12px ${story.wash}` : "none",
-            opacity: isActive ? 1 : 0,
-            transition: "opacity 0.4s ease",
+            transform: isActive
+              ? `translateX(${-115 + progress * 230}%)`
+              : "translateX(-115%)",
+            transition: "opacity 0.7s ease, transform 80ms linear",
           }}
         />
 
