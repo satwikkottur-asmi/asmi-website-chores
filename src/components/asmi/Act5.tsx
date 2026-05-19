@@ -56,6 +56,7 @@ const STORIES: Story[] = [
     duration: "2:11",
     accent: "var(--color-clay)",
     tint: "rgba(212, 165, 116, 0.16)",
+    wash: "rgba(212, 165, 116, 0.55)",
     tilt: -0.8,
     src: "/audio/spanish-grandpa-call.mp4",
   },
