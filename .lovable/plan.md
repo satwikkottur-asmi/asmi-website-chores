@@ -1,43 +1,55 @@
-# Footer additions + restore original gradient wash
+# Restore the elegant left-to-right wash on audio playback
 
-## 1. Footer — privacy policy + support email
+## Goal
 
-In `src/routes/index.tsx` footer (lines 62–76), add a third row/column:
+Bring back the earlier playback effect on the Act 5 audio cards: a soft, elegant gradient wash that starts immediately when audio begins and visibly travels from left to right across the whole card. It should feel like a broad light sweep, not a static overlay and not a skinny random bar.
 
-- Email link: `support@asmiai.com` (mailto)
-- Privacy policy link → `/privacy`
+## Change to make
 
-Layout: keep current asmi wordmark left, tagline middle, and add a right-aligned cluster with the support email and "Privacy" link separated by a dot. Italic serif, stone-dim color, fontSize 14, matching existing footer typography.
+In `src/components/asmi/Act5.tsx`, replace the current static playback wash layer with a moving wash layer that:
 
-Create a minimal `src/routes/privacy.tsx` route with a placeholder privacy policy page (heading + short paragraph) so the link resolves and SSR/typecheck passes.
+- spans the full card height
+- uses a soft-edged gradient based on `story.wash`
+- starts just off-canvas on the left when playback begins
+- moves fully across the card as `progress` advances
+- remains elegant and diffused rather than looking like a hard progress bar
 
-## 2. Restore original gradient wash on FieldNoteCard
+## Implementation details
 
-In `src/components/asmi/Act5.tsx`, the current sweep is a narrow vertical band tied to `progress` that travels left→right. The original effect was a **soft full-card diagonal wash** that simply appears (fades in) when audio starts — not a moving bar.
+Update the active wash `<span>` in `FieldNoteCard` so it uses both a soft diagonal gradient and horizontal translation tied to playback progress. The shape should be wide enough to read as a wash, with a feathered center and transparent falloff on both sides.
 
-Replace the moving-band `<span>` (around lines 612–623) with the original:
+Implementation intent:
 
 ```tsx
 <span
   aria-hidden
-  className="absolute inset-0 pointer-events-none"
+  className="absolute inset-y-0 left-0 pointer-events-none"
   style={{
-    background: `linear-gradient(115deg, ${story.wash} 0%, ${story.wash} 35%, transparent 70%)`,
-    opacity: isActive ? 1 : 0,
-    transition: "opacity 0.7s ease",
+    width: "70%",
+    background: `linear-gradient(100deg, transparent 0%, ${story.wash} 30%, ${story.wash} 50%, transparent 82%)`,
+    opacity: isActive ? 0.95 : 0,
+    transform: `translateX(${/* start off left, sweep fully right via progress */}%)`,
+    transition: isActive
+      ? "transform 80ms linear, opacity 180ms ease-out"
+      : "opacity 220ms ease-out",
   }}
 />
 ```
 
-- Uses `story.wash` (the bolder per-story color already defined) so it reads on cream.
-- No `mixBlendMode: multiply` (that washed it out previously).
-- No transform/progress coupling — appears smoothly as soon as audio starts, fades out when it stops.
-- Corner bloom + ambient bloom layers stay untouched.
+Expected motion behavior:
 
-## Files touched
-- `src/routes/index.tsx` — footer additions
-- `src/routes/privacy.tsx` — new placeholder route
-- `src/components/asmi/Act5.tsx` — restore original wash
+- At play start (`progress` near `0`), the wash is already visible and positioned off the left edge.
+- During playback, it sweeps continuously across the card from left to right.
+- By the end of playback, it exits off the right edge.
+- On stop/end, it fades cleanly without leaving a tint blanket over the card.
 
-## Not touched
-Audio logic, phrase reveal, Act 2/3/4/6, mobile layout.
+## Keep unchanged
+
+- Footer, privacy link, and support email
+- Audio preload/startup logic
+- Phrase reveal timing and card copy
+- Other acts and section layouts
+
+## File touched
+
+- `src/components/asmi/Act5.tsx` — restore the moving playback wash behavior
