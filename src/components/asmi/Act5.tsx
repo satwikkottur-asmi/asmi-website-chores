@@ -611,11 +611,15 @@ function FieldNoteCard({
         />
         <span
           aria-hidden
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-y-0 left-0 pointer-events-none"
           style={{
-            background: `linear-gradient(115deg, ${story.wash} 0%, ${story.wash} 35%, transparent 70%)`,
-            opacity: isActive ? 1 : 0,
-            transition: "opacity 0.7s ease",
+            width: "82%",
+            background: `linear-gradient(102deg, transparent 0%, transparent 12%, ${story.wash} 34%, ${story.wash} 52%, transparent 84%)`,
+            opacity: isActive ? 0.96 : 0,
+            transform: `translateX(${-72 + progress * 212}%)`,
+            transition: isActive
+              ? "transform 80ms linear, opacity 180ms ease-out"
+              : "opacity 220ms ease-out",
           }}
         />
 
