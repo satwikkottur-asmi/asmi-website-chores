@@ -41,6 +41,7 @@ const STORIES: Story[] = [
     duration: "1:49",
     accent: "var(--color-sage-strong)",
     tint: "rgba(95, 131, 101, 0.12)",
+    wash: "rgba(95, 131, 101, 0.5)",
     tilt: 1.1,
     src: "/audio/hvac-call.mp4",
   },
