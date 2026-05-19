@@ -1,5 +1,5 @@
 {
-  "buildCommand": "bun run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": "tanstack-start"
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
