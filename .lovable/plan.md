@@ -1,23 +1,43 @@
-# Restore visible gradient wash on FieldNoteCard playback
+# Footer additions + restore original gradient wash
 
-The sweep already exists in `FieldNoteCard` (Act5.tsx, lines ~608–620) but is invisible because the `story.tint` values are very low-alpha (0.10–0.16) and the sweep layer uses `mixBlendMode: multiply` on a cream background — the effect washes out to nothing.
+## 1. Footer — privacy policy + support email
 
-## Fix
+In `src/routes/index.tsx` footer (lines 62–76), add a third row/column:
 
-In `src/components/asmi/Act5.tsx`:
+- Email link: `support@asmiai.com` (mailto)
+- Privacy policy link → `/privacy`
 
-1. **Bolder sweep gradient.** Replace the sweep's `background` with a gradient that uses a stronger, opaque-ish version of the story accent (derived from `story.tint` but at higher alpha, ~0.45–0.55), so the band reads clearly as it travels across the card during playback.
+Layout: keep current asmi wordmark left, tagline middle, and add a right-aligned cluster with the support email and "Privacy" link separated by a dot. Italic serif, stone-dim color, fontSize 14, matching existing footer typography.
 
-2. **Drop `mixBlendMode: multiply`** on the sweep layer — switch to normal blending so the band shows on cream paper without being eaten.
+Create a minimal `src/routes/privacy.tsx` route with a placeholder privacy policy page (heading + short paragraph) so the link resolves and SSR/typecheck passes.
 
-3. **Slightly widen the band** (transparent 0% → tint 50% → transparent 100% with a tighter peak) so it feels like a soft wash, not a hairline.
+## 2. Restore original gradient wash on FieldNoteCard
 
-4. **Keep the corner-bloom layer and the ambient bloom behind text untouched** — only the moving sweep band changes.
+In `src/components/asmi/Act5.tsx`, the current sweep is a narrow vertical band tied to `progress` that travels left→right. The original effect was a **soft full-card diagonal wash** that simply appears (fades in) when audio starts — not a moving bar.
 
-5. **Per-story accent color**: introduce a `story.accent` alongside the existing `tint`, set to the same hue but at ~0.5 alpha (terracotta, sage, amber). Use `accent` for the sweep, keep `tint` for the soft blooms so the existing softness is preserved.
+Replace the moving-band `<span>` (around lines 612–623) with the original:
+
+```tsx
+<span
+  aria-hidden
+  className="absolute inset-0 pointer-events-none"
+  style={{
+    background: `linear-gradient(115deg, ${story.wash} 0%, ${story.wash} 35%, transparent 70%)`,
+    opacity: isActive ? 1 : 0,
+    transition: "opacity 0.7s ease",
+  }}
+/>
+```
+
+- Uses `story.wash` (the bolder per-story color already defined) so it reads on cream.
+- No `mixBlendMode: multiply` (that washed it out previously).
+- No transform/progress coupling — appears smoothly as soon as audio starts, fades out when it stops.
+- Corner bloom + ambient bloom layers stay untouched.
 
 ## Files touched
-- `src/components/asmi/Act5.tsx` — add `accent` to each story, update the sweep `<span>` styles.
+- `src/routes/index.tsx` — footer additions
+- `src/routes/privacy.tsx` — new placeholder route
+- `src/components/asmi/Act5.tsx` — restore original wash
 
 ## Not touched
-- Audio playback logic, phrase reveal, progress timing, card layout, dimming behavior, Act 2/3/4/6.
+Audio logic, phrase reveal, Act 2/3/4/6, mobile layout.
