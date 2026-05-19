@@ -564,6 +564,8 @@ function FieldNoteCard({
   // Reveal phrases progressively
   const phraseCount = story.phrases.length;
   const phraseProgress = progress * phraseCount;
+  const playbackSeconds = progress * (story.src ? baseDuration : visualDuration);
+  const washProgress = Math.min(playbackSeconds / 4.5, 1);
 
   return (
     <motion.div
@@ -616,7 +618,7 @@ function FieldNoteCard({
             width: "82%",
             background: `linear-gradient(102deg, transparent 0%, transparent 12%, ${story.wash} 34%, ${story.wash} 52%, transparent 84%)`,
             opacity: isActive ? 0.96 : 0,
-            transform: `translateX(${-72 + progress * 212}%)`,
+            transform: `translateX(${-72 + washProgress * 212}%)`,
             transition: isActive
               ? "transform 80ms linear, opacity 180ms ease-out"
               : "opacity 220ms ease-out",
