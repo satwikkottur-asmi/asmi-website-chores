@@ -97,6 +97,8 @@ export function Act2CallViz() {
 
   const activeKey = (steps[active]?.key ?? "ask") as StepKey;
 
+  if (isMobile) return null;
+
   return (
     <section
       ref={sectionRef}
