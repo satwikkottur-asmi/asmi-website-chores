@@ -208,8 +208,8 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5C Languages */}
-      <div id="languages" className="px-5 sm:px-6 py-20 md:py-32">
-        <div className="text-center mb-12">
+      <div id="languages" className="px-5 sm:px-6 pt-16 pb-10 md:py-32">
+        <div className="text-center mb-8 md:mb-12">
           <motion.h2
             className="font-serif"
             style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
@@ -282,15 +282,14 @@ function MobileLanguageCloud() {
   };
 
   return (
-    <div className="md:hidden relative mx-auto w-full max-w-md px-3" style={{ minHeight: 460 }}>
+    <div className="md:hidden relative mx-auto w-full max-w-md px-2">
       <div
         className="flex flex-wrap items-center justify-center"
-        style={{ rowGap: "0.55rem", columnGap: "0.85rem" }}
+        style={{ rowGap: "0.95rem", columnGap: "1rem" }}
       >
         {LANGUAGES.map((l, i) => {
           const isLit = tapped.has(i) || autoLit === i;
-          const rotate = (rand(i + 1) - 0.5) * 14;
-          const yOffset = (rand(i + 7) - 0.5) * 14;
+          const rotate = (rand(i + 1) - 0.5) * 6;
           const dur = 5 + rand(i + 3) * 4;
           const delay = rand(i + 11) * 3;
 
@@ -312,14 +311,14 @@ function MobileLanguageCloud() {
                 fontSize: sizeMap[l.size],
                 color: isLit ? "var(--color-terracotta)" : colorMap[l.size],
                 opacity: isLit ? 1 : l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
-                lineHeight: 1.1,
+                lineHeight: 1.15,
                 whiteSpace: "nowrap",
-                transform: `translateY(${yOffset}px) rotate(${rotate}deg)`,
+                transform: `rotate(${rotate}deg)`,
                 transition: "color 0.4s ease, opacity 0.4s ease",
                 cursor: "pointer",
                 WebkitTapHighlightColor: "transparent",
               }}
-              animate={{ y: [0, -4, 0, 3, 0], scale: isLit ? 1.15 : 1 }}
+              animate={{ y: [0, -3, 0, 2, 0], scale: isLit ? 1.15 : 1 }}
               transition={{
                 y: { duration: dur, repeat: Infinity, ease: "easeInOut", delay },
                 scale: { duration: 0.35, ease: [0.2, 0.7, 0.2, 1] },
