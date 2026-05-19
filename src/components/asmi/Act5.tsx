@@ -209,7 +209,7 @@ export function Act5() {
 
       {/* 5C Languages */}
       <div id="languages" className="px-5 sm:px-6 pt-16 pb-10 md:py-32">
-        <div className="text-center mb-8 md:mb-12">
+        <div className="text-center mb-12 md:mb-16">
           <motion.h2
             className="font-serif"
             style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
