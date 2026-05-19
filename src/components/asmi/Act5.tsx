@@ -613,12 +613,9 @@ function FieldNoteCard({
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(90deg, transparent 0%, transparent 35%, ${story.wash} 50%, transparent 65%, transparent 100%)`,
+            background: `linear-gradient(115deg, ${story.wash} 0%, ${story.wash} 35%, transparent 70%)`,
             opacity: isActive ? 1 : 0,
-            transform: isActive
-              ? `translateX(${-100 + progress * 200}%)`
-              : "translateX(-100%)",
-            transition: "opacity 0.7s ease, transform 80ms linear",
+            transition: "opacity 0.7s ease",
           }}
         />
 
