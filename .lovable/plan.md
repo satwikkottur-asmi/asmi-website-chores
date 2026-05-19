@@ -1,43 +1,63 @@
-# Update Act 5 field-note stories + wire real audio
+# Three fixes: durations, audio progress line, restore Act 6 design
 
-Update the three "this week with asmi" cards in `src/components/asmi/Act5.tsx`
-and attach the uploaded recordings so each card plays the real call.
+## 1. Update story durations (`src/components/asmi/Act5.tsx`)
 
-## Copy changes (STORIES array)
+Match the real recording lengths in the `STORIES` array:
 
-**Story 1 — Dr. Weng's office**
-- `"got Sarah on the primary care waitlist."` → `"got Jonathan on the primary care waitlist."`
-- `"tomorrow, 10am."` → `"tuesday, 10am."`
+- Story 1 (Dr. Weng): `"0:47"` → `"3:04"`
+- Story 2 (HVAC): `"1:12"` → `"1:49"`
+- Story 3 (grandpa): `"3:20"` → `"2:11"`
 
-**Story 2 — HVAC**
-- No copy changes.
+These are visible as the bottom-right timestamp on each card. The real audio
+element drives playback progress, so the displayed string is purely a label.
 
-**Story 3 — replace the "mom in Nigeria" story entirely**
-- kicker: `"sunday evening · in Spanish"`
-- phrases:
-  1. `"called grandpa in Spain."`
-  2. `"he has pain."`
-  3. `"he took his medicines."`
-- tag: `"check-in logged"`
-- duration: keep `"3:20"` (will be overridden by real audio length)
-- accent/tint/tilt: unchanged (clay palette still fits)
+## 2. Make the playing-progress line actually move on the card
 
-## Audio wiring
+Today the only "progress" visual on `FieldNoteCard` is a subtle gradient wash
+that translates from `-40%` → roughly `+10%` — easy to miss. Add an explicit
+hairline progress bar pinned to the bottom edge of the card that fills left →
+right as `progress` advances (0 → 1).
 
-Copy the three uploads into `public/audio/`:
-- `user-uploads://Doc_Sandra_Call.mp4`  → `public/audio/doc-sandra-call.mp4` (story 1)
-- `user-uploads://HVAC_Call.mp4`        → `public/audio/hvac-call.mp4` (story 2)
-- `user-uploads://Spanish_Call_Grandpa.mp4` → `public/audio/spanish-grandpa-call.mp4` (story 3)
+Implementation in `FieldNoteCard` (Act5.tsx):
 
-Set each story's `src` field to the matching `/audio/...` path. The existing
-`FieldNoteCard` already prefers real audio when `story.src` is set
-(uses `HTMLAudioElement`, swaps the visual timer for the real duration, and
-calls `onStop` on `ended`), so no component logic changes are needed.
+- Add an absolutely-positioned 2px-tall span at `bottom: 0; left: 0; right: 0;`
+  inside the existing `motion.button` (which already has `overflow-hidden`).
+- Track rail uses `story.tint` at low opacity; fill uses `story.accent`.
+- Fill is a child span with `width: ${progress * 100}%`, `height: 100%`,
+  `transition: width 80ms linear` so the rAF updates look smooth.
+- Only render when `isActive || finished` (rail stays hidden at rest, fill
+  remains full when finished, snaps back to 0 on next play via existing
+  `setProgress(0)`).
 
-## Technical notes
+No changes to the existing progress state machine — it already updates from
+the real `<audio>` element every animation frame.
 
-- Files are `.mp4` containers but audio-only — `new Audio(src)` handles mp4
-  audio tracks in all evergreen browsers, so no transcoding.
-- Files served from `public/` are referenced by absolute path (`/audio/...`),
-  no import needed.
-- Only `src/components/asmi/Act5.tsx` is edited; no new dependencies.
+## 3. Restore the original "Your day, handled." section (`src/components/asmi/Act6Close.tsx`)
+
+The current file is a 200vh sticky scroll-driven sequence. Revert to the
+original `whileInView` design that existed when the iMessage CTA first
+shipped — same one currently used as the `prefersReducedMotion` fallback
+inside this file. That design:
+
+- Standard section (no sticky, no double height)
+- Ambient blobs backdrop at ~50% opacity
+- `Your day,` (serif) fades + rises in
+- `handled.` (serif italic, terracotta) fades + rises in shortly after
+- Subtitle `Join thousands who talk to Asmi every morning.`
+- `<WaitlistForm size="lg" />` centered
+- `No app to download.` caption below
+
+Use `whileInView` with `once: true` and small stagger delays (0.15s between
+elements) so the section assembles itself as it scrolls into view — the
+"magical" feel from the original, without the long sticky-scroll runway.
+
+Keep the section id `start` so the nav CTA still scrolls here. Keep
+`AmbientBlobs` and `WaitlistForm` imports. Drop `useScroll`, `useTransform`,
+`useRef`, and the `useStage` helper.
+
+## Files touched
+
+- `src/components/asmi/Act5.tsx` — durations + progress bar
+- `src/components/asmi/Act6Close.tsx` — full rewrite back to static reveal
+
+No new deps, no asset changes.
