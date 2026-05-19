@@ -189,7 +189,7 @@ export function Act5() {
             <ChannelCompact word="Listen" ambient={<Ripples />} />
           </div>
           <p
-            className="mt-8 font-sans text-center mx-auto"
+            className="mt-10 font-sans text-center mx-auto"
             style={{ color: "#6B6560", fontSize: 14, lineHeight: 1.55, maxWidth: 300 }}
           >
             Call, text, or just talk — iMessage, WhatsApp, or a phone call.
