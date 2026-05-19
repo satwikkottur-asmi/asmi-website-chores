@@ -11,26 +11,27 @@ Match the real recording lengths in the `STORIES` array:
 These are visible as the bottom-right timestamp on each card. The real audio
 element drives playback progress, so the displayed string is purely a label.
 
-## 2. Make the playing-progress line actually move on the card
+## 2. Fix the gradient-wash sweep on the card
 
-Today the only "progress" visual on `FieldNoteCard` is a subtle gradient wash
-that translates from `-40%` → roughly `+10%` — easy to miss. Add an explicit
-hairline progress bar pinned to the bottom edge of the card that fills left →
-right as `progress` advances (0 → 1).
+Keep the existing subtle gradient wash — no new progress bar. Today it does
+not visibly move because the transform range is tiny:
 
-Implementation in `FieldNoteCard` (Act5.tsx):
+```
+transform: `translateX(${(progress - 0.5) * 30}%)`  // ranges -15% → +15%
+```
 
-- Add an absolutely-positioned 2px-tall span at `bottom: 0; left: 0; right: 0;`
-  inside the existing `motion.button` (which already has `overflow-hidden`).
-- Track rail uses `story.tint` at low opacity; fill uses `story.accent`.
-- Fill is a child span with `width: ${progress * 100}%`, `height: 100%`,
-  `transition: width 80ms linear` so the rAF updates look smooth.
-- Only render when `isActive || finished` (rail stays hidden at rest, fill
-  remains full when finished, snaps back to 0 on next play via existing
-  `setProgress(0)`).
+Fix in `FieldNoteCard` (Act5.tsx, the second wash `<span>`):
 
-No changes to the existing progress state machine — it already updates from
-the real `<audio>` element every animation frame.
+- Widen the sweep range so it actually travels across the card: use
+  `translateX(${-60 + progress * 120}%)` (start off-canvas left at -60%,
+  end off-canvas right at +60%).
+- Add `transition: transform 80ms linear` so the rAF progress updates
+  interpolate smoothly instead of snapping.
+- Leave the gradient direction, tint, blend mode, and opacity behaviour
+  unchanged.
+
+The `progress` state is already updated every animation frame from the real
+`<audio>` element — no state-machine changes needed.
 
 ## 3. Restore the original "Your day, handled." section (`src/components/asmi/Act6Close.tsx`)
 
