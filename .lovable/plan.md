@@ -1,22 +1,33 @@
-# Restore the elegant left-to-right wash on audio playback
+# Tone down the Act 5 playback wash
 
 ## Goal
 
-Bring back the earlier playback effect on the Act 5 audio cards: a soft, elegant gradient wash that starts immediately when audio begins and visibly travels from left to right across the whole card. It should feel like a broad light sweep, not a static overlay and not a skinny random bar.
+Make the playback wash feel subtle again: lighter color, softer presence, and much slower motion. It should read as a gentle ambient sweep across the card, not a strong moving overlay.
 
 ## Change to make
 
-In `src/components/asmi/Act5.tsx`, replace the current static playback wash layer with a moving wash layer that:
+Adjust only the wash layer in `src/components/asmi/Act5.tsx` so that:
 
-- spans the full card height
-- uses a soft-edged gradient based on `story.wash`
-- starts just off-canvas on the left when playback begins
-- moves fully across the card as `progress` advances
-- remains elegant and diffused rather than looking like a hard progress bar
+- the tint is visibly lighter
+- the wash opacity is reduced
+- the sweep moves slowly and calmly
+- the card keeps the same overall structure and playback behavior
 
 ## Implementation details
 
-Update the active wash `<span>` in `FieldNoteCard` so it uses both a soft diagonal gradient and horizontal translation tied to playback progress. The shape should be wide enough to read as a wash, with a feathered center and transparent falloff on both sides.
+Update the moving wash `<span>` in `FieldNoteCard` with three changes:
+
+1. **Lighten the color treatment**
+   - Reduce the active wash alpha by switching from the current stronger `story.wash` presentation to a softer rendering.
+   - Lower the overlay opacity so the cream card remains dominant.
+
+2. **Slow the sweep down**
+   - Decouple the sweep from the aggressive “cross in the first few seconds” behavior.
+   - Tie the movement to a much slower progress curve so the wash glides gradually instead of rushing across the card.
+
+3. **Keep it soft-edged**
+   - Preserve the broad, feathered gradient shape.
+   - Avoid turning it into a narrow bar or hard progress indicator.
 
 Implementation intent:
 
@@ -25,31 +36,24 @@ Implementation intent:
   aria-hidden
   className="absolute inset-y-0 left-0 pointer-events-none"
   style={{
-    width: "70%",
-    background: `linear-gradient(100deg, transparent 0%, ${story.wash} 30%, ${story.wash} 50%, transparent 82%)`,
-    opacity: isActive ? 0.95 : 0,
-    transform: `translateX(${/* start off left, sweep fully right via progress */}%)`,
+    width: "82%",
+    background: `linear-gradient(102deg, transparent 0%, transparent 18%, ${story.wash} 38%, ${story.wash} 50%, transparent 82%)`,
+    opacity: isActive ? 0.45 : 0,
+    transform: `translateX(${/* slower, gentler travel */}%)`,
     transition: isActive
-      ? "transform 80ms linear, opacity 180ms ease-out"
-      : "opacity 220ms ease-out",
+      ? "transform 140ms linear, opacity 260ms ease-out"
+      : "opacity 260ms ease-out",
   }}
 />
 ```
 
-Expected motion behavior:
-
-- At play start (`progress` near `0`), the wash is already visible and positioned off the left edge.
-- During playback, it sweeps continuously across the card from left to right.
-- By the end of playback, it exits off the right edge.
-- On stop/end, it fades cleanly without leaving a tint blanket over the card.
-
 ## Keep unchanged
 
 - Footer, privacy link, and support email
-- Audio preload/startup logic
+- Audio startup / preload logic
 - Phrase reveal timing and card copy
-- Other acts and section layouts
+- Other acts and layouts
 
 ## File touched
 
-- `src/components/asmi/Act5.tsx` — restore the moving playback wash behavior
+- `src/components/asmi/Act5.tsx` — soften and slow the playback wash
