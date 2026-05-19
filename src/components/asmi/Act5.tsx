@@ -8,7 +8,8 @@ type Story = {
   tag: string;           // "pre-auth cleared"
   duration: string;      // "0:47"
   accent: string;        // css color
-  tint: string;          // soft wash color
+  tint: string;          // soft wash color (blooms)
+  wash: string;          // bolder sweep color, visible on cream
   tilt: number;          // deg
   src?: string;          // optional real audio
 };
@@ -25,6 +26,7 @@ const STORIES: Story[] = [
     duration: "3:04",
     accent: "var(--color-terracotta)",
     tint: "rgba(194, 91, 63, 0.10)",
+    wash: "rgba(194, 91, 63, 0.55)",
     tilt: -1.5,
     src: "/audio/doc-sandra-call.mp4",
   },
@@ -39,6 +41,7 @@ const STORIES: Story[] = [
     duration: "1:49",
     accent: "var(--color-sage-strong)",
     tint: "rgba(95, 131, 101, 0.12)",
+    wash: "rgba(95, 131, 101, 0.5)",
     tilt: 1.1,
     src: "/audio/hvac-call.mp4",
   },
@@ -53,6 +56,7 @@ const STORIES: Story[] = [
     duration: "2:11",
     accent: "var(--color-clay)",
     tint: "rgba(212, 165, 116, 0.16)",
+    wash: "rgba(212, 165, 116, 0.55)",
     tilt: -0.8,
     src: "/audio/spanish-grandpa-call.mp4",
   },
@@ -609,13 +613,12 @@ function FieldNoteCard({
           aria-hidden
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(110deg, transparent 0%, transparent 28%, ${story.tint} 46%, transparent 68%)`,
-            opacity: isActive ? 0.95 : 0,
+            background: `linear-gradient(110deg, transparent 0%, transparent 20%, ${story.wash} 50%, transparent 80%, transparent 100%)`,
+            opacity: isActive ? 1 : 0,
             transform: isActive
               ? `translateX(${-115 + progress * 230}%)`
               : "translateX(-115%)",
             transition: "opacity 0.7s ease, transform 80ms linear",
-            mixBlendMode: "multiply",
           }}
         />
 
