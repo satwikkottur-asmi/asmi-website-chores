@@ -564,8 +564,6 @@ function FieldNoteCard({
   // Reveal phrases progressively
   const phraseCount = story.phrases.length;
   const phraseProgress = progress * phraseCount;
-  const playbackSeconds = progress * (story.src ? baseDuration : visualDuration);
-  const washProgress = Math.min(playbackSeconds / 4.5, 1);
 
   return (
     <motion.div
@@ -613,15 +611,15 @@ function FieldNoteCard({
         />
         <span
           aria-hidden
-          className="absolute inset-y-0 left-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            width: "82%",
-            background: `linear-gradient(102deg, transparent 0%, transparent 12%, ${story.wash} 34%, ${story.wash} 52%, transparent 84%)`,
-            opacity: isActive ? 0.96 : 0,
-            transform: `translateX(${-72 + washProgress * 212}%)`,
-            transition: isActive
-              ? "transform 80ms linear, opacity 180ms ease-out"
-              : "opacity 220ms ease-out",
+            backgroundImage: `linear-gradient(100deg, transparent 0%, transparent 35%, ${story.wash} 50%, transparent 65%, transparent 100%)`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "220% 100%",
+            backgroundPosition: "0% 0%",
+            opacity: isActive ? 0.35 : 0,
+            animation: isActive ? "asmi-wash-sweep 90s linear infinite" : "none",
+            transition: "opacity 0.5s ease",
           }}
         />
 
