@@ -208,8 +208,8 @@ export function Act5() {
       <OrganicDivider />
 
       {/* 5C Languages */}
-      <div id="languages" className="px-5 sm:px-6 pt-16 pb-10 md:py-32">
-        <div className="text-center mb-12 md:mb-16">
+      <div id="languages" className="px-5 sm:px-6 pt-20 pb-16 md:py-32">
+        <div className="text-center mb-16 md:mb-16">
           <motion.h2
             className="font-serif"
             style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
