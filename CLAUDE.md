@@ -4,13 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **TanStack Start + React** full-stack web application built with:
-- **Build tool**: Vite with @lovable.dev/vite-tanstack-config
-- **Framework**: TanStack Start (React Router with SSR)
-- **Styling**: Tailwind CSS with shadcn/ui components
+This is a **React + Vite** frontend web application built with:
+- **Build tool**: Vite
+- **Framework**: React Router v6
+- **Styling**: Tailwind CSS with custom CSS variables
 - **UI Components**: Radix UI (via shadcn/ui)
 - **State management**: TanStack React Query
-- **Hosting**: Cloudflare (see wrangler.jsonc)
 - **Package manager**: Bun (bun.lock, bunfig.toml present)
 
 The codebase is a branded website/demo with multiple "acts" (Act1Opening, Act2CallViz, etc.) featuring interactive scenes, animations, and atmospheric effects.
@@ -42,32 +41,31 @@ bun run format
 
 ## Project Structure
 
-- `src/routes/` — TanStack Router route definitions (file-based routing)
-  - `__root.tsx` — Root layout with QueryClientProvider and global error handling
+- `src/routes/` — React Router v6 route components
+  - `__root.tsx` — Root layout with error boundaries
   - `index.tsx` — Home page
-  - Routes are automatically generated into `routeTree.gen.ts` (do not edit manually)
+  - `privacy.tsx` — Privacy Policy page
+  - `terms-and-conditions.tsx` — Terms and Conditions page
 - `src/components/` — React components
   - `asmi/` — Domain-specific components (Nav, WaitlistForm, Act1Opening, Act2CallViz, etc.)
   - `ui/` — shadcn/ui reusable components (buttons, forms, dialogs, etc.)
 - `src/hooks/` — Custom React hooks (e.g., use-mobile.tsx)
 - `src/lib/` — Utilities and helpers
   - `utils.ts` — General utilities (classname merging, etc.)
-  - `error-page.ts`, `error-capture.ts` — Error handling
-- `src/server.ts` — SSR server entry point (wrapped with error handling)
-- `src/router.tsx` — Router factory function with React Query setup
+- `src/main.tsx` — React Router setup and application entry point
 - `src/styles.css` — Global Tailwind + CSS variables
 
 ## Key Architecture Notes
 
-### TanStack Start Setup
-- **File-based routing**: Routes are automatically discovered from `src/routes/`. The router tree is auto-generated; do not manually edit `routeTree.gen.ts`.
-- **Server context**: The app passes `{ queryClient }` via router context, making React Query available throughout the app.
-- **SSR-aware**: Use `.server.ts` suffix (not `server-only` package) for server-only code.
+### React Router Setup
+- **BrowserRouter**: Client-side routing via React Router v6
+- **QueryClientProvider**: TanStack React Query is initialized in main.tsx
+- **Route registration**: Routes are manually registered in `src/main.tsx`
 
 ### Configuration
-- **Path aliases**: `@/*` maps to `src/*` (configured in tsconfig.json and components.json)
+- **Path aliases**: `@/*` maps to `src/*` (configured in tsconfig.json)
 - **shadcn/ui config**: `components.json` defines the component style (new-york) and paths (@/components, @/ui, @/hooks, etc.)
-- **Vite config**: Uses @lovable.dev's preset which auto-includes tanstackStart, viteReact, tailwindcss, tsConfigPaths, and cloudflare plugin. Do not manually re-add these or the build will break.
+- **Vite config**: Standard Vite setup with React plugin and Tailwind CSS integration
 
 ### Styling & UI
 - **Tailwind CSS** with shadcn/ui components (Radix UI underneath)
@@ -90,10 +88,10 @@ bun run format
 2. Or copy from shadcn's component library and place in `src/components/ui/`
 3. Import via `@/components/ui/<component>`
 
-### Creating server-side functions
-1. Create `.server.ts` files in routes or `src/lib/`
-2. Import using `import { action } from './file.server'`
-3. Do NOT use `server-only` package; TanStack Start handles server/client boundaries differently
+### Adding a new route
+1. Create a new file in `src/routes/` (e.g., `src/routes/about.tsx`)
+2. Register the route in `src/main.tsx` within the Routes component
+3. The route will be available at its corresponding path (e.g., `/about`)
 
 ## Type Checking & Linting
 
@@ -104,6 +102,6 @@ bun run format
 
 ## Deployment
 
-- Targets **Cloudflare** (see wrangler.jsonc and @cloudflare/vite-plugin in config)
+- Frontend-only SPA (Single Page Application)
 - Build artifacts go to `dist/` directory
-- Server entry point redirected to `src/server.ts` via vite.config.ts
+- Static site hosting compatible (Netlify, Vercel, GitHub Pages, etc.)

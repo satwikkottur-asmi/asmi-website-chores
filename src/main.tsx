@@ -6,6 +6,7 @@ import "./styles.css";
 import { RootLayout } from "./routes/__root";
 import Index from "./routes/index";
 import Privacy from "./routes/privacy";
+import TermsAndConditions from "./routes/terms-and-conditions";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route element={<RootLayout />}>
             <Route path="/" element={<Index />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           </Route>
         </Routes>
       </BrowserRouter>
