@@ -109,7 +109,7 @@ function langPos(i: number, total: number, size: string) {
   };
 }
 
-export function Act5() {
+export function Act5Stories() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
@@ -158,7 +158,13 @@ export function Act5() {
           ))}
         </div>
       </div>
+    </section>
+  );
+}
 
+export function Act5() {
+  return (
+    <section className="relative">
       <OrganicDivider />
 
       {/* 5B Available everywhere */}

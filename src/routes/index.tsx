@@ -6,7 +6,7 @@ import { Act1Opening } from "@/components/asmi/Act1Opening";
 import { Act2CallViz } from "@/components/asmi/Act2CallViz";
 import { Act3ThreeMoments } from "@/components/asmi/Act3Moments";
 import { Act4Cloud } from "@/components/asmi/Act4Cloud";
-import { Act5 } from "@/components/asmi/Act5";
+import { Act5, Act5Stories } from "@/components/asmi/Act5";
 import { Act6Close } from "@/components/asmi/Act6Close";
 import { OrganicDivider } from "@/components/asmi/Atmosphere";
 
@@ -30,8 +30,9 @@ function Index() {
       <Nav />
       <Act1Opening sectionRef={heroRef} />
       <Act2CallViz />
-      <div aria-hidden style={{ height: "40svh" }} />
+      <div aria-hidden className="hidden md:block" style={{ height: "40svh" }} />
       <Act3ThreeMoments />
+      <Act5Stories />
       <OrganicDivider />
       <Act4Cloud />
       <Act5 />
