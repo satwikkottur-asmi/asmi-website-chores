@@ -22,7 +22,7 @@ const STORIES: Story[] = [
       "tuesday, 10am.",
     ],
     tag: "pre-auth cleared",
-    duration: "0:47",
+    duration: "3:04",
     accent: "var(--color-terracotta)",
     tint: "rgba(194, 91, 63, 0.10)",
     tilt: -1.5,
@@ -36,7 +36,7 @@ const STORIES: Story[] = [
       "saturday, 9am.",
     ],
     tag: "$150 diagnostic",
-    duration: "1:12",
+    duration: "1:49",
     accent: "var(--color-sage-strong)",
     tint: "rgba(95, 131, 101, 0.12)",
     tilt: 1.1,
@@ -50,7 +50,7 @@ const STORIES: Story[] = [
       "he took his medicines.",
     ],
     tag: "check-in logged",
-    duration: "3:20",
+    duration: "2:11",
     accent: "var(--color-clay)",
     tint: "rgba(212, 165, 116, 0.16)",
     tilt: -0.8,
@@ -606,9 +606,9 @@ function FieldNoteCard({
             background: `linear-gradient(115deg, ${story.tint} 0%, ${story.tint} 35%, transparent 70%)`,
             opacity: isActive ? 1 : 0,
             transform: isActive
-              ? `translateX(${(progress - 0.5) * 30}%)`
-              : "translateX(-40%)",
-            transition: "opacity 0.7s ease",
+              ? `translateX(${-60 + progress * 120}%)`
+              : "translateX(-60%)",
+            transition: "opacity 0.7s ease, transform 80ms linear",
             mixBlendMode: "multiply",
           }}
         />
