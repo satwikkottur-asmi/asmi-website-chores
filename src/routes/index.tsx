@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useRef } from "react";
 import { Nav } from "@/components/asmi/Nav";
 import { ScrollProgress } from "@/components/asmi/ScrollProgress";
@@ -10,19 +9,7 @@ import { Act5, Act5Stories } from "@/components/asmi/Act5";
 import { Act6Close } from "@/components/asmi/Act6Close";
 import { OrganicDivider } from "@/components/asmi/Atmosphere";
 
-export const Route = createFileRoute("/")({
-  component: Index,
-  head: () => ({
-    meta: [
-      { title: "Asmi — AI that handles your personal chores in the physical world" },
-      { name: "description", content: "Asmi makes real phone calls — plumbers, prescriptions, family check-ins. You text. Asmi handles it." },
-      { property: "og:title", content: "Asmi — The screen era is over." },
-      { property: "og:description", content: "AI that handles your personal chores in the physical world." },
-    ],
-  }),
-});
-
-function Index() {
+export default function Index() {
   const heroRef = useRef<HTMLElement>(null);
   return (
     <main className="relative" style={{ overflowX: "clip" }}>

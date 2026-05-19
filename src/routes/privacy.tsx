@@ -1,20 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 
-export const Route = createFileRoute("/privacy")({
-  component: PrivacyPage,
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy · asmi" },
-      {
-        name: "description",
-        content:
-          "How asmi collects, uses, and protects your data when you use our AI assistant.",
-      },
-    ],
-  }),
-});
-
-function PrivacyPage() {
+export default function PrivacyPage() {
   return (
     <main className="min-h-screen px-5 sm:px-8 py-16 md:py-24">
       <div className="max-w-2xl mx-auto">

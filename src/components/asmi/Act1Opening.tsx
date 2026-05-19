@@ -52,15 +52,18 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
                 </span>
               ))}
             </h1>
+            {/*
             <div className="mt-6 sm:mt-10 flex justify-center">
               <motion.div style={{ opacity: brushOpacity }} className="w-full max-w-[24rem] sm:max-w-[40rem]">
                 <BrushUnderline progress={1} />
               </motion.div>
             </div>
+            */}
           </motion.div>
         </motion.div>
 
         {/* Wordmark block — absolutely positioned on every breakpoint, anchored to lower portion */}
+        {/*
         <motion.div
           className="absolute left-0 right-0 px-5 sm:px-6 z-20 text-center"
           style={{
@@ -86,6 +89,7 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
             <WaitlistForm />
           </div>
         </motion.div>
+        */}
       </div>
     </section>
   );

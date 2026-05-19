@@ -1,14 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
-
-import appCss from "../styles.css?url";
+import { Outlet, useNavigate } from "react-router-dom";
 
 function NotFoundComponent() {
   return (
@@ -20,12 +10,12 @@ function NotFoundComponent() {
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
+          <a
+            href="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Go home
-          </Link>
+          </a>
         </div>
       </div>
     </div>
@@ -34,7 +24,7 @@ function NotFoundComponent() {
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -48,7 +38,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
-              router.invalidate();
+              window.location.reload();
               reset();
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -67,59 +57,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Asmi AI" },
-      { name: "description", content: "Asmi is an AI that makes real phone calls in the physical world for you." },
-      { name: "author", content: "Asmi" },
-      { property: "og:title", content: "Asmi AI" },
-      { property: "og:description", content: "Asmi is an AI that makes real phone calls in the physical world for you." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@AsmiAI" },
-      { name: "twitter:title", content: "Asmi AI" },
-      { name: "twitter:description", content: "Asmi is an AI that makes real phone calls in the physical world for you." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d3fbb070-9cd4-4306-af7e-f24ae7a26197/id-preview-232e13f7--6d6b2778-c078-4d4e-8085-25e2da0727f6.lovable.app-1778900453400.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d3fbb070-9cd4-4306-af7e-f24ae7a26197/id-preview-232e13f7--6d6b2778-c078-4d4e-8085-25e2da0727f6.lovable.app-1778900453400.png" },
-    ],
-    links: [
-      { rel: "icon", href: "/asmi_logo_white_square.png", type: "image/png" },
-      { rel: "shortcut icon", href: "/asmi_logo_white_square.png", type: "image/png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,300;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&family=Figtree:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" },
-      { rel: "stylesheet", href: appCss },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
+export function RootLayout() {
+  return <Outlet />;
 }
 
-function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />
-    </QueryClientProvider>
-  );
-}
+export { NotFoundComponent, ErrorComponent };
