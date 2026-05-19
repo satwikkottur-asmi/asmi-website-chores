@@ -26,6 +26,7 @@ const STORIES: Story[] = [
     duration: "3:04",
     accent: "var(--color-terracotta)",
     tint: "rgba(194, 91, 63, 0.10)",
+    wash: "rgba(194, 91, 63, 0.55)",
     tilt: -1.5,
     src: "/audio/doc-sandra-call.mp4",
   },
