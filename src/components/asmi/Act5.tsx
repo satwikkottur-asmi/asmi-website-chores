@@ -564,8 +564,6 @@ function FieldNoteCard({
   // Reveal phrases progressively
   const phraseCount = story.phrases.length;
   const phraseProgress = progress * phraseCount;
-  const playbackSeconds = progress * (story.src ? baseDuration : visualDuration);
-  const washProgress = Math.min(playbackSeconds / 4.5, 1);
 
   return (
     <motion.div
