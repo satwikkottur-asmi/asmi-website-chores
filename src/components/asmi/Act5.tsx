@@ -197,7 +197,7 @@ export function Act5() {
         </div>
 
         <p
-          className="mt-10 md:mt-20 font-sans text-center"
+          className="mt-14 md:mt-20 font-sans text-center"
           style={{ color: "var(--color-espresso)", fontSize: 16, fontWeight: 400 }}
         >
           Same intelligence. Every surface. No app.
