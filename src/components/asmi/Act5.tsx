@@ -8,7 +8,8 @@ type Story = {
   tag: string;           // "pre-auth cleared"
   duration: string;      // "0:47"
   accent: string;        // css color
-  tint: string;          // soft wash color
+  tint: string;          // soft wash color (blooms)
+  wash: string;          // bolder sweep color, visible on cream
   tilt: number;          // deg
   src?: string;          // optional real audio
 };
