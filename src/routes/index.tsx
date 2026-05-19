@@ -73,6 +73,18 @@ function Index() {
           >
             AI that handles your personal chores in the physical world.
           </p>
+          <div
+            className="font-serif italic flex items-center gap-2"
+            style={{ color: "var(--color-stone-dim)", fontSize: 14 }}
+          >
+            <a href="mailto:support@asmiai.com" style={{ color: "inherit" }}>
+              support@asmiai.com
+            </a>
+            <span aria-hidden>·</span>
+            <a href="/privacy" style={{ color: "inherit" }}>
+              Privacy
+            </a>
+          </div>
         </div>
       </footer>
     </main>
