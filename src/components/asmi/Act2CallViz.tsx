@@ -55,6 +55,7 @@ export function Act2CallViz() {
 
   // GSAP ScrollTrigger pinning — deterministic across desktop & mobile
   useLayoutEffect(() => {
+    if (isMobile) return;
     const section = sectionRef.current;
     const pin = pinRef.current;
     if (!section || !pin) return;
