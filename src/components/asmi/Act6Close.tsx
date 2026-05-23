@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { AmbientBlobs } from "./Atmosphere";
-import { WaitlistForm } from "./WaitlistForm";
+import { CTASection } from "./CTASection";
 
 export function Act6Close() {
   return (
@@ -71,7 +71,7 @@ export function Act6Close() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            <WaitlistForm size="lg" />
+            <CTASection size="lg" />
           </motion.div>
           <motion.p
             className="mt-6 label-mono text-center"
