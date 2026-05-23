@@ -101,6 +101,7 @@ export function Act2CallViz() {
 
   return (
     <section
+      id="how"
       ref={sectionRef}
       className="relative"
       style={{ height: `${(isMobile ? 2 : steps.length) * 100}svh` }}
