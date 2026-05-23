@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useProductHunt } from "@/context/ProductHuntContext";
 
 export function Nav() {
   const [show, setShow] = useState(false);
+  const { isProductHunt } = useProductHunt();
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.85);
     onScroll();
@@ -42,10 +44,43 @@ export function Nav() {
                  onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
                  onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Languages</a>
             </div>
-            <a href="#start" className="btn-pill" style={{ padding: "0.55rem 1.1rem", fontSize: "0.82rem" }}>
-              <span className="hidden sm:inline">Join waitlist</span>
-              <span className="sm:hidden">Waitlist</span>
-            </a>
+            {isProductHunt ? (
+              <div className="flex items-center gap-3">
+                <motion.a
+                  href="https://asmi-ai.link/PH"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                  title="Open in iMessage"
+                >
+                  <img src="/assets/logos/imessage.svg" alt="iMessage" style={{ width: 40, height: 40 }} />
+                </motion.a>
+                <motion.a
+                  href="https://asmi-ai.link/PH-2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    background: "#25D366",
+                    borderRadius: "8px",
+                  }}
+                  title="Open in WhatsApp"
+                >
+                  <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
+                </motion.a>
+              </div>
+            ) : (
+              <a href="#start" className="btn-pill" style={{ padding: "0.55rem 1.1rem", fontSize: "0.82rem" }}>
+                <span className="hidden sm:inline">Join waitlist</span>
+                <span className="sm:hidden">Waitlist</span>
+              </a>
+            )}
           </div>
         </motion.nav>
       )}
