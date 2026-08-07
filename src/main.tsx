@@ -8,6 +8,7 @@ import Index from "./routes/index";
 import Privacy from "./routes/privacy";
 import TermsAndConditions from "./routes/terms-and-conditions";
 import ProductHunt from "./routes/product-hunt";
+import NewNumber from "./routes/new-number";
 import { ProductHuntProvider } from "./context/ProductHuntContext";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route element={<RootLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/product-hunt" element={<ProductHunt />} />
+              <Route path="/new-number" element={<NewNumber />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             </Route>
