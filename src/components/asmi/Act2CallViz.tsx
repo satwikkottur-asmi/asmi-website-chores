@@ -3,6 +3,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { EASE_OUT, withAlpha } from "@/lib/theme";
+import { CallLogRow } from "./CallLogRow";
+import { GlowOrb } from "./GlowOrb";
+import { RadialVignette } from "./RadialVignette";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -154,13 +158,7 @@ export function Act2CallViz() {
             "linear-gradient(135deg, var(--color-linen), var(--color-sand) 55%, var(--color-morning))",
         }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle at center, rgba(194,91,63,0.10) 0%, rgba(194,91,63,0.05) 25%, rgba(246,241,235,0) 60%)",
-          }}
-        />
+        <RadialVignette color="terracotta" />
         {isMobile ? (
           <MobileScene active={active} activeKey={activeKey} steps={steps} />
         ) : (
@@ -196,7 +194,7 @@ function StepHeader({
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.45, ease: [0.2, 0.7, 0.2, 1] }}
+          transition={{ duration: 0.45, ease: EASE_OUT }}
           className="flex items-center justify-center gap-3 whitespace-nowrap"
         >
           <span
@@ -259,7 +257,7 @@ function MobileScene({
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.55, ease: EASE_OUT }}
           >
             <div className="text-center w-full max-w-md">
               <p className="label-mono mb-3" style={{ color: "var(--color-terracotta-deep)" }}>
@@ -293,9 +291,9 @@ function MobileScene({
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.6, ease: EASE_OUT }}
           >
-            <MobileOrb size={104} confirmed={isConfirmed} />
+            <GlowOrb size={104} confirmed={isConfirmed} tappable />
           </motion.div>
         )}
       </AnimatePresence>
@@ -310,7 +308,7 @@ function MobileScene({
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.5, ease: EASE_OUT }}
           >
             <div className="mx-auto w-full max-w-sm flex flex-col gap-2.5">
               {MOBILE_PLUMBERS.map((p, i) => (
@@ -331,72 +329,6 @@ function MobileScene({
   );
 }
 
-function MobileOrb({ size, confirmed }: { size: number; confirmed: boolean }) {
-  const [pulse, setPulse] = useState(false);
-  return (
-    <div
-      className="relative"
-      style={{ width: size, height: size, WebkitTapHighlightColor: "transparent" }}
-      onClick={() => {
-        setPulse(true);
-        setTimeout(() => setPulse(false), 600);
-      }}
-    >
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: confirmed ? "rgba(95,131,101,0.14)" : "rgba(194,91,63,0.14)",
-          boxShadow: confirmed
-            ? "0 0 110px rgba(95,131,101,0.32)"
-            : "0 0 110px rgba(194,91,63,0.28)",
-          transition: "background 0.6s ease, box-shadow 0.6s ease",
-        }}
-      />
-      <div
-        className="absolute inset-[16%] rounded-full"
-        style={{
-          background: confirmed ? "rgba(95,131,101,0.26)" : "rgba(194,91,63,0.26)",
-          transition: "background 0.6s ease",
-        }}
-      />
-      <div
-        className="absolute inset-[31%] rounded-full"
-        style={{
-          background: confirmed ? "rgba(95,131,101,0.4)" : "rgba(194,91,63,0.4)",
-          transition: "background 0.6s ease",
-        }}
-      />
-      <motion.div
-        className="absolute inset-[39%] rounded-full"
-        style={{
-          background: confirmed ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)",
-          boxShadow: confirmed ? "0 0 50px rgba(73,100,78,0.55)" : "0 0 50px rgba(162,72,48,0.5)",
-          transition: "background 0.6s ease, box-shadow 0.6s ease",
-        }}
-        animate={{ scale: pulse ? [1, 1.25, 1] : [1, 1.08, 1] }}
-        transition={{
-          duration: pulse ? 0.6 : 2.8,
-          repeat: pulse ? 0 : Infinity,
-          ease: "easeInOut",
-        }}
-      />
-      <div
-        className="absolute left-1/2 -translate-x-1/2 label-mono"
-        style={{
-          bottom: -22,
-          color: confirmed ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)",
-          whiteSpace: "nowrap",
-          fontSize: "0.7rem",
-          letterSpacing: "0.2em",
-          transition: "color 0.6s ease",
-        }}
-      >
-        Asmi
-      </div>
-    </div>
-  );
-}
-
 function PlumberRow({
   index,
   name,
@@ -412,134 +344,37 @@ function PlumberRow({
 }) {
   const winner = index === 0;
   const [tapped, setTapped] = useState(false);
-  // Faster mobile stagger
-  const delay = activeKey === "dial" ? index * 0.08 : 0;
-
-  // Color/state logic
   const dim = isConfirmed && !winner;
+  const dialing = activeKey === "dial";
+
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
       : "var(--color-stone-dim)"
     : "var(--color-terracotta-deep)";
 
+  const subtext =
+    tapped && !isConfirmed ? "ringing…" : isConfirmed ? (winner ? `✓ ${note}` : note) : "calling…";
+  const subtextColor =
+    !isConfirmed && tapped && !(winner && isConfirmed) ? "var(--color-terracotta-deep)" : undefined;
+
   return (
-    <motion.button
-      type="button"
-      onClick={() => {
+    <CallLogRow
+      index={index}
+      name={name}
+      subtext={subtext}
+      subtextColor={subtextColor}
+      winner={winner}
+      resolved={isConfirmed}
+      dotColor={dotColor}
+      dialing={dialing}
+      dim={dim}
+      tapped={tapped}
+      onTap={() => {
         setTapped(true);
         setTimeout(() => setTapped(false), 900);
       }}
-      initial={{ opacity: 0, x: -16 }}
-      animate={{
-        opacity: dim ? 0.45 : 1,
-        x: 0,
-        filter: dim ? "saturate(0.4)" : "saturate(1)",
-      }}
-      transition={{ duration: 0.5, delay, ease: [0.2, 0.7, 0.2, 1] }}
-      whileTap={{ scale: 0.98 }}
-      className="relative flex items-center gap-3 text-left rounded-2xl px-4 py-3 w-full"
-      style={{
-        background: winner && isConfirmed ? "rgba(95,131,101,0.12)" : "rgba(255,255,255,0.55)",
-        border:
-          winner && isConfirmed
-            ? "1px solid rgba(95,131,101,0.4)"
-            : "1px solid rgba(107,101,96,0.12)",
-        backdropFilter: "blur(6px)",
-        WebkitBackdropFilter: "blur(6px)",
-        boxShadow:
-          winner && isConfirmed
-            ? "0 18px 40px -22px rgba(73,100,78,0.55)"
-            : "0 4px 14px -8px rgba(76,53,38,0.18)",
-        WebkitTapHighlightColor: "transparent",
-        transition: "background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease",
-      }}
-    >
-      {/* Pulsing dot */}
-      <span className="relative flex-shrink-0" style={{ width: 12, height: 12 }}>
-        <motion.span
-          className="absolute inset-0 rounded-full"
-          style={{ background: dotColor, transition: "background 0.5s ease" }}
-          animate={
-            activeKey === "dial"
-              ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }
-              : { scale: 1, opacity: 1 }
-          }
-          transition={{
-            duration: 1.2,
-            repeat: activeKey === "dial" ? Infinity : 0,
-            ease: "easeInOut",
-            delay: index * 0.18,
-          }}
-        />
-        {tapped && (
-          <motion.span
-            className="absolute inset-0 rounded-full"
-            style={{ border: `2px solid ${dotColor}` }}
-            initial={{ scale: 1, opacity: 0.7 }}
-            animate={{ scale: 3, opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          />
-        )}
-      </span>
-
-      <span className="flex-1 min-w-0">
-        <span
-          className="block label-mono"
-          style={{
-            color: dim ? "var(--color-stone-dim)" : "var(--color-espresso-strong)",
-            fontSize: "0.82rem",
-            letterSpacing: "0.12em",
-            fontWeight: 600,
-            transition: "color 0.5s ease",
-          }}
-        >
-          {name}
-        </span>
-        <span
-          className="block font-sans"
-          style={{
-            color:
-              winner && isConfirmed
-                ? "var(--color-sage-strong)"
-                : tapped
-                  ? "var(--color-terracotta-deep)"
-                  : "var(--color-stone-dim)",
-            fontSize: "0.78rem",
-            marginTop: 2,
-            fontWeight: winner && isConfirmed ? 600 : 400,
-            transition: "color 0.4s ease",
-          }}
-        >
-          {tapped && !isConfirmed
-            ? "ringing…"
-            : isConfirmed
-              ? winner
-                ? `✓ ${note}`
-                : note
-              : "calling…"}
-        </span>
-      </span>
-
-      {winner && isConfirmed && (
-        <motion.span
-          initial={{ scale: 0, rotate: -20 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
-          className="flex-shrink-0 inline-flex items-center justify-center rounded-full"
-          style={{
-            width: 24,
-            height: 24,
-            background: "var(--color-sage-strong)",
-            color: "var(--color-cream)",
-            fontSize: 13,
-          }}
-          aria-hidden
-        >
-          ✓
-        </motion.span>
-      )}
-    </motion.button>
+    />
   );
 }
 
@@ -612,7 +447,7 @@ function DesktopScene({
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.55, ease: EASE_OUT }}
           >
             <div className="text-center w-full max-w-3xl">
               <p className="label-mono mb-3" style={{ color: "var(--color-terracotta-deep)" }}>
@@ -676,59 +511,9 @@ function DesktopScene({
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.55, ease: EASE_OUT }}
           >
-            <div className="relative" style={{ width: 168, height: 168 }}>
-              <div
-                className="absolute inset-0 rounded-full"
-                style={{
-                  background: isConfirmed ? "rgba(95,131,101,0.14)" : "rgba(194,91,63,0.14)",
-                  boxShadow: isConfirmed
-                    ? "0 0 110px rgba(95,131,101,0.32)"
-                    : "0 0 110px rgba(194,91,63,0.28)",
-                  transition: "background 0.6s ease, box-shadow 0.6s ease",
-                }}
-              />
-              <div
-                className="absolute inset-[16%] rounded-full"
-                style={{
-                  background: isConfirmed ? "rgba(95,131,101,0.26)" : "rgba(194,91,63,0.26)",
-                  transition: "background 0.6s ease",
-                }}
-              />
-              <div
-                className="absolute inset-[31%] rounded-full"
-                style={{
-                  background: isConfirmed ? "rgba(95,131,101,0.4)" : "rgba(194,91,63,0.4)",
-                  transition: "background 0.6s ease",
-                }}
-              />
-              <motion.div
-                className="absolute inset-[39%] rounded-full"
-                style={{
-                  background: isConfirmed
-                    ? "var(--color-sage-strong)"
-                    : "var(--color-terracotta-deep)",
-                  boxShadow: isConfirmed
-                    ? "0 0 50px rgba(73,100,78,0.55)"
-                    : "0 0 50px rgba(162,72,48,0.5)",
-                  transition: "background 0.6s ease, box-shadow 0.6s ease",
-                }}
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <div
-                className="absolute left-1/2 -translate-x-1/2 label-mono"
-                style={{
-                  bottom: -28,
-                  color: isConfirmed ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)",
-                  whiteSpace: "nowrap",
-                  transition: "color 0.6s ease",
-                }}
-              >
-                Asmi
-              </div>
-            </div>
+            <GlowOrb size={168} confirmed={isConfirmed} pulseScale={1.1} labelOffset={-28} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -762,7 +547,7 @@ function BranchLine({
   const stroke = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
-      : "rgba(107, 101, 96, 0.3)"
+      : withAlpha("stone", 0.3)
     : "var(--color-terracotta-deep)";
   const targetOpacity = isConfirmed ? (winner ? 1 : 0.5) : winner ? 0.9 : 0.75;
 
@@ -776,7 +561,7 @@ function BranchLine({
       initial={{ pathLength: 0, opacity: 0 }}
       animate={{ pathLength: 1, opacity: targetOpacity }}
       transition={{
-        pathLength: { duration: 0.7, delay, ease: [0.2, 0.7, 0.2, 1] },
+        pathLength: { duration: 0.7, delay, ease: EASE_OUT },
         opacity: { duration: 0.5, delay, ease: "easeOut" },
         stroke: { duration: 0.4 },
       }}
@@ -846,7 +631,7 @@ function EndpointLabel({
   const dotColor = isConfirmed
     ? winner
       ? "var(--color-sage-strong)"
-      : "rgba(107, 101, 96, 0.45)"
+      : withAlpha("stone", 0.45)
     : "var(--color-terracotta-deep)";
 
   return (
@@ -860,7 +645,8 @@ function EndpointLabel({
           height: winner ? 14 : 10,
           background: dotColor,
           transform: "translate(-50%, -50%)",
-          boxShadow: winner && isConfirmed ? "0 0 36px rgba(95,131,101,0.6)" : undefined,
+          boxShadow:
+            winner && isConfirmed ? `0 0 36px ${withAlpha("sage-strong", 0.6)}` : undefined,
         }}
         initial={{ opacity: 0, scale: 0.6 }}
         animate={{
@@ -868,7 +654,7 @@ function EndpointLabel({
           scale: winner && isConfirmed ? 1.5 : 1,
           filter: isConfirmed && !winner ? "saturate(0.4)" : "saturate(1)",
         }}
-        transition={{ duration: 0.5, delay, ease: [0.2, 0.7, 0.2, 1] }}
+        transition={{ duration: 0.5, delay, ease: EASE_OUT }}
       />
 
       <motion.div
@@ -899,7 +685,7 @@ function EndpointLabel({
                 fontSize: "0.72rem",
                 letterSpacing: "0.16em",
                 textWrap: "balance",
-                textShadow: "0 1px 0 rgba(251,248,243,0.55)",
+                textShadow: `0 1px 0 ${withAlpha("cream", 0.55)}`,
                 transition: "color 0.4s ease",
               }}
             >
@@ -911,7 +697,7 @@ function EndpointLabel({
             <motion.div
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.55, ease: [0.2, 0.7, 0.2, 1] }}
+              transition={{ duration: 0.55, ease: EASE_OUT }}
             >
               <span
                 className="label-mono inline-flex items-center justify-center px-4 py-2 rounded-full"
@@ -919,7 +705,7 @@ function EndpointLabel({
                   color: "var(--color-cream)",
                   background: "var(--color-sage-strong)",
                   border: "1px solid var(--color-sage-deep)",
-                  boxShadow: "0 18px 48px -18px rgba(73,100,78,0.6)",
+                  boxShadow: `0 18px 48px -18px ${withAlpha("sage-deep", 0.6)}`,
                   whiteSpace: "normal",
                   lineHeight: 1.45,
                   fontSize: 11,

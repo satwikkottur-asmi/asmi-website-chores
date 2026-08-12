@@ -1,6 +1,8 @@
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { EASE_OUT, withAlpha } from "@/lib/theme";
+import { CallLogRow } from "./CallLogRow";
 
 function Moment({
   index,
@@ -46,7 +48,7 @@ function Moment({
         </h2>
         <div
           className="mt-5 sm:mt-6 font-sans"
-          style={{ color: "#6B6560", fontSize: "clamp(1rem, 1.5vw, 1.3rem)" }}
+          style={{ color: "var(--color-stone)", fontSize: "clamp(1rem, 1.5vw, 1.3rem)" }}
         >
           {subtext}
         </div>
@@ -144,7 +146,7 @@ function MobileScene({ index, children }: { index: number; children: React.React
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.3 }}
-        transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
+        transition={{ duration: 0.7, ease: EASE_OUT }}
       >
         <p className="label-mono mb-5" style={{ color: "var(--color-stone-dim)" }}>
           0{index}
@@ -259,98 +261,16 @@ function LoopPlumberRow({
     phase === "idle" ? "—" : dialing ? "calling…" : winner ? `✓ ${resolvedNote}` : resolvedNote;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -16 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
-      animate={{
-        opacity: dim ? 0.45 : 1,
-        filter: dim ? "saturate(0.4)" : "saturate(1)",
-      }}
-      className="relative flex items-center gap-3 text-left rounded-2xl px-4 py-3 w-full"
-      style={{
-        background: winner && resolved ? "rgba(95,131,101,0.12)" : "rgba(255,255,255,0.55)",
-        border:
-          winner && resolved ? "1px solid rgba(95,131,101,0.4)" : "1px solid rgba(107,101,96,0.12)",
-        backdropFilter: "blur(6px)",
-        WebkitBackdropFilter: "blur(6px)",
-        boxShadow:
-          winner && resolved
-            ? "0 18px 40px -22px rgba(73,100,78,0.55)"
-            : "0 4px 14px -8px rgba(76,53,38,0.18)",
-        transition:
-          "background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
-      }}
-    >
-      <span className="relative flex-shrink-0" style={{ width: 12, height: 12 }}>
-        <motion.span
-          className="absolute inset-0 rounded-full"
-          style={{ background: dotColor, transition: "background 0.5s ease" }}
-          animate={
-            dialing ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] } : { scale: 1, opacity: 1 }
-          }
-          transition={{
-            duration: 1.2,
-            repeat: dialing ? Infinity : 0,
-            ease: "easeInOut",
-            delay: index * 0.18,
-          }}
-        />
-      </span>
-
-      <span className="flex-1 min-w-0 text-left">
-        <span
-          className="block label-mono"
-          style={{
-            color: dim ? "var(--color-stone-dim)" : "var(--color-espresso-strong)",
-            fontSize: "0.82rem",
-            letterSpacing: "0.12em",
-            fontWeight: 600,
-            transition: "color 0.5s ease",
-          }}
-        >
-          {name}
-        </span>
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={subtext}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.25 }}
-            className="block font-sans"
-            style={{
-              color: winner && resolved ? "var(--color-sage-strong)" : "var(--color-stone-dim)",
-              fontSize: "0.78rem",
-              marginTop: 2,
-              fontWeight: winner && resolved ? 600 : 400,
-            }}
-          >
-            {subtext}
-          </motion.span>
-        </AnimatePresence>
-      </span>
-
-      {winner && resolved && (
-        <motion.span
-          initial={{ scale: 0, rotate: -20 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
-          className="flex-shrink-0 inline-flex items-center justify-center rounded-full"
-          style={{
-            width: 24,
-            height: 24,
-            background: "var(--color-sage-strong)",
-            color: "var(--color-cream)",
-            fontSize: 13,
-          }}
-          aria-hidden
-        >
-          ✓
-        </motion.span>
-      )}
-    </motion.div>
+    <CallLogRow
+      index={index}
+      name={name}
+      subtext={subtext}
+      winner={winner}
+      resolved={resolved}
+      dotColor={dotColor}
+      dialing={dialing}
+      dim={dim}
+    />
   );
 }
 
@@ -365,7 +285,7 @@ function FullWaveform() {
       <motion.path
         d="M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100"
         fill="none"
-        stroke="#C25B3F"
+        stroke="var(--color-terracotta)"
         strokeWidth="3"
         strokeLinecap="round"
         animate={{
@@ -400,7 +320,7 @@ function FaintRadiating() {
           <path
             key={i}
             d={`M50 50 Q ${mx} ${my}, ${x} ${y}`}
-            stroke="#C25B3F"
+            stroke="var(--color-terracotta)"
             strokeWidth="0.4"
             fill="none"
           />
@@ -424,7 +344,7 @@ function MessageBubble() {
         style={{
           background: "var(--color-sage)",
           color: "var(--color-espresso)",
-          boxShadow: "0 8px 32px rgba(44,37,32,0.08), 0 12px 40px -16px rgba(139, 168, 136, 0.6)",
+          boxShadow: `0 8px 32px ${withAlpha("espresso", 0.08)}, 0 12px 40px -16px ${withAlpha("sage", 0.6)}`,
           fontSize: "1.15rem",
           fontWeight: 500,
           maxWidth: "85vw",
