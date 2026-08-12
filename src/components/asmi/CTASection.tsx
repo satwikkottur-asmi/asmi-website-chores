@@ -1,4 +1,4 @@
-import { ProductHuntLinks } from "./ProductHuntLinks";
+import { ProductHuntLinks } from "./MessagingLinks";
 
 interface Props {
   size?: "md" | "lg";
