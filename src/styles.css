@@ -26,6 +26,34 @@
   --color-clay: #d4a574;
   --color-gold: #d4a574;
   --color-cream: #fbf8f3;
+  --color-apricot: #c9956f;
+  --color-whatsapp: #25d366;
+
+  /* Ambient blob palette (Act1/Act6 backdrop) */
+  --color-blob-1: #e6dcc8;
+  --color-blob-2: #e8d9c3;
+  --color-blob-3: #d9cfc0;
+  --color-blob-4: #eadfcc;
+  --color-blob-5: #d8c9b5;
+
+  /* RGB triplets for alpha-blended usage, e.g. rgba(var(--rgb-terracotta), 0.4) */
+  --rgb-linen: 246, 241, 235;
+  --rgb-sand: 237, 230, 220;
+  --rgb-espresso: 44, 37, 32;
+  --rgb-espresso-strong: 33, 26, 22;
+  --rgb-ink: 76, 53, 38;
+  --rgb-stone: 107, 101, 96;
+  --rgb-stone-dim: 138, 130, 120;
+  --rgb-terracotta: 194, 91, 63;
+  --rgb-terracotta-deep: 162, 72, 48;
+  --rgb-sage: 139, 168, 136;
+  --rgb-sage-strong: 95, 131, 101;
+  --rgb-sage-deep: 73, 100, 78;
+  --rgb-sky: 126, 173, 194;
+  --rgb-clay: 212, 165, 116;
+  --rgb-apricot: 201, 149, 111;
+  --rgb-cream: 251, 248, 243;
+  --rgb-white: 255, 255, 255;
 
   --color-background: var(--color-linen);
   --color-foreground: var(--color-espresso);
