@@ -42,17 +42,20 @@ export function Nav() {
                  onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
                  onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Languages</a>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <motion.a
                 href="https://asmi-ai.link/PH"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center justify-center hover:opacity-80 transition-opacity"
+                className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
                 title="Open in iMessage"
               >
                 <img src="/assets/logos/imessage.svg" alt="iMessage" style={{ width: 40, height: 40 }} />
+                <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
+                  iMessage
+                </span>
               </motion.a>
               <motion.a
                 href="https://asmi-ai.link/PH-2"
@@ -60,16 +63,23 @@ export function Nav() {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.96 }}
-                className="flex items-center justify-center hover:opacity-80 transition-opacity"
-                style={{
-                  width: 40,
-                  height: 40,
-                  background: "#25D366",
-                  borderRadius: "8px",
-                }}
+                className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
                 title="Open in WhatsApp"
               >
-                <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
+                <span
+                  className="flex items-center justify-center"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    background: "#25D366",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
+                </span>
+                <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
+                  WhatsApp
+                </span>
               </motion.a>
             </div>
           </div>
