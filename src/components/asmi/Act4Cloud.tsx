@@ -2,7 +2,11 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type Pill = { label: string; cat: "home" | "health" | "fin" | "travel" | "family"; size: "lg" | "md" | "sm" };
+type Pill = {
+  label: string;
+  cat: "home" | "health" | "fin" | "travel" | "family";
+  size: "lg" | "md" | "sm";
+};
 
 const CATS: Record<Pill["cat"], string> = {
   home: "#C25B3F",
@@ -57,15 +61,20 @@ const PILLS: Pill[] = [
 function generatePositions(count: number) {
   const out: { x: number; y: number; delay: number; dur: number }[] = [];
   const minDist = 12;
-  const X_MIN = 8, X_MAX = 88;
-  const Y_MIN = 10, Y_MAX = 88;
+  const X_MIN = 8,
+    X_MAX = 88;
+  const Y_MIN = 10,
+    Y_MAX = 88;
   for (let i = 0; i < count; i++) {
-    let x = 0, y = 0, ok = false, tries = 0;
+    let x = 0,
+      y = 0,
+      ok = false,
+      tries = 0;
     while (!ok && tries < 120) {
       const a = Math.sin((i + 1) * 9.31 + tries * 0.7) * 10000;
       const b = Math.cos((i + 1) * 4.27 + tries * 1.3) * 10000;
-      x = ((a - Math.floor(a)) * (X_MAX - X_MIN)) + X_MIN;
-      y = ((b - Math.floor(b)) * (Y_MAX - Y_MIN)) + Y_MIN;
+      x = (a - Math.floor(a)) * (X_MAX - X_MIN) + X_MIN;
+      y = (b - Math.floor(b)) * (Y_MAX - Y_MIN) + Y_MIN;
       ok = out.every((p) => Math.hypot(p.x - x, p.y - y) > minDist);
       tries++;
     }
@@ -145,9 +154,11 @@ export function Act4Cloud() {
 
 function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: number }) {
   const sizeClass =
-    pill.size === "lg" ? "px-4 py-2.5 text-[0.9rem]"
-    : pill.size === "md" ? "px-3.5 py-2 text-[0.82rem]"
-    : "px-3 py-2 text-[0.78rem]";
+    pill.size === "lg"
+      ? "px-4 py-2.5 text-[0.9rem]"
+      : pill.size === "md"
+        ? "px-3.5 py-2 text-[0.82rem]"
+        : "px-3 py-2 text-[0.78rem]";
   return (
     <motion.div
       animate={{ y: [0, -4, 0, 3, 0] }}
@@ -163,7 +174,10 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
           minHeight: 36,
         }}
       >
-        <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
+        <span
+          className="inline-block rounded-full"
+          style={{ width: 6, height: 6, background: CATS[pill.cat] }}
+        />
         {pill.label}
       </span>
     </motion.div>
@@ -171,7 +185,8 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
 }
 
 function FloatingPill({
-  pill, pos,
+  pill,
+  pos,
 }: {
   pill: Pill;
   pos: { x: number; y: number; delay: number; dur: number };
@@ -203,9 +218,11 @@ function FloatingPill({
   }, []);
 
   const sizeClass =
-    pill.size === "lg" ? "px-5 py-3 text-[0.95rem]"
-    : pill.size === "md" ? "px-4 py-2.5 text-[0.85rem]"
-    : "px-3.5 py-2 text-[0.78rem]";
+    pill.size === "lg"
+      ? "px-5 py-3 text-[0.95rem]"
+      : pill.size === "md"
+        ? "px-4 py-2.5 text-[0.85rem]"
+        : "px-3.5 py-2 text-[0.78rem]";
 
   return (
     <motion.div
@@ -242,7 +259,10 @@ function FloatingPill({
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
+          <span
+            className="inline-block rounded-full"
+            style={{ width: 6, height: 6, background: CATS[pill.cat] }}
+          />
           {pill.label}
         </button>
       </motion.div>

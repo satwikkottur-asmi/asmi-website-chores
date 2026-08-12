@@ -4,11 +4,7 @@ import { CTASection } from "./CTASection";
 
 export function Act6Close() {
   return (
-    <section
-      id="start"
-      className="relative"
-      style={{ padding: "80px 20px", minHeight: "90vh" }}
-    >
+    <section id="start" className="relative" style={{ padding: "80px 20px", minHeight: "90vh" }}>
       <div
         className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ opacity: 0.5 }}

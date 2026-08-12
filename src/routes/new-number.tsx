@@ -59,14 +59,25 @@ export default function NewNumber() {
         }}
         aria-label="Message asmi on iMessage"
       >
-        <svg width={26} height={26} viewBox="0 0 66.145836 66.145836" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width={26}
+          height={26}
+          viewBox="0 0 66.145836 66.145836"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
             <linearGradient id="nn-imsg-grad" x1="0%" y1="100%" x2="0%" y2="0%">
               <stop offset="0" stopColor="#0cbd2a" />
               <stop offset="1" stopColor="#5bf675" />
             </linearGradient>
           </defs>
-          <rect width={66.145836} height={66.145836} rx={14.567832} ry={14.567832} fill="url(#nn-imsg-grad)" />
+          <rect
+            width={66.145836}
+            height={66.145836}
+            rx={14.567832}
+            ry={14.567832}
+            fill="url(#nn-imsg-grad)"
+          />
           <path
             fill="#fff"
             d="m 33.072934,11.450461 a 24.278298,20.222157 0 0 0 -24.278105,20.22202 24.278298,20.222157 0 0 0 11.79463,17.31574 27.365264,20.222157 0 0 1 -4.245218,5.94228 23.85735,20.222157 0 0 0 9.86038,-3.87367 24.278298,20.222157 0 0 0 6.868313,0.83768 24.278298,20.222157 0 0 0 24.278106,-20.22203 24.278298,20.222157 0 0 0 -24.278106,-20.22202 z"

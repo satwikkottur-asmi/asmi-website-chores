@@ -1,15 +1,15 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./styles.css";
+import { ProductHuntProvider } from "./context/ProductHuntContext";
 import { RootLayout } from "./routes/__root";
 import Index from "./routes/index";
-import Privacy from "./routes/privacy";
-import TermsAndConditions from "./routes/terms-and-conditions";
-import ProductHunt from "./routes/product-hunt";
 import NewNumber from "./routes/new-number";
-import { ProductHuntProvider } from "./context/ProductHuntContext";
+import Privacy from "./routes/privacy";
+import ProductHunt from "./routes/product-hunt";
+import TermsAndConditions from "./routes/terms-and-conditions";
 
 const queryClient = new QueryClient();
 

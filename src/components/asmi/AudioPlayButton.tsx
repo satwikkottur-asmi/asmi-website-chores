@@ -16,14 +16,23 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
     audioRef.current = a;
     const onEnd = () => setPlaying(false);
     a.addEventListener("ended", onEnd);
-    return () => { a.pause(); a.removeEventListener("ended", onEnd); };
+    return () => {
+      a.pause();
+      a.removeEventListener("ended", onEnd);
+    };
   }, [src]);
 
   const toggle = () => {
     const a = audioRef.current;
     if (!a) return;
-    if (playing) { a.pause(); setPlaying(false); }
-    else { a.currentTime = 0; a.play().catch(() => {}); setPlaying(true); }
+    if (playing) {
+      a.pause();
+      setPlaying(false);
+    } else {
+      a.currentTime = 0;
+      a.play().catch(() => {});
+      setPlaying(true);
+    }
   };
 
   return (
@@ -33,7 +42,8 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
         aria-label={playing ? "Pause call recording" : "Play call recording"}
         className="relative flex items-center justify-center rounded-full transition-all"
         style={{
-          width: 44, height: 44,
+          width: 44,
+          height: 44,
           border: `1.5px solid ${color}`,
           background: "transparent",
         }}
@@ -54,7 +64,8 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
         ) : (
           <span
             style={{
-              width: 0, height: 0,
+              width: 0,
+              height: 0,
               borderLeft: `10px solid ${color}`,
               borderTop: "6px solid transparent",
               borderBottom: "6px solid transparent",
@@ -82,7 +93,12 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
       </button>
       <span
         className="font-mono"
-        style={{ fontSize: 10, color: "var(--color-stone-dim)", letterSpacing: "0.12em", textTransform: "uppercase" }}
+        style={{
+          fontSize: 10,
+          color: "var(--color-stone-dim)",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
       >
         Listen
       </span>

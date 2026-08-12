@@ -28,7 +28,11 @@ export function ProductHuntLinks({ size = "md", className = "" }: Props) {
           className="flex items-center justify-center hover:opacity-80 transition-opacity"
           title="Open in iMessage"
         >
-          <img src="/assets/logos/imessage.svg" alt="iMessage" style={{ width: iconSize, height: iconSize }} />
+          <img
+            src="/assets/logos/imessage.svg"
+            alt="iMessage"
+            style={{ width: iconSize, height: iconSize }}
+          />
         </motion.a>
 
         {/* WhatsApp Link */}
@@ -48,7 +52,11 @@ export function ProductHuntLinks({ size = "md", className = "" }: Props) {
           }}
           title="Open in WhatsApp"
         >
-          <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
+          <img
+            src="/assets/logos/whatsapp.svg"
+            alt="WhatsApp"
+            style={{ width: "60%", height: "60%" }}
+          />
         </motion.a>
       </motion.div>
 

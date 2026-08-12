@@ -1,10 +1,18 @@
-import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 function Moment({
-  index, headline, subtext, ambient,
-}: { index: number; headline: string; subtext: React.ReactNode; ambient: React.ReactNode }) {
+  index,
+  headline,
+  subtext,
+  ambient,
+}: {
+  index: number;
+  headline: string;
+  subtext: React.ReactNode;
+  ambient: React.ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const opacity = useTransform(scrollYProgress, [0.02, 0.18, 0.68, 0.84], [0, 1, 1, 0]);
@@ -18,8 +26,13 @@ function Moment({
       >
         {ambient}
       </motion.div>
-      <motion.div className="relative text-center px-5 sm:px-6 max-w-3xl w-full" style={{ opacity, y }}>
-        <p className="label-mono mb-5 sm:mb-6" style={{ color: "var(--color-stone-dim)" }}>0{index}</p>
+      <motion.div
+        className="relative text-center px-5 sm:px-6 max-w-3xl w-full"
+        style={{ opacity, y }}
+      >
+        <p className="label-mono mb-5 sm:mb-6" style={{ color: "var(--color-stone-dim)" }}>
+          0{index}
+        </p>
         <h2
           className="font-serif"
           style={{
@@ -59,12 +72,7 @@ export function Act3ThreeMoments() {
         subtext="Calls. IVRs. Hold queues. Negotiation. In the real world."
         ambient={<FaintRadiating />}
       />
-      <Moment
-        index={3}
-        headline="Done."
-        subtext={<MessageBubble />}
-        ambient={null}
-      />
+      <Moment index={3} headline="Done." subtext={<MessageBubble />} ambient={null} />
     </section>
   );
 }
@@ -77,10 +85,7 @@ function Act3Mobile() {
   return (
     <section className="relative">
       <MobileScene index={1}>
-        <p
-          className="label-mono mb-4"
-          style={{ color: "var(--color-terracotta-deep)" }}
-        >
+        <p className="label-mono mb-4" style={{ color: "var(--color-terracotta-deep)" }}>
           Sarah · 9:03 AM
         </p>
         <p
@@ -141,10 +146,7 @@ function MobileScene({ index, children }: { index: number; children: React.React
         viewport={{ once: false, amount: 0.3 }}
         transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
       >
-        <p
-          className="label-mono mb-5"
-          style={{ color: "var(--color-stone-dim)" }}
-        >
+        <p className="label-mono mb-5" style={{ color: "var(--color-stone-dim)" }}>
           0{index}
         </p>
         {children}
@@ -175,10 +177,9 @@ function PlumberCallLoop() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0.3 }
-    );
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
+      threshold: 0.3,
+    });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -191,19 +192,25 @@ function PlumberCallLoop() {
     const run = () => {
       if (cancelled) return;
       setPhase("dialing");
-      timeouts.push(setTimeout(() => {
-        if (cancelled) return;
-        setPhase("resolving");
-        timeouts.push(setTimeout(() => {
+      timeouts.push(
+        setTimeout(() => {
           if (cancelled) return;
-          setPhase("hold");
-          timeouts.push(setTimeout(() => {
-            if (cancelled) return;
-            setPhase("idle");
-            timeouts.push(setTimeout(run, 700));
-          }, 2000));
-        }, 1800));
-      }, 2200));
+          setPhase("resolving");
+          timeouts.push(
+            setTimeout(() => {
+              if (cancelled) return;
+              setPhase("hold");
+              timeouts.push(
+                setTimeout(() => {
+                  if (cancelled) return;
+                  setPhase("idle");
+                  timeouts.push(setTimeout(run, 700));
+                }, 2000),
+              );
+            }, 1800),
+          );
+        }, 2200),
+      );
     };
 
     timeouts.push(setTimeout(run, 400));
@@ -219,13 +226,7 @@ function PlumberCallLoop() {
   return (
     <div ref={ref} className="mx-auto w-full max-w-sm flex flex-col gap-2.5">
       {PLUMBERS.map((p, i) => (
-        <LoopPlumberRow
-          key={p.name}
-          plumber={p}
-          index={i}
-          phase={phase}
-          resolved={resolved}
-        />
+        <LoopPlumberRow key={p.name} plumber={p} index={i} phase={phase} resolved={resolved} />
       ))}
     </div>
   );
@@ -237,7 +238,7 @@ function LoopPlumberRow({
   phase,
   resolved,
 }: {
-  plumber: typeof PLUMBERS[number];
+  plumber: (typeof PLUMBERS)[number];
   index: number;
   phase: Phase;
   resolved: boolean;
@@ -255,13 +256,7 @@ function LoopPlumberRow({
       : "var(--color-terracotta-deep)";
 
   const subtext =
-    phase === "idle"
-      ? "—"
-      : dialing
-        ? "calling…"
-        : winner
-          ? `✓ ${resolvedNote}`
-          : resolvedNote;
+    phase === "idle" ? "—" : dialing ? "calling…" : winner ? `✓ ${resolvedNote}` : resolvedNote;
 
   return (
     <motion.div
@@ -275,18 +270,17 @@ function LoopPlumberRow({
       }}
       className="relative flex items-center gap-3 text-left rounded-2xl px-4 py-3 w-full"
       style={{
-        background: winner && resolved
-          ? "rgba(95,131,101,0.12)"
-          : "rgba(255,255,255,0.55)",
-        border: winner && resolved
-          ? "1px solid rgba(95,131,101,0.4)"
-          : "1px solid rgba(107,101,96,0.12)",
+        background: winner && resolved ? "rgba(95,131,101,0.12)" : "rgba(255,255,255,0.55)",
+        border:
+          winner && resolved ? "1px solid rgba(95,131,101,0.4)" : "1px solid rgba(107,101,96,0.12)",
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
-        boxShadow: winner && resolved
-          ? "0 18px 40px -22px rgba(73,100,78,0.55)"
-          : "0 4px 14px -8px rgba(76,53,38,0.18)",
-        transition: "background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
+        boxShadow:
+          winner && resolved
+            ? "0 18px 40px -22px rgba(73,100,78,0.55)"
+            : "0 4px 14px -8px rgba(76,53,38,0.18)",
+        transition:
+          "background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
       }}
     >
       <span className="relative flex-shrink-0" style={{ width: 12, height: 12 }}>
@@ -294,9 +288,7 @@ function LoopPlumberRow({
           className="absolute inset-0 rounded-full"
           style={{ background: dotColor, transition: "background 0.5s ease" }}
           animate={
-            dialing
-              ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }
-              : { scale: 1, opacity: 1 }
+            dialing ? { scale: [1, 1.5, 1], opacity: [1, 0.4, 1] } : { scale: 1, opacity: 1 }
           }
           transition={{
             duration: 1.2,
@@ -329,9 +321,7 @@ function LoopPlumberRow({
             transition={{ duration: 0.25 }}
             className="block font-sans"
             style={{
-              color: winner && resolved
-                ? "var(--color-sage-strong)"
-                : "var(--color-stone-dim)",
+              color: winner && resolved ? "var(--color-sage-strong)" : "var(--color-stone-dim)",
               fontSize: "0.78rem",
               marginTop: 2,
               fontWeight: winner && resolved ? 600 : 400,
@@ -366,15 +356,25 @@ function LoopPlumberRow({
 
 function FullWaveform() {
   return (
-    <svg viewBox="0 0 1200 200" className="w-full" preserveAspectRatio="none" style={{ height: "55vh", opacity: 0.03 }}>
+    <svg
+      viewBox="0 0 1200 200"
+      className="w-full"
+      preserveAspectRatio="none"
+      style={{ height: "55vh", opacity: 0.03 }}
+    >
       <motion.path
         d="M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100"
-        fill="none" stroke="#C25B3F" strokeWidth="3" strokeLinecap="round"
-        animate={{ d: [
-          "M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
-          "M0 100 Q75 170 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
-          "M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
-        ] }}
+        fill="none"
+        stroke="#C25B3F"
+        strokeWidth="3"
+        strokeLinecap="round"
+        animate={{
+          d: [
+            "M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
+            "M0 100 Q75 170 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
+            "M0 100 Q75 30 150 100 T300 100 T450 100 T600 100 T750 100 T900 100 T1050 100 T1200 100",
+          ],
+        }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
     </svg>
@@ -384,14 +384,27 @@ function FullWaveform() {
 function FaintRadiating() {
   const lines = Array.from({ length: 12 });
   return (
-    <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice" style={{ opacity: 0.02 }}>
+    <svg
+      viewBox="0 0 100 100"
+      className="w-full h-full"
+      preserveAspectRatio="xMidYMid slice"
+      style={{ opacity: 0.02 }}
+    >
       {lines.map((_, i) => {
         const angle = (i / lines.length) * Math.PI * 2;
         const x = 50 + Math.cos(angle) * 60;
         const y = 50 + Math.sin(angle) * 60;
         const mx = 50 + Math.cos(angle) * 30 + (i % 2 ? 10 : -10);
         const my = 50 + Math.sin(angle) * 30 + (i % 2 ? -10 : 10);
-        return <path key={i} d={`M50 50 Q ${mx} ${my}, ${x} ${y}`} stroke="#C25B3F" strokeWidth="0.4" fill="none" />;
+        return (
+          <path
+            key={i}
+            d={`M50 50 Q ${mx} ${my}, ${x} ${y}`}
+            stroke="#C25B3F"
+            strokeWidth="0.4"
+            fill="none"
+          />
+        );
       })}
     </svg>
   );
@@ -419,7 +432,9 @@ function MessageBubble() {
           justifyContent: "center",
         }}
       >
-        <span style={{ whiteSpace: "normal", lineHeight: 1.4 }}>✓ Bay Area Plumbing · Mike · Today 2pm</span>
+        <span style={{ whiteSpace: "normal", lineHeight: 1.4 }}>
+          ✓ Bay Area Plumbing · Mike · Today 2pm
+        </span>
       </div>
       <span className="mt-2 font-sans" style={{ fontSize: 11, color: "var(--color-stone-dim)" }}>
         Booked

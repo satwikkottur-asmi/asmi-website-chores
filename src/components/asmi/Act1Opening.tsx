@@ -1,7 +1,7 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { RefObject, useRef } from "react";
-import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AmbientBlobs, BrushUnderline } from "./Atmosphere";
 import { WaitlistForm } from "./WaitlistForm";
 
 const WORDS = ["The", "screen", "era", "is", "over."];
@@ -15,7 +15,11 @@ export function Act1Opening({ sectionRef }: { sectionRef?: RefObject<HTMLElement
 
   const statementOpacity = useTransform(scrollYProgress, [0.42, 0.68], [1, 0]);
   const statementY = useTransform(scrollYProgress, [0.42, 0.72], [0, isMobile ? -36 : -72]);
-  const statementScale = useTransform(scrollYProgress, [0.5, 0.72], [1, prefersReducedMotion ? 0.985 : 1.02]);
+  const statementScale = useTransform(
+    scrollYProgress,
+    [0.5, 0.72],
+    [1, prefersReducedMotion ? 0.985 : 1.02],
+  );
   const wordmarkOpacity = useTransform(scrollYProgress, [0.3, 0.48, 0.68], [0, 1, 0]);
   const wordmarkY = useTransform(scrollYProgress, [0.32, 0.68], [28, -12]);
   const brushOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
@@ -106,13 +110,7 @@ function Word({
   index: number;
   total: number;
 }) {
-  const dim = useTransform(
-    progress,
-    [0.45, 0.7],
-    [1, index === total - 1 ? 1 : 0.55]
-  );
+  const dim = useTransform(progress, [0.45, 0.7], [1, index === total - 1 ? 1 : 0.55]);
   const y = useTransform(progress, [0, 0.5], [0, -(index * 2)]);
-  return (
-    <motion.span style={{ opacity: dim, y, display: "inline-block" }}>{children}</motion.span>
-  );
+  return <motion.span style={{ opacity: dim, y, display: "inline-block" }}>{children}</motion.span>;
 }

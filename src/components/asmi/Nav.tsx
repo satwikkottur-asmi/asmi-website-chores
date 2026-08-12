@@ -1,5 +1,5 @@
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
 
 export function Nav() {
   const [show, setShow] = useState(false);
@@ -25,22 +25,50 @@ export function Nav() {
             borderBottom: "1px solid rgba(44,37,32,0.05)",
           }}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between" style={{ minHeight: 56 }}>
-            <a href="#" className="font-serif italic text-xl" style={{ color: "var(--color-espresso)" }}>
+          <div
+            className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between"
+            style={{ minHeight: 56 }}
+          >
+            <a
+              href="#"
+              className="font-serif italic text-xl"
+              style={{ color: "var(--color-espresso)" }}
+            >
               asmi
             </a>
-            <div className="hidden md:flex items-center gap-8 font-sans text-[0.9rem]" style={{ color: "#6B6560" }}>
-              <a href="#how" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>How</a>
+            <div
+              className="hidden md:flex items-center gap-8 font-sans text-[0.9rem]"
+              style={{ color: "#6B6560" }}
+            >
+              <a
+                href="#how"
+                className="transition-colors"
+                style={{ color: "#6B6560" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#2C2520")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#6B6560")}
+              >
+                How
+              </a>
               <span style={{ color: "var(--color-stone-dim)" }}>·</span>
-              <a href="#stories" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Stories</a>
+              <a
+                href="#stories"
+                className="transition-colors"
+                style={{ color: "#6B6560" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#2C2520")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#6B6560")}
+              >
+                Stories
+              </a>
               <span style={{ color: "var(--color-stone-dim)" }}>·</span>
-              <a href="#languages" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Languages</a>
+              <a
+                href="#languages"
+                className="transition-colors"
+                style={{ color: "#6B6560" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#2C2520")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#6B6560")}
+              >
+                Languages
+              </a>
             </div>
             <div className="flex items-center gap-4">
               <motion.a
@@ -52,7 +80,11 @@ export function Nav() {
                 className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
                 title="Open in iMessage"
               >
-                <img src="/assets/logos/imessage.svg" alt="iMessage" style={{ width: 40, height: 40 }} />
+                <img
+                  src="/assets/logos/imessage.svg"
+                  alt="iMessage"
+                  style={{ width: 40, height: 40 }}
+                />
                 <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
                   iMessage
                 </span>
@@ -75,7 +107,11 @@ export function Nav() {
                     borderRadius: "8px",
                   }}
                 >
-                  <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
+                  <img
+                    src="/assets/logos/whatsapp.svg"
+                    alt="WhatsApp"
+                    style={{ width: "60%", height: "60%" }}
+                  />
                 </span>
                 <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
                   WhatsApp

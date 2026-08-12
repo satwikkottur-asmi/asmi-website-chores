@@ -1,7 +1,7 @@
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,11 +17,51 @@ type Endpoint = {
 };
 
 const DESKTOP_ENDPOINTS: Endpoint[] = [
-  { x: 16, y: 30, label: "Bay Area Plumbing", labelOffsetX: 16, labelOffsetY: -10, labelAlign: "left", maxWidth: 220 },
-  { x: 84, y: 28, label: "Rapid Rooter", labelOffsetX: -16, labelOffsetY: -10, labelAlign: "right", maxWidth: 180 },
-  { x: 12, y: 72, label: "Pacific Plumbing Co", labelOffsetX: 16, labelOffsetY: 8, labelAlign: "left", maxWidth: 220 },
-  { x: 88, y: 74, label: "Mr. Fix-It", labelOffsetX: -16, labelOffsetY: 8, labelAlign: "right", maxWidth: 150 },
-  { x: 50, y: 88, label: "Joe's Plumbing", labelOffsetX: 0, labelOffsetY: 14, labelAlign: "center", maxWidth: 170 },
+  {
+    x: 16,
+    y: 30,
+    label: "Bay Area Plumbing",
+    labelOffsetX: 16,
+    labelOffsetY: -10,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 84,
+    y: 28,
+    label: "Rapid Rooter",
+    labelOffsetX: -16,
+    labelOffsetY: -10,
+    labelAlign: "right",
+    maxWidth: 180,
+  },
+  {
+    x: 12,
+    y: 72,
+    label: "Pacific Plumbing Co",
+    labelOffsetX: 16,
+    labelOffsetY: 8,
+    labelAlign: "left",
+    maxWidth: 220,
+  },
+  {
+    x: 88,
+    y: 74,
+    label: "Mr. Fix-It",
+    labelOffsetX: -16,
+    labelOffsetY: 8,
+    labelAlign: "right",
+    maxWidth: 150,
+  },
+  {
+    x: 50,
+    y: 88,
+    label: "Joe's Plumbing",
+    labelOffsetX: 0,
+    labelOffsetY: 14,
+    labelAlign: "center",
+    maxWidth: 170,
+  },
 ];
 
 // Winner is always index 0 (Bay Area Plumbing → "Mike")
@@ -78,7 +118,7 @@ export function Act2CallViz() {
           const p = self.progress;
           const idx = Math.min(
             stepCount - 1,
-            Math.max(0, Math.round(p * (stepCount - 1) + 0.0001))
+            Math.max(0, Math.round(p * (stepCount - 1) + 0.0001)),
           );
           setActive((prev) => (prev === idx ? prev : idx));
           // Fade the entire pinned stage over the last 8% so it doesn't collide with Act 3
@@ -330,9 +370,7 @@ function MobileOrb({ size, confirmed }: { size: number; confirmed: boolean }) {
         className="absolute inset-[39%] rounded-full"
         style={{
           background: confirmed ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)",
-          boxShadow: confirmed
-            ? "0 0 50px rgba(73,100,78,0.55)"
-            : "0 0 50px rgba(162,72,48,0.5)",
+          boxShadow: confirmed ? "0 0 50px rgba(73,100,78,0.55)" : "0 0 50px rgba(162,72,48,0.5)",
           transition: "background 0.6s ease, box-shadow 0.6s ease",
         }}
         animate={{ scale: pulse ? [1, 1.25, 1] : [1, 1.08, 1] }}
@@ -402,17 +440,17 @@ function PlumberRow({
       whileTap={{ scale: 0.98 }}
       className="relative flex items-center gap-3 text-left rounded-2xl px-4 py-3 w-full"
       style={{
-        background: winner && isConfirmed
-          ? "rgba(95,131,101,0.12)"
-          : "rgba(255,255,255,0.55)",
-        border: winner && isConfirmed
-          ? "1px solid rgba(95,131,101,0.4)"
-          : "1px solid rgba(107,101,96,0.12)",
+        background: winner && isConfirmed ? "rgba(95,131,101,0.12)" : "rgba(255,255,255,0.55)",
+        border:
+          winner && isConfirmed
+            ? "1px solid rgba(95,131,101,0.4)"
+            : "1px solid rgba(107,101,96,0.12)",
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
-        boxShadow: winner && isConfirmed
-          ? "0 18px 40px -22px rgba(73,100,78,0.55)"
-          : "0 4px 14px -8px rgba(76,53,38,0.18)",
+        boxShadow:
+          winner && isConfirmed
+            ? "0 18px 40px -22px rgba(73,100,78,0.55)"
+            : "0 4px 14px -8px rgba(76,53,38,0.18)",
         WebkitTapHighlightColor: "transparent",
         transition: "background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease",
       }}
@@ -461,11 +499,12 @@ function PlumberRow({
         <span
           className="block font-sans"
           style={{
-            color: winner && isConfirmed
-              ? "var(--color-sage-strong)"
-              : tapped
-                ? "var(--color-terracotta-deep)"
-                : "var(--color-stone-dim)",
+            color:
+              winner && isConfirmed
+                ? "var(--color-sage-strong)"
+                : tapped
+                  ? "var(--color-terracotta-deep)"
+                  : "var(--color-stone-dim)",
             fontSize: "0.78rem",
             marginTop: 2,
             fontWeight: winner && isConfirmed ? 600 : 400,
@@ -548,9 +587,7 @@ function DesktopScene({
       DESKTOP_ENDPOINTS.map((endpoint, index) => {
         const ex = (endpoint.x / 100) * size.w;
         const ey = (endpoint.y / 100) * size.h;
-        const mx =
-          (cx + ex) / 2 +
-          (index - (DESKTOP_ENDPOINTS.length - 1) / 2) * (size.w * 0.04);
+        const mx = (cx + ex) / 2 + (index - (DESKTOP_ENDPOINTS.length - 1) / 2) * (size.w * 0.04);
         const my = (cy + ey) / 2 + (index % 2 === 0 ? -60 : 60);
         return {
           id: `branch-${index}`,
@@ -559,7 +596,7 @@ function DesktopScene({
           index,
         };
       }),
-    [cx, cy, size.w]
+    [cx, cy, size.w],
   );
 
   return (
@@ -623,9 +660,7 @@ function DesktopScene({
 
           {showBranches &&
             !isConfirmed &&
-            branches.map((b) => (
-              <TravelingWave key={`wave-${b.id}`} branch={b} />
-            ))}
+            branches.map((b) => <TravelingWave key={`wave-${b.id}`} branch={b} />)}
 
           {showBranches && isConfirmed && (
             <TravelingWave key="winner-wave" branch={branches[0]} winner />
@@ -686,9 +721,7 @@ function DesktopScene({
                 className="absolute left-1/2 -translate-x-1/2 label-mono"
                 style={{
                   bottom: -28,
-                  color: isConfirmed
-                    ? "var(--color-sage-strong)"
-                    : "var(--color-terracotta-deep)",
+                  color: isConfirmed ? "var(--color-sage-strong)" : "var(--color-terracotta-deep)",
                   whiteSpace: "nowrap",
                   transition: "color 0.6s ease",
                 }}
@@ -827,8 +860,7 @@ function EndpointLabel({
           height: winner ? 14 : 10,
           background: dotColor,
           transform: "translate(-50%, -50%)",
-          boxShadow:
-            winner && isConfirmed ? "0 0 36px rgba(95,131,101,0.6)" : undefined,
+          boxShadow: winner && isConfirmed ? "0 0 36px rgba(95,131,101,0.6)" : undefined,
         }}
         initial={{ opacity: 0, scale: 0.6 }}
         animate={{
@@ -860,9 +892,7 @@ function EndpointLabel({
             <span
               className="label-mono inline-block"
               style={{
-                color: isConfirmed
-                  ? "var(--color-stone-dim)"
-                  : "var(--color-espresso-strong)",
+                color: isConfirmed ? "var(--color-stone-dim)" : "var(--color-espresso-strong)",
                 whiteSpace: "normal",
                 lineHeight: 1.45,
                 fontWeight: 600,

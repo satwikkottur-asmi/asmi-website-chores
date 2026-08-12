@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useState, FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
 interface Props {
   size?: "md" | "lg";
@@ -93,7 +93,8 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
               style={{
                 color: "var(--color-espresso)",
                 fontSize: size === "lg" ? "1.15rem" : "1.05rem",
-                background: "linear-gradient(180deg, transparent 62%, rgba(126,173,194,0.32) 62%, rgba(126,173,194,0.32) 92%, transparent 92%)",
+                background:
+                  "linear-gradient(180deg, transparent 62%, rgba(126,173,194,0.32) 62%, rgba(126,173,194,0.32) 92%, transparent 92%)",
                 padding: "0 4px",
               }}
               initial={{ backgroundSize: "0% 100%" }}

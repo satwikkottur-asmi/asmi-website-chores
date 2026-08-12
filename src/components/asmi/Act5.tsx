@@ -1,17 +1,17 @@
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { OrganicDivider } from "./Atmosphere";
 
 type Story = {
-  kicker: string;        // "tuesday morning"
-  phrases: string[];     // body text, one phrase per line
-  tag: string;           // "pre-auth cleared"
-  duration: string;      // "0:47"
-  accent: string;        // css color
-  tint: string;          // soft wash color (blooms)
-  wash: string;          // bolder sweep color, visible on cream
-  tilt: number;          // deg
-  src?: string;          // optional real audio
+  kicker: string; // "tuesday morning"
+  phrases: string[]; // body text, one phrase per line
+  tag: string; // "pre-auth cleared"
+  duration: string; // "0:47"
+  accent: string; // css color
+  tint: string; // soft wash color (blooms)
+  wash: string; // bolder sweep color, visible on cream
+  tilt: number; // deg
+  src?: string; // optional real audio
 };
 
 const STORIES: Story[] = [
@@ -32,11 +32,7 @@ const STORIES: Story[] = [
   },
   {
     kicker: "wednesday, before coffee",
-    phrases: [
-      "got five HVAC quotes.",
-      "booked the one Marco liked.",
-      "saturday, 9am.",
-    ],
+    phrases: ["got five HVAC quotes.", "booked the one Marco liked.", "saturday, 9am."],
     tag: "$150 diagnostic",
     duration: "1:49",
     accent: "var(--color-sage-strong)",
@@ -47,11 +43,7 @@ const STORIES: Story[] = [
   },
   {
     kicker: "sunday evening · in Spanish",
-    phrases: [
-      "called grandpa in Spain.",
-      "he has pain.",
-      "he took his medicines.",
-    ],
+    phrases: ["called grandpa in Spain.", "he has pain.", "he took his medicines."],
     tag: "check-in logged",
     duration: "2:11",
     accent: "var(--color-clay)",
@@ -63,19 +55,40 @@ const STORIES: Story[] = [
 ];
 
 const LANGUAGES = [
-  { name: "English", size: "xl" }, { name: "Español", size: "lg" }, { name: "Français", size: "lg" },
-  { name: "हिन्दी", size: "xl" }, { name: "中文", size: "lg" }, { name: "Italiano", size: "md" },
-  { name: "Deutsch", size: "md" }, { name: "العربية", size: "lg" }, { name: "Português", size: "md" },
-  { name: "日本語", size: "lg" }, { name: "한국어", size: "md" }, { name: "Русский", size: "md" },
-  { name: "Türkçe", size: "sm" }, { name: "Tiếng Việt", size: "sm" }, { name: "ภาษาไทย", size: "sm" },
-  { name: "தமிழ்", size: "md" }, { name: "বাংলা", size: "md" }, { name: "Nederlands", size: "sm" },
-  { name: "Polski", size: "sm" }, { name: "Svenska", size: "sm" }, { name: "Suomi", size: "sm" },
-  { name: "Norsk", size: "sm" }, { name: "Українська", size: "sm" }, { name: "ελληνικά", size: "sm" },
-  { name: "עברית", size: "md" }, { name: "Filipino", size: "sm" }, { name: "Bahasa", size: "sm" },
-  { name: "Magyar", size: "sm" }, { name: "Čeština", size: "sm" }, { name: "Română", size: "sm" },
-  { name: "Dansk", size: "sm" }, { name: "Català", size: "sm" }, { name: "Punjabi", size: "md" },
+  { name: "English", size: "xl" },
+  { name: "Español", size: "lg" },
+  { name: "Français", size: "lg" },
+  { name: "हिन्दी", size: "xl" },
+  { name: "中文", size: "lg" },
+  { name: "Italiano", size: "md" },
+  { name: "Deutsch", size: "md" },
+  { name: "العربية", size: "lg" },
+  { name: "Português", size: "md" },
+  { name: "日本語", size: "lg" },
+  { name: "한국어", size: "md" },
+  { name: "Русский", size: "md" },
+  { name: "Türkçe", size: "sm" },
+  { name: "Tiếng Việt", size: "sm" },
+  { name: "ภาษาไทย", size: "sm" },
+  { name: "தமிழ்", size: "md" },
+  { name: "বাংলা", size: "md" },
+  { name: "Nederlands", size: "sm" },
+  { name: "Polski", size: "sm" },
+  { name: "Svenska", size: "sm" },
+  { name: "Suomi", size: "sm" },
+  { name: "Norsk", size: "sm" },
+  { name: "Українська", size: "sm" },
+  { name: "ελληνικά", size: "sm" },
+  { name: "עברית", size: "md" },
+  { name: "Filipino", size: "sm" },
+  { name: "Bahasa", size: "sm" },
+  { name: "Magyar", size: "sm" },
+  { name: "Čeština", size: "sm" },
+  { name: "Română", size: "sm" },
+  { name: "Dansk", size: "sm" },
+  { name: "Català", size: "sm" },
+  { name: "Punjabi", size: "md" },
 ];
-
 
 const RING_OF: Record<string, number> = { xl: 0, lg: 1, md: 2, sm: 3 };
 const RING_R = [12, 26, 38, 48];
@@ -175,7 +188,12 @@ export function Act5() {
       <div className="px-5 sm:px-6 py-20 md:py-32 max-w-6xl mx-auto">
         <motion.h2
           className="font-serif mb-16 md:mb-20 text-center"
-          style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+          style={{
+            color: "var(--color-espresso)",
+            fontSize: "clamp(2.8rem, 9vw, 5rem)",
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+          }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -214,7 +232,6 @@ export function Act5() {
         </p>
       </div>
 
-
       <OrganicDivider />
 
       {/* 5C Languages */}
@@ -222,7 +239,12 @@ export function Act5() {
         <div className="text-center mb-16 md:mb-16">
           <motion.h2
             className="font-serif"
-            style={{ color: "var(--color-espresso)", fontSize: "clamp(2.8rem, 9vw, 5rem)", lineHeight: 1.05, letterSpacing: "-0.02em" }}
+            style={{
+              color: "var(--color-espresso)",
+              fontSize: "clamp(2.8rem, 9vw, 5rem)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.02em",
+            }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -234,11 +256,22 @@ export function Act5() {
 
         <MobileLanguageCloud />
 
-        <div className="hidden md:block relative mx-auto max-w-6xl" style={{ height: "min(70vh, 600px)" }}>
+        <div
+          className="hidden md:block relative mx-auto max-w-6xl"
+          style={{ height: "min(70vh, 600px)" }}
+        >
           {LANGUAGES.map((l, i) => {
             const p = langPos(i, LANGUAGES.length, l.size);
-            const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<string, string>;
-            const colorMap = { sm: "#8A8278", md: "#6B6560", lg: "var(--color-espresso)", xl: "var(--color-espresso)" } as Record<string, string>;
+            const sizeMap = { sm: "1rem", md: "1.4rem", lg: "2.1rem", xl: "3.2rem" } as Record<
+              string,
+              string
+            >;
+            const colorMap = {
+              sm: "#8A8278",
+              md: "#6B6560",
+              lg: "var(--color-espresso)",
+              xl: "var(--color-espresso)",
+            } as Record<string, string>;
             return (
               <motion.span
                 key={l.name}
@@ -252,8 +285,18 @@ export function Act5() {
                   opacity: l.size === "sm" ? 0.7 : l.size === "md" ? 0.88 : 1,
                 }}
                 animate={{ y: [0, -10, 0, 8, 0] }}
-                transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
-                whileHover={{ color: "var(--color-terracotta)", scale: 1.1, opacity: 1, transition: { duration: 0.2 } }}
+                transition={{
+                  duration: p.dur,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: p.delay,
+                }}
+                whileHover={{
+                  color: "var(--color-terracotta)",
+                  scale: 1.1,
+                  opacity: 1,
+                  transition: { duration: 0.2 },
+                }}
               >
                 {l.name}
               </motion.span>
@@ -278,7 +321,10 @@ function MobileLanguageCloud() {
     return () => clearInterval(id);
   }, []);
 
-  const sizeMap = { sm: "0.95rem", md: "1.2rem", lg: "1.65rem", xl: "2.25rem" } as Record<string, string>;
+  const sizeMap = { sm: "0.95rem", md: "1.2rem", lg: "1.65rem", xl: "2.25rem" } as Record<
+    string,
+    string
+  >;
   const colorMap = {
     sm: "#9A9288",
     md: "#6B6560",
@@ -344,7 +390,15 @@ function MobileLanguageCloud() {
   );
 }
 
-function Channel({ word, caption, ambient }: { word: string; caption: string; ambient: React.ReactNode }) {
+function Channel({
+  word,
+  caption,
+  ambient,
+}: {
+  word: string;
+  caption: string;
+  ambient: React.ReactNode;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -355,12 +409,25 @@ function Channel({ word, caption, ambient }: { word: string; caption: string; am
     >
       <p
         className="font-serif"
-        style={{ color: "var(--color-espresso)", fontSize: "clamp(38px, 9vw, 48px)", lineHeight: 1, letterSpacing: "-0.02em" }}
+        style={{
+          color: "var(--color-espresso)",
+          fontSize: "clamp(38px, 9vw, 48px)",
+          lineHeight: 1,
+          letterSpacing: "-0.02em",
+        }}
       >
         {word}
       </p>
       <div className="mt-5 h-7 flex items-center">{ambient}</div>
-      <p className="mt-5 font-sans" style={{ color: "#6B6560", fontSize: "clamp(15px, 4vw, 16px)", lineHeight: 1.55, maxWidth: 280 }}>
+      <p
+        className="mt-5 font-sans"
+        style={{
+          color: "#6B6560",
+          fontSize: "clamp(15px, 4vw, 16px)",
+          lineHeight: 1.55,
+          maxWidth: 280,
+        }}
+      >
         {caption}
       </p>
     </motion.div>
@@ -379,7 +446,12 @@ function ChannelCompact({ word, ambient }: { word: string; ambient: React.ReactN
       <div className="h-5 flex items-end">{ambient}</div>
       <p
         className="font-serif"
-        style={{ color: "var(--color-espresso)", fontSize: "clamp(22px, 6vw, 28px)", lineHeight: 1, letterSpacing: "-0.02em" }}
+        style={{
+          color: "var(--color-espresso)",
+          fontSize: "clamp(22px, 6vw, 28px)",
+          lineHeight: 1,
+          letterSpacing: "-0.02em",
+        }}
       >
         {word}
       </p>
@@ -415,7 +487,8 @@ function TypingDots() {
           key={i}
           className="block rounded-full"
           style={{
-            width: 8, height: 8,
+            width: 8,
+            height: 8,
             background: "#6B6560",
             animation: `typing-dot 1.4s ease-in-out ${i * 0.18}s infinite`,
           }}
@@ -433,14 +506,18 @@ function Ripples() {
           key={i}
           className="absolute rounded-full border"
           style={{
-            width: 36, height: 36,
+            width: 36,
+            height: 36,
             borderColor: "var(--color-terracotta)",
             opacity: 0.15,
             animation: `ripple 3s ease-out ${i}s infinite`,
           }}
         />
       ))}
-      <span className="block rounded-full" style={{ width: 8, height: 8, background: "var(--color-terracotta)" }} />
+      <span
+        className="block rounded-full"
+        style={{ width: 8, height: 8, background: "var(--color-terracotta)" }}
+      />
     </div>
   );
 }
@@ -688,8 +765,7 @@ function FieldNoteCard({
             let phraseOpacity = isActive
               ? Math.max(0.25, Math.min(1, (progress - localStart + 0.05) / 0.15))
               : 1;
-            const isCurrent =
-              isActive && phraseProgress >= pi && phraseProgress < pi + 1;
+            const isCurrent = isActive && phraseProgress >= pi && phraseProgress < pi + 1;
 
             return (
               <motion.span
@@ -700,11 +776,7 @@ function FieldNoteCard({
                   opacity: phraseOpacity,
                   transition: "color 0.5s ease, opacity 0.4s ease",
                 }}
-                animate={
-                  isCurrent
-                    ? { y: [-2, 0], opacity: [0.5, 1] }
-                    : { y: 0 }
-                }
+                animate={isCurrent ? { y: [-2, 0], opacity: [0.5, 1] } : { y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 {phrase}
@@ -795,7 +867,11 @@ function FieldNoteCard({
           <span
             className="font-serif italic"
             style={{
-              color: isActive ? story.accent : audioReady ? "var(--color-stone)" : "var(--color-stone-dim)",
+              color: isActive
+                ? story.accent
+                : audioReady
+                  ? "var(--color-stone)"
+                  : "var(--color-stone-dim)",
               fontSize: "0.95rem",
               transition: "color 0.3s ease",
             }}
