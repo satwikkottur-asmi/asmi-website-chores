@@ -1,5 +1,3 @@
-import { useProductHunt } from "@/context/ProductHuntContext";
-import { WaitlistForm } from "./WaitlistForm";
 import { ProductHuntLinks } from "./ProductHuntLinks";
 
 interface Props {
@@ -7,11 +5,5 @@ interface Props {
 }
 
 export function CTASection({ size = "lg" }: Props) {
-  const { isProductHunt } = useProductHunt();
-
-  return isProductHunt ? (
-    <ProductHuntLinks size={size} />
-  ) : (
-    <WaitlistForm size={size} />
-  );
+  return <ProductHuntLinks size={size} />;
 }
