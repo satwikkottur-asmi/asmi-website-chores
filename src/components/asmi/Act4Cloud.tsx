@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { withAlpha } from "@/lib/theme";
 
 type Pill = {
   label: string;
@@ -9,11 +10,11 @@ type Pill = {
 };
 
 const CATS: Record<Pill["cat"], string> = {
-  home: "#C25B3F",
-  health: "#8BA888",
-  fin: "#D4A574",
-  travel: "#7EADC2",
-  family: "#C9956F",
+  home: "var(--color-terracotta)",
+  health: "var(--color-sage)",
+  fin: "var(--color-clay)",
+  travel: "var(--color-sky)",
+  family: "var(--color-apricot)",
 };
 
 const PILLS: Pill[] = [
@@ -115,7 +116,7 @@ export function Act4Cloud() {
         </h2>
         <p
           className="mt-3 md:mt-4 font-sans"
-          style={{ color: "#6B6560", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+          style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
         >
           Everything that needs a phone call.
         </p>
@@ -152,6 +153,21 @@ export function Act4Cloud() {
   );
 }
 
+const PILL_CHROME = {
+  background: withAlpha("cream", 0.85),
+  color: "var(--color-ink)",
+  backdropFilter: "blur(8px)",
+} as const;
+
+function CategoryDot({ cat }: { cat: Pill["cat"] }) {
+  return (
+    <span
+      className="inline-block rounded-full"
+      style={{ width: 6, height: 6, background: CATS[cat] }}
+    />
+  );
+}
+
 function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: number }) {
   const sizeClass =
     pill.size === "lg"
@@ -167,17 +183,12 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
       <span
         className={`inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap ${sizeClass}`}
         style={{
-          background: "rgba(251, 248, 243, 0.85)",
-          color: "#5C5349",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(44,37,32,0.08)",
+          ...PILL_CHROME,
+          border: `1px solid ${withAlpha("espresso", 0.08)}`,
           minHeight: 36,
         }}
       >
-        <span
-          className="inline-block rounded-full"
-          style={{ width: 6, height: 6, background: CATS[pill.cat] }}
-        />
+        <CategoryDot cat={pill.cat} />
         {pill.label}
       </span>
     </motion.div>
@@ -242,27 +253,19 @@ function FloatingPill({
       >
         <button
           className={`group inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap transition-all duration-300 ${sizeClass}`}
-          style={{
-            background: "rgba(251, 248, 243, 0.85)",
-            color: "#5C5349",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(44,37,32,0.06)",
-          }}
+          style={{ ...PILL_CHROME, border: `1px solid ${withAlpha("espresso", 0.06)}` }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "var(--color-terracotta)";
             e.currentTarget.style.color = "var(--color-espresso)";
             e.currentTarget.style.transform = "scale(1.06)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "rgba(44,37,32,0.06)";
-            e.currentTarget.style.color = "#5C5349";
+            e.currentTarget.style.borderColor = withAlpha("espresso", 0.06);
+            e.currentTarget.style.color = "var(--color-ink)";
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <span
-            className="inline-block rounded-full"
-            style={{ width: 6, height: 6, background: CATS[pill.cat] }}
-          />
+          <CategoryDot cat={pill.cat} />
           {pill.label}
         </button>
       </motion.div>

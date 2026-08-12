@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from "react";
 
 type Props = { src?: string; color?: string };
 
+/** Alpha-blend an arbitrary CSS color (var() or literal) against transparent. */
+function colorMix(color: string, alpha: number) {
+  return `color-mix(in srgb, ${color} ${alpha * 100}%, transparent)`;
+}
+
 // Silent placeholder mp3 (base64). Swap `src` prop with real recordings later.
 const PLACEHOLDER =
   "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAACgAB//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAoAv4nMAAAAAAAAAAAAAAAAAAAAA";
@@ -48,7 +53,7 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
           background: "transparent",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(194,91,63,0.08)";
+          e.currentTarget.style.background = colorMix(color, 0.08);
           e.currentTarget.style.transform = "scale(1.05)";
         }}
         onMouseLeave={(e) => {

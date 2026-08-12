@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { EASE_OUT, withAlpha } from "@/lib/theme";
 import { OrganicDivider } from "./Atmosphere";
 
 type Story = {
@@ -25,8 +26,8 @@ const STORIES: Story[] = [
     tag: "pre-auth cleared",
     duration: "3:04",
     accent: "var(--color-terracotta)",
-    tint: "rgba(194, 91, 63, 0.10)",
-    wash: "rgba(194, 91, 63, 0.55)",
+    tint: withAlpha("terracotta", 0.1),
+    wash: withAlpha("terracotta", 0.55),
     tilt: -1.5,
     src: "/audio/doc-sandra-call.mp4",
   },
@@ -36,8 +37,8 @@ const STORIES: Story[] = [
     tag: "$150 diagnostic",
     duration: "1:49",
     accent: "var(--color-sage-strong)",
-    tint: "rgba(95, 131, 101, 0.12)",
-    wash: "rgba(95, 131, 101, 0.5)",
+    tint: withAlpha("sage-strong", 0.12),
+    wash: withAlpha("sage-strong", 0.5),
     tilt: 1.1,
     src: "/audio/hvac-call.mp4",
   },
@@ -47,8 +48,8 @@ const STORIES: Story[] = [
     tag: "check-in logged",
     duration: "2:11",
     accent: "var(--color-clay)",
-    tint: "rgba(212, 165, 116, 0.16)",
-    wash: "rgba(212, 165, 116, 0.55)",
+    tint: withAlpha("clay", 0.16),
+    wash: withAlpha("clay", 0.55),
     tilt: -0.8,
     src: "/audio/spanish-grandpa-call.mp4",
   },
@@ -218,7 +219,7 @@ export function Act5() {
           </div>
           <p
             className="mt-10 font-sans text-center mx-auto"
-            style={{ color: "#6B6560", fontSize: 14, lineHeight: 1.55, maxWidth: 300 }}
+            style={{ color: "var(--color-stone)", fontSize: 14, lineHeight: 1.55, maxWidth: 300 }}
           >
             Call, text, or just talk — iMessage, WhatsApp, or a phone call.
           </p>
@@ -267,8 +268,8 @@ export function Act5() {
               string
             >;
             const colorMap = {
-              sm: "#8A8278",
-              md: "#6B6560",
+              sm: "var(--color-stone-dim)",
+              md: "var(--color-stone)",
               lg: "var(--color-espresso)",
               xl: "var(--color-espresso)",
             } as Record<string, string>;
@@ -327,7 +328,7 @@ function MobileLanguageCloud() {
   >;
   const colorMap = {
     sm: "#9A9288",
-    md: "#6B6560",
+    md: "var(--color-stone)",
     lg: "var(--color-espresso)",
     xl: "var(--color-espresso)",
   } as Record<string, string>;
@@ -377,7 +378,7 @@ function MobileLanguageCloud() {
               animate={{ y: [0, -3, 0, 2, 0], scale: isLit ? 1.15 : 1 }}
               transition={{
                 y: { duration: dur, repeat: Infinity, ease: "easeInOut", delay },
-                scale: { duration: 0.35, ease: [0.2, 0.7, 0.2, 1] },
+                scale: { duration: 0.35, ease: EASE_OUT },
               }}
               whileTap={{ scale: 1.25 }}
             >
@@ -422,7 +423,7 @@ function Channel({
       <p
         className="mt-5 font-sans"
         style={{
-          color: "#6B6560",
+          color: "var(--color-stone)",
           fontSize: "clamp(15px, 4vw, 16px)",
           lineHeight: 1.55,
           maxWidth: 280,
@@ -489,7 +490,7 @@ function TypingDots() {
           style={{
             width: 8,
             height: 8,
-            background: "#6B6560",
+            background: "var(--color-stone)",
             animation: `typing-dot 1.4s ease-in-out ${i * 0.18}s infinite`,
           }}
         />
@@ -647,7 +648,7 @@ function FieldNoteCard({
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.8, delay: index * 0.08, ease: [0.2, 0.7, 0.2, 1] }}
+      transition={{ duration: 0.8, delay: index * 0.08, ease: EASE_OUT }}
       style={{
         filter: isDimmed ? "blur(3px)" : "none",
         opacity: isDimmed ? 0.35 : 1,
@@ -664,8 +665,8 @@ function FieldNoteCard({
           padding: "clamp(22px, 5vw, 38px)",
           paddingBottom: "clamp(70px, 14vw, 90px)",
           boxShadow: isActive
-            ? "0 30px 60px -20px rgba(44,37,32,0.25), 0 8px 20px -10px rgba(44,37,32,0.15)"
-            : "0 14px 30px -18px rgba(44,37,32,0.18), 0 4px 10px -6px rgba(44,37,32,0.08)",
+            ? `0 30px 60px -20px ${withAlpha("espresso", 0.25)}, 0 8px 20px -10px ${withAlpha("espresso", 0.15)}`
+            : `0 14px 30px -18px ${withAlpha("espresso", 0.18)}, 0 4px 10px -6px ${withAlpha("espresso", 0.08)}`,
           WebkitTapHighlightColor: "transparent",
           cursor: "pointer",
         }}
@@ -674,7 +675,7 @@ function FieldNoteCard({
           scale: isActive ? 1.02 : 1,
           y: isActive ? -4 : 0,
         }}
-        transition={{ duration: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+        transition={{ duration: 0.5, ease: EASE_OUT }}
       >
         {/* Accent wash — corner bloom that sweeps across during playback */}
         <span

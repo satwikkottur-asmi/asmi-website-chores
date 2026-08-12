@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { FormEvent, useState } from "react";
+import { withAlpha } from "@/lib/theme";
 
 interface Props {
   size?: "md" | "lg";
@@ -70,8 +71,8 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
               style={{
                 width: 32,
                 height: 32,
-                background: "rgba(44,37,32,0.06)",
-                border: "1px solid rgba(44,37,32,0.08)",
+                background: withAlpha("espresso", 0.06),
+                border: `1px solid ${withAlpha("espresso", 0.08)}`,
               }}
               aria-hidden
             >
@@ -93,8 +94,7 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
               style={{
                 color: "var(--color-espresso)",
                 fontSize: size === "lg" ? "1.15rem" : "1.05rem",
-                background:
-                  "linear-gradient(180deg, transparent 62%, rgba(126,173,194,0.32) 62%, rgba(126,173,194,0.32) 92%, transparent 92%)",
+                background: `linear-gradient(180deg, transparent 62%, ${withAlpha("sky", 0.32)} 62%, ${withAlpha("sky", 0.32)} 92%, transparent 92%)`,
                 padding: "0 4px",
               }}
               initial={{ backgroundSize: "0% 100%" }}
@@ -128,11 +128,15 @@ export function WaitlistForm({ size = "md", className = "" }: Props) {
               aria-label="Email address"
               className={`flex-1 rounded-full bg-transparent font-sans text-base outline-none transition ${pad}`}
               style={{
-                border: "1px solid rgba(44,37,32,0.18)",
+                border: `1px solid ${withAlpha("espresso", 0.18)}`,
                 color: "var(--color-espresso)",
               }}
-              onFocus={(e) => (e.currentTarget.style.border = "1px solid rgba(44,37,32,0.45)")}
-              onBlur={(e) => (e.currentTarget.style.border = "1px solid rgba(44,37,32,0.18)")}
+              onFocus={(e) =>
+                (e.currentTarget.style.border = `1px solid ${withAlpha("espresso", 0.45)}`)
+              }
+              onBlur={(e) =>
+                (e.currentTarget.style.border = `1px solid ${withAlpha("espresso", 0.18)}`)
+              }
             />
             <button
               type="submit"
