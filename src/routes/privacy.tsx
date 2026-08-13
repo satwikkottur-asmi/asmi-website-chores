@@ -11,13 +11,13 @@ interface PrivacySectionProps {
 const PrivacySection = ({ number, title, children }: PrivacySectionProps) => {
   return (
     <section className="mb-10 pb-8" style={{ borderBottom: "1px solid var(--color-border)" }}>
-      <p className="label-mono mb-3" style={{ color: "var(--color-stone-dim)" }}>
+      <p className="label-mono mb-3" style={{ color: "var(--ink-dim)" }}>
         {number}
       </p>
       <h2
         className="font-serif mb-4"
         style={{
-          color: "var(--color-espresso-strong)",
+          color: "var(--ink)",
           fontSize: "1.75rem",
         }}
       >
@@ -32,7 +32,7 @@ const Blockquote = ({ children }: { children: React.ReactNode }) => (
   <div
     className="mb-4 p-4 italic"
     style={{
-      borderLeft: "4px solid var(--color-espresso-strong)",
+      borderLeft: "4px solid var(--ink)",
       backgroundColor: "var(--color-card)",
     }}
   >
@@ -55,15 +55,15 @@ const Privacy = () => {
 
   return (
     <div
-      className="flex flex-col min-h-screen"
-      style={{ backgroundColor: "var(--color-background)", color: "var(--color-foreground)" }}
+      className="landing-theme flex flex-col min-h-screen"
+      style={{ backgroundColor: "var(--paper)", color: "var(--color-foreground)" }}
     >
       {/* Navigation */}
       <nav className="px-5 sm:px-8 py-6">
         <Link
           to="/"
           className="font-serif italic"
-          style={{ color: "var(--color-stone-dim)", fontSize: 14 }}
+          style={{ color: "var(--ink-dim)", fontSize: 14 }}
         >
           ← back to asmi
         </Link>
@@ -71,7 +71,7 @@ const Privacy = () => {
 
       <main
         className="flex flex-col items-center flex-1 px-5 sm:px-8 pb-16"
-        style={{ color: "var(--color-ink)", fontSize: "1.05rem", lineHeight: 1.7 }}
+        style={{ color: "var(--ink-soft)", fontSize: "1.05rem", lineHeight: 1.7 }}
       >
         <div className="w-full max-w-2xl">
           {/* Header */}
@@ -79,7 +79,7 @@ const Privacy = () => {
             <h1
               className="font-serif italic"
               style={{
-                color: "var(--color-espresso-strong)",
+                color: "var(--ink)",
                 fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
               }}
             >
@@ -88,7 +88,7 @@ const Privacy = () => {
             <p
               className="font-serif"
               style={{
-                color: "var(--color-espresso-strong)",
+                color: "var(--ink)",
                 fontSize: "1.75rem",
                 marginTop: "0.5rem",
               }}
@@ -104,13 +104,11 @@ const Privacy = () => {
               fontSize: "0.95rem",
             }}
           >
-            <p style={{ color: "var(--color-stone-dim)" }}>Effective: April 2026</p>
-            <p className="label-mono mt-2" style={{ color: "var(--color-stone-dim)" }}>
+            <p style={{ color: "var(--ink-dim)" }}>Effective: April 2026</p>
+            <p className="label-mono mt-2" style={{ color: "var(--ink-dim)" }}>
               Humint Labs, Inc. (incorporated in Delaware)
             </p>
-            <p
-              style={{ color: "var(--color-stone-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}
-            >
+            <p style={{ color: "var(--ink-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
               710 Lakeway Drive, Suite 200, Sunnyvale, CA 94085
             </p>
           </div>
@@ -290,7 +288,7 @@ const Privacy = () => {
                       className="label-mono px-4 py-3 text-left"
                       style={{
                         borderBottom: "1px solid var(--color-border)",
-                        color: "var(--color-stone-dim)",
+                        color: "var(--ink-dim)",
                       }}
                     >
                       Who
@@ -299,7 +297,7 @@ const Privacy = () => {
                       className="label-mono px-4 py-3 text-left"
                       style={{
                         borderBottom: "1px solid var(--color-border)",
-                        color: "var(--color-stone-dim)",
+                        color: "var(--ink-dim)",
                       }}
                     >
                       Access & reason
@@ -434,16 +432,16 @@ const Privacy = () => {
             </p>
             <div className="space-y-1" style={{ fontSize: "0.95rem" }}>
               <p style={{ fontWeight: "bold" }}>Humint Labs, Inc.</p>
-              <p style={{ color: "var(--color-stone-dim)" }}>(operating as Asmi AI)</p>
-              <p style={{ color: "var(--color-stone-dim)" }}>710 Lakeway Drive, Suite 200</p>
-              <p style={{ color: "var(--color-stone-dim)" }}>Sunnyvale, CA 94085</p>
-              <p style={{ color: "var(--color-stone-dim)" }}>Incorporated in Delaware</p>
+              <p style={{ color: "var(--ink-dim)" }}>(operating as Asmi AI)</p>
+              <p style={{ color: "var(--ink-dim)" }}>710 Lakeway Drive, Suite 200</p>
+              <p style={{ color: "var(--ink-dim)" }}>Sunnyvale, CA 94085</p>
+              <p style={{ color: "var(--ink-dim)" }}>Incorporated in Delaware</p>
               <p style={{ marginTop: "0.5rem" }}>
                 <a
                   href="mailto:support@asmiai.com"
                   style={{
                     fontWeight: "bold",
-                    color: "var(--color-espresso-strong)",
+                    color: "var(--ink)",
                     transition: "opacity 0.2s",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
