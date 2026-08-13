@@ -10,13 +10,13 @@ interface TermsSectionProps {
 const TermsSection = ({ number, title, children }: TermsSectionProps) => {
   return (
     <section className="mb-10 pb-8" style={{ borderBottom: "1px solid var(--color-border)" }}>
-      <p className="label-mono mb-3" style={{ color: "var(--color-stone-dim)" }}>
+      <p className="label-mono mb-3" style={{ color: "var(--ink-dim)" }}>
         {number}
       </p>
       <h2
         className="font-serif mb-4"
         style={{
-          color: "var(--color-espresso-strong)",
+          color: "var(--ink)",
           fontSize: "1.75rem",
         }}
       >
@@ -34,15 +34,15 @@ const TermsAndConditions = () => {
 
   return (
     <div
-      className="flex flex-col min-h-screen"
-      style={{ backgroundColor: "var(--color-background)", color: "var(--color-foreground)" }}
+      className="landing-theme flex flex-col min-h-screen"
+      style={{ backgroundColor: "var(--paper)", color: "var(--color-foreground)" }}
     >
       {/* Navigation */}
       <nav className="px-5 sm:px-8 py-6">
         <Link
           to="/"
           className="font-serif italic"
-          style={{ color: "var(--color-stone-dim)", fontSize: 14 }}
+          style={{ color: "var(--ink-dim)", fontSize: 14 }}
         >
           ← back to asmi
         </Link>
@@ -50,7 +50,7 @@ const TermsAndConditions = () => {
 
       <main
         className="flex flex-col items-center flex-1 px-5 sm:px-8 pb-16"
-        style={{ color: "var(--color-ink)", fontSize: "1.05rem", lineHeight: 1.7 }}
+        style={{ color: "var(--ink-soft)", fontSize: "1.05rem", lineHeight: 1.7 }}
       >
         <div className="w-full max-w-2xl">
           {/* Header */}
@@ -58,7 +58,7 @@ const TermsAndConditions = () => {
             <h1
               className="font-serif italic"
               style={{
-                color: "var(--color-espresso-strong)",
+                color: "var(--ink)",
                 fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
               }}
             >
@@ -67,7 +67,7 @@ const TermsAndConditions = () => {
             <p
               className="font-serif"
               style={{
-                color: "var(--color-espresso-strong)",
+                color: "var(--ink)",
                 fontSize: "1.75rem",
                 marginTop: "0.5rem",
               }}
@@ -83,13 +83,11 @@ const TermsAndConditions = () => {
               fontSize: "0.95rem",
             }}
           >
-            <p style={{ color: "var(--color-stone-dim)" }}>Effective: May 2026</p>
-            <p className="label-mono mt-2" style={{ color: "var(--color-stone-dim)" }}>
+            <p style={{ color: "var(--ink-dim)" }}>Effective: May 2026</p>
+            <p className="label-mono mt-2" style={{ color: "var(--ink-dim)" }}>
               Humint Labs, Inc. (incorporated in Delaware)
             </p>
-            <p
-              style={{ color: "var(--color-stone-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}
-            >
+            <p style={{ color: "var(--ink-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
               710 Lakeway Drive, Suite 200, Sunnyvale, CA 94085
             </p>
           </div>
@@ -122,7 +120,7 @@ const TermsAndConditions = () => {
                 href="mailto:support@asmiai.com"
                 style={{
                   fontWeight: "bold",
-                  color: "var(--color-espresso-strong)",
+                  color: "var(--ink)",
                   transition: "opacity 0.2s",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
