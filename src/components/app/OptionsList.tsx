@@ -27,16 +27,16 @@ export function OptionsList({
         onClick={onClearAll}
         className="flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left"
         style={{
-          background: "linear-gradient(135deg, rgba(124,58,237,0.10), rgba(230,75,255,0.08))",
-          border: "1px solid rgba(124,58,237,0.22)",
+          background: "linear-gradient(135deg, var(--violet-faint), var(--magenta-wash))",
+          border: "1px solid var(--violet-line)",
         }}
       >
         <div className="flex items-center gap-3">
           <span
             className="grid h-9 w-9 place-items-center rounded-xl"
-            style={{ background: "rgba(124,58,237,0.14)" }}
+            style={{ background: "var(--violet-faint)" }}
           >
-            <Sparkles size={15} strokeWidth={1.8} style={{ color: "#7C3AED" }} />
+            <Sparkles size={15} strokeWidth={1.8} style={{ color: "var(--color-violet)" }} />
           </span>
           <div>
             <div className="text-[14px] font-medium" style={{ color: "var(--color-ink)" }}>
@@ -45,7 +45,7 @@ export function OptionsList({
             <div className="chip-mono mt-0.5">tap to revisit</div>
           </div>
         </div>
-        <ChevronRight size={16} style={{ color: "#7C3AED" }} />
+        <ChevronRight size={16} style={{ color: "var(--color-violet)" }} />
       </motion.button>
     );
   }
@@ -60,7 +60,7 @@ export function OptionsList({
           whileTap={{ scale: 0.95 }}
           onClick={onAnyWorks}
           className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-medium"
-          style={{ background: "rgba(124,58,237,0.08)", color: "#6D28D9" }}
+          style={{ background: "var(--violet-faint)", color: "var(--violet-deep)" }}
         >
           <Sparkles size={11} strokeWidth={2} /> any works
         </motion.button>
@@ -112,11 +112,11 @@ function OptionRow({
 
   const priorityColor =
     option.priority === "high"
-      ? "#E64BFF"
+      ? "var(--color-magenta)"
       : option.priority === "med"
-        ? "#A78BFA"
+        ? "var(--color-violet-soft)"
         : option.priority === "low"
-          ? "rgba(26,11,46,0.18)"
+          ? "var(--ink-line)"
           : "transparent";
 
   return (
@@ -133,13 +133,13 @@ function OptionRow({
       >
         <span
           className="inline-flex items-center gap-1.5 label-mono"
-          style={{ color: "#C026D3", opacity: dragX > 0 ? 1 : 0, fontSize: 10 }}
+          style={{ color: "var(--color-amber-deep)", opacity: dragX > 0 ? 1 : 0, fontSize: 10 }}
         >
           <Star size={12} strokeWidth={2} /> high priority
         </span>
         <span
           className="inline-flex items-center gap-1.5 label-mono"
-          style={{ color: "#64748B", opacity: dragX < 0 ? 1 : 0, fontSize: 10 }}
+          style={{ color: "var(--color-slate)", opacity: dragX < 0 ? 1 : 0, fontSize: 10 }}
         >
           <Trash2 size={12} strokeWidth={2} /> dismiss
         </span>
@@ -164,7 +164,7 @@ function OptionRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             {option.priority === "high" && (
-              <Flame size={12} strokeWidth={2} style={{ color: "#E64BFF" }} />
+              <Flame size={12} strokeWidth={2} style={{ color: "var(--color-magenta)" }} />
             )}
             <span
               className="truncate text-[15px] font-medium"
@@ -179,7 +179,7 @@ function OptionRow({
               style={{ color: "var(--color-ink-soft)" }}
             >
               {option.price && (
-                <span className="font-mono" style={{ color: "#6D28D9" }}>
+                <span className="font-mono" style={{ color: "var(--violet-deep)" }}>
                   {option.price}
                 </span>
               )}
@@ -198,10 +198,10 @@ function OptionRow({
           transition={{ duration: 0.28 }}
           className="grid h-6 w-6 shrink-0 place-items-center rounded-full"
           style={{
-            background: option.selected ? "linear-gradient(135deg,#7C3AED,#E64BFF)" : "transparent",
-            border: option.selected ? "none" : "1.5px solid rgba(26,11,46,0.18)",
+            background: option.selected ? "var(--gradient-brand)" : "transparent",
+            border: option.selected ? "none" : "1.5px solid var(--ink-line)",
             color: "white",
-            boxShadow: option.selected ? "0 4px 10px -4px rgba(124,58,237,0.55)" : undefined,
+            boxShadow: option.selected ? "0 4px 10px -4px var(--violet-strong)" : undefined,
           }}
         >
           {option.selected && <Check size={13} strokeWidth={2.6} />}

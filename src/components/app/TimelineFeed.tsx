@@ -27,17 +27,17 @@ const ICON: Record<TimelineEvent["kind"], typeof Phone> = {
 };
 
 const TONE: Record<TimelineEvent["kind"], string> = {
-  spawned: "#7C3AED",
+  spawned: "var(--color-violet)",
   researching: "#5B5BFF",
-  dialed: "#A78BFA",
-  connected: "#7C3AED",
-  voicemail: "#E64B6E",
-  message_sent: "#0F766E",
-  email_sent: "#0F766E",
-  callback_scheduled: "#A78BFA",
-  wrapped: "#0F766E",
-  user_input: "#6B5B8A",
-  handoff: "#6B5B8A",
+  dialed: "var(--color-violet-soft)",
+  connected: "var(--color-violet)",
+  voicemail: "var(--color-destructive)",
+  message_sent: "var(--color-sage-deep)",
+  email_sent: "var(--color-sage-deep)",
+  callback_scheduled: "var(--color-violet-soft)",
+  wrapped: "var(--color-sage-deep)",
+  user_input: "var(--color-ink-soft)",
+  handoff: "var(--color-ink-soft)",
 };
 
 export function TimelineFeed({ events }: { events: TimelineEvent[] }) {
@@ -49,7 +49,7 @@ export function TimelineFeed({ events }: { events: TimelineEvent[] }) {
       <ol className="relative space-y-2 pl-4">
         <span
           className="absolute left-[7px] top-1 bottom-1 w-px"
-          style={{ background: "rgba(124,58,237,0.15)" }}
+          style={{ background: "var(--violet-faint)" }}
         />
         {events.map((e) => {
           const Icon = ICON[e.kind] ?? Phone;

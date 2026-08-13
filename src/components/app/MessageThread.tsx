@@ -5,7 +5,7 @@ export function MessageThread({ thread }: { thread: MessageThreadT }) {
   return (
     <div
       className="rounded-2xl bg-white/55 p-3.5 backdrop-blur-xl"
-      style={{ border: "1px solid rgba(124,58,237,0.10)" }}
+      style={{ border: "1px solid var(--violet-faint)" }}
     >
       <div className="mb-2 flex items-center justify-between">
         <span className="label-mono" style={{ color: "var(--color-ink-muted)", fontSize: 9.5 }}>
@@ -23,7 +23,7 @@ export function MessageThread({ thread }: { thread: MessageThreadT }) {
               {!me && (
                 <span
                   className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-medium text-white"
-                  style={{ background: "#A78BFA" }}
+                  style={{ background: "var(--color-violet-soft)" }}
                 >
                   {thread.with[0]}
                 </span>
@@ -31,13 +31,11 @@ export function MessageThread({ thread }: { thread: MessageThreadT }) {
               <div
                 className="max-w-[80%] rounded-2xl px-3 py-1.5 text-[13px] leading-snug"
                 style={{
-                  background: me
-                    ? "linear-gradient(135deg,#7C3AED,#E64BFF)"
-                    : "rgba(255,255,255,0.92)",
+                  background: me ? "var(--gradient-brand)" : "rgba(255,255,255,0.92)",
                   color: me ? "white" : "var(--color-ink)",
                   borderBottomRightRadius: me ? 6 : undefined,
                   borderBottomLeftRadius: !me ? 6 : undefined,
-                  boxShadow: me ? "0 6px 14px -8px rgba(124,58,237,0.45)" : undefined,
+                  boxShadow: me ? "0 6px 14px -8px var(--violet-strong)" : undefined,
                 }}
               >
                 {line.text}

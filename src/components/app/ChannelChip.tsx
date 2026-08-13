@@ -2,7 +2,7 @@ import { Globe, MessageCircle, MessageSquare } from "lucide-react";
 import type { CanvasOrigin } from "./useCanvases";
 
 const MAP: Record<CanvasOrigin, { text: string; color: string; Icon: typeof Globe }> = {
-  web: { text: "web", color: "#6B5B8A", Icon: Globe },
+  web: { text: "web", color: "var(--color-ink-soft)", Icon: Globe },
   whatsapp: { text: "whatsapp", color: "#1F7A4D", Icon: MessageCircle },
   imessage: { text: "imessage", color: "#1671C8", Icon: MessageSquare },
 };

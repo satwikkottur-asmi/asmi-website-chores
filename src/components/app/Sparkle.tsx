@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 
 /** Tiny sparkle burst - 6 dots flying out. Mounted once, auto-cleans. */
-export function SparkleBurst({ size = 80, color = "#E64BFF" }: { size?: number; color?: string }) {
+export function SparkleBurst({
+  size = 80,
+  color = "var(--color-magenta)",
+}: {
+  size?: number;
+  color?: string;
+}) {
   const [show, setShow] = useState(true);
   useEffect(() => {
     const t = setTimeout(() => setShow(false), 700);
@@ -45,7 +51,13 @@ export function SparkleBurst({ size = 80, color = "#E64BFF" }: { size?: number; 
 }
 
 /** Animated call-wave (4 bars) - for live calls. */
-export function CallWave({ color = "#7C3AED", size = 14 }: { color?: string; size?: number }) {
+export function CallWave({
+  color = "var(--color-violet)",
+  size = 14,
+}: {
+  color?: string;
+  size?: number;
+}) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 2, height: size }}>
       {[0, 1, 2, 3].map((i) => (

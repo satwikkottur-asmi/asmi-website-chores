@@ -5,13 +5,13 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
   return (
     <div
       className="overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl"
-      style={{ border: "1px solid rgba(124,58,237,0.10)" }}
+      style={{ border: "1px solid var(--violet-faint)" }}
     >
       <div
         className="flex items-center gap-2 border-b px-3 py-2.5"
-        style={{ borderColor: "rgba(124,58,237,0.08)" }}
+        style={{ borderColor: "var(--violet-faint)" }}
       >
-        <CalendarDays size={13} strokeWidth={1.8} style={{ color: "#7C3AED" }} />
+        <CalendarDays size={13} strokeWidth={1.8} style={{ color: "var(--color-violet)" }} />
         <span className="label-mono" style={{ color: "var(--color-ink-soft)", fontSize: 10 }}>
           slots · {grid.people.join(" · ")}
         </span>
@@ -20,7 +20,7 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
         className="grid items-center gap-2 border-b px-3 py-2"
         style={{
           gridTemplateColumns: `1fr repeat(${grid.people.length}, minmax(0, 0.6fr)) auto`,
-          borderColor: "rgba(124,58,237,0.06)",
+          borderColor: "var(--violet-wash)",
         }}
       >
         <span className="label-mono" style={{ color: "var(--color-ink-muted)", fontSize: 9 }}>
@@ -37,7 +37,7 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
         ))}
         <span />
       </div>
-      <div className="divide-y" style={{ borderColor: "rgba(124,58,237,0.06)" }}>
+      <div className="divide-y" style={{ borderColor: "var(--violet-wash)" }}>
         {grid.slots.map((s) => {
           const allOk = s.available.every(Boolean);
           return (
@@ -46,7 +46,7 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
               className="grid items-center gap-2 px-3 py-2.5"
               style={{
                 gridTemplateColumns: `1fr repeat(${grid.people.length}, minmax(0, 0.6fr)) auto`,
-                background: s.chosen ? "rgba(94,234,212,0.14)" : undefined,
+                background: s.chosen ? "var(--mint-wash)" : undefined,
               }}
             >
               <div
@@ -61,8 +61,8 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
                   <span
                     className="grid h-5 w-5 place-items-center rounded-full"
                     style={{
-                      background: ok ? "rgba(94,234,212,0.22)" : "rgba(230,75,110,0.10)",
-                      color: ok ? "#0F766E" : "#E64B6E",
+                      background: ok ? "var(--mint-faint)" : "var(--destructive-wash)",
+                      color: ok ? "var(--color-sage-deep)" : "var(--color-destructive)",
                     }}
                   >
                     {ok ? <Check size={11} strokeWidth={2.5} /> : <X size={11} strokeWidth={2.5} />}
@@ -74,8 +74,8 @@ export function SchedulingView({ grid }: { grid: SchedulingGrid }) {
                   <span
                     className="label-mono rounded-full px-2 py-0.5"
                     style={{
-                      background: s.chosen ? "#0F766E" : "rgba(94,234,212,0.20)",
-                      color: s.chosen ? "white" : "#0F766E",
+                      background: s.chosen ? "var(--color-sage-deep)" : "var(--mint-faint)",
+                      color: s.chosen ? "white" : "var(--color-sage-deep)",
                       fontSize: 8.5,
                     }}
                   >

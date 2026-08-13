@@ -36,13 +36,18 @@ export function CallStepper({ call, compact = false }: { call: Call; compact?: b
 
   if (terminal) {
     const tone = terminal.tone;
-    const color = tone === "good" ? "#0F766E" : tone === "bad" ? "#E64B6E" : "#6B5B8A";
+    const color =
+      tone === "good"
+        ? "var(--color-sage-deep)"
+        : tone === "bad"
+          ? "var(--color-destructive)"
+          : "var(--color-ink-soft)";
     const bg =
       tone === "good"
-        ? "rgba(94,234,212,0.18)"
+        ? "var(--mint-faint)"
         : tone === "bad"
-          ? "rgba(230,75,110,0.12)"
-          : "rgba(124,58,237,0.07)";
+          ? "var(--destructive-wash)"
+          : "var(--violet-wash)";
     const Icon = terminal.Icon;
     return (
       <div
@@ -75,12 +80,12 @@ export function CallStepper({ call, compact = false }: { call: Call; compact?: b
                 width: active ? 22 : 16,
                 height: active ? 22 : 16,
                 background: active
-                  ? "linear-gradient(135deg,#7C3AED,#E64BFF)"
+                  ? "var(--gradient-brand)"
                   : passed
-                    ? "#5EEAD4"
-                    : "rgba(124,58,237,0.10)",
+                    ? "var(--color-mint)"
+                    : "var(--violet-faint)",
                 color: "white",
-                boxShadow: active ? "0 0 0 4px rgba(124,58,237,0.18)" : undefined,
+                boxShadow: active ? "0 0 0 4px var(--violet-line)" : undefined,
               }}
             >
               {active ? (
@@ -105,7 +110,7 @@ export function CallStepper({ call, compact = false }: { call: Call; compact?: b
             {i < STEPS.length - 1 && (
               <span
                 className="block h-px w-3"
-                style={{ background: passed ? "#5EEAD4" : "rgba(124,58,237,0.15)" }}
+                style={{ background: passed ? "var(--color-mint)" : "var(--violet-faint)" }}
               />
             )}
           </div>
@@ -138,9 +143,9 @@ export function NextActionChip({ next }: { next: NonNullable<Call["nextAction"]>
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-[10px]"
       style={{
-        background: "rgba(124,58,237,0.10)",
-        color: "#6D28D9",
-        border: "1px solid rgba(124,58,237,0.18)",
+        background: "var(--violet-faint)",
+        color: "var(--violet-deep)",
+        border: "1px solid var(--violet-line)",
       }}
     >
       <Icon size={10} strokeWidth={2} />

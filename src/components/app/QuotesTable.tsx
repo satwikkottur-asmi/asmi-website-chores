@@ -11,7 +11,7 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
   return (
     <div
       className="overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl"
-      style={{ border: "1px solid rgba(124,58,237,0.10)" }}
+      style={{ border: "1px solid var(--violet-faint)" }}
     >
       <div
         className="label-mono grid gap-2 border-b px-3 py-2"
@@ -19,7 +19,7 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
           gridTemplateColumns: "1.6fr 0.6fr 0.9fr 0.9fr 0.5fr",
           color: "var(--color-ink-muted)",
           fontSize: 9,
-          borderColor: "rgba(124,58,237,0.08)",
+          borderColor: "var(--violet-faint)",
         }}
       >
         <span>vendor</span>
@@ -32,7 +32,7 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
         <span>start</span>
         <span>status</span>
       </div>
-      <div className="divide-y" style={{ borderColor: "rgba(124,58,237,0.06)" }}>
+      <div className="divide-y" style={{ borderColor: "var(--violet-wash)" }}>
         {quotes.map((q) => (
           <div
             key={q.id}
@@ -45,7 +45,7 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
                   {q.vendor}
                 </span>
                 {q.id === cheapestId && (
-                  <Sparkles size={10} strokeWidth={2} style={{ color: "#E64BFF" }} />
+                  <Sparkles size={10} strokeWidth={2} style={{ color: "var(--color-magenta)" }} />
                 )}
               </div>
               {q.note && (
@@ -60,14 +60,18 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
             >
               {q.rating ? (
                 <>
-                  <Star size={10} className="fill-current" style={{ color: "#E64BFF" }} />
+                  <Star
+                    size={10}
+                    className="fill-current"
+                    style={{ color: "var(--color-magenta)" }}
+                  />
                   {q.rating}
                 </>
               ) : (
                 "-"
               )}
             </div>
-            <div className="font-mono text-[11.5px]" style={{ color: "#6D28D9" }}>
+            <div className="font-mono text-[11.5px]" style={{ color: "var(--violet-deep)" }}>
               {q.price}
             </div>
             <div className="text-[11.5px]" style={{ color: "var(--color-ink-soft)" }}>
@@ -80,15 +84,15 @@ export function QuotesTable({ quotes }: { quotes: Quote[] }) {
                   fontSize: 8.5,
                   background:
                     q.status === "received"
-                      ? "rgba(94,234,212,0.22)"
+                      ? "var(--mint-faint)"
                       : q.status === "declined"
-                        ? "rgba(230,75,110,0.12)"
-                        : "rgba(124,58,237,0.07)",
+                        ? "var(--destructive-wash)"
+                        : "var(--violet-wash)",
                   color:
                     q.status === "received"
-                      ? "#0F766E"
+                      ? "var(--color-sage-deep)"
                       : q.status === "declined"
-                        ? "#E64B6E"
+                        ? "var(--color-destructive)"
                         : "var(--color-ink-soft)",
                 }}
               >

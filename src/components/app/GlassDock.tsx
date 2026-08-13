@@ -81,7 +81,10 @@ export function GlassDock({
               className="glass-pill rounded-[28px] p-3"
             >
               <div className="flex items-start gap-2">
-                <span className="mt-2 ml-1 grid place-items-center" style={{ color: "#7C3AED" }}>
+                <span
+                  className="mt-2 ml-1 grid place-items-center"
+                  style={{ color: "var(--color-violet)" }}
+                >
                   <Sparkles size={16} strokeWidth={1.8} />
                 </span>
                 <textarea
@@ -122,9 +125,9 @@ export function GlassDock({
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setText(s.text)}
                       className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[12px] text-[color:var(--color-ink)] hover:bg-white"
-                      style={{ border: "1px solid rgba(124,58,237,0.10)" }}
+                      style={{ border: "1px solid var(--violet-faint)" }}
                     >
-                      <Icon size={11} strokeWidth={1.8} style={{ color: "#7C3AED" }} />
+                      <Icon size={11} strokeWidth={1.8} style={{ color: "var(--color-violet)" }} />
                       {s.text}
                     </motion.button>
                   );
@@ -138,9 +141,9 @@ export function GlassDock({
                   disabled={!text.trim()}
                   className="grid h-9 w-9 place-items-center rounded-full transition-all disabled:opacity-40"
                   style={{
-                    background: "linear-gradient(135deg, #7C3AED, #E64BFF)",
+                    background: "var(--gradient-brand)",
                     color: "white",
-                    boxShadow: "0 8px 20px -6px rgba(124,58,237,0.55)",
+                    boxShadow: "0 8px 20px -6px var(--violet-strong)",
                   }}
                   aria-label="send"
                 >
@@ -159,7 +162,11 @@ export function GlassDock({
             >
               <span
                 className="label-mono shrink-0 rounded-full px-2.5 py-1"
-                style={{ background: "rgba(124,58,237,0.12)", color: "#6D28D9", fontSize: 9.5 }}
+                style={{
+                  background: "var(--violet-faint)",
+                  color: "var(--violet-deep)",
+                  fontSize: 9.5,
+                }}
               >
                 {selected} selected
               </span>
@@ -175,9 +182,9 @@ export function GlassDock({
                       style={
                         i === 0
                           ? {
-                              background: "linear-gradient(135deg, #7C3AED, #E64BFF)",
+                              background: "var(--gradient-brand)",
                               color: "white",
-                              boxShadow: "0 6px 18px -6px rgba(230,75,255,0.55)",
+                              boxShadow: "0 6px 18px -6px var(--magenta-strong)",
                             }
                           : { background: "rgba(255,255,255,0.7)", color: "var(--color-ink)" }
                       }
@@ -198,7 +205,11 @@ export function GlassDock({
               transition={spring}
               className="glass-pill flex items-center gap-2 rounded-full py-2 pl-4 pr-2"
             >
-              <Sparkles size={15} strokeWidth={1.8} style={{ color: "#7C3AED", flexShrink: 0 }} />
+              <Sparkles
+                size={15}
+                strokeWidth={1.8}
+                style={{ color: "var(--color-violet)", flexShrink: 0 }}
+              />
               <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -218,9 +229,9 @@ export function GlassDock({
                   onClick={submit}
                   className="grid h-9 w-9 place-items-center rounded-full"
                   style={{
-                    background: "linear-gradient(135deg, #7C3AED, #E64BFF)",
+                    background: "var(--gradient-brand)",
                     color: "white",
-                    boxShadow: "0 8px 20px -6px rgba(124,58,237,0.55)",
+                    boxShadow: "0 8px 20px -6px var(--violet-strong)",
                   }}
                   aria-label="send"
                 >

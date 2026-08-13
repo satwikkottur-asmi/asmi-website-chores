@@ -8,21 +8,21 @@ export function Checklist({ items }: { items: ChecklistItem[] }) {
         const Icon = it.status === "done" ? Check : it.status === "doing" ? Loader2 : Circle;
         const tone =
           it.status === "done"
-            ? "#0F766E"
+            ? "var(--color-sage-deep)"
             : it.status === "doing"
-              ? "#7C3AED"
+              ? "var(--color-violet)"
               : "var(--color-ink-muted)";
         const bg =
           it.status === "done"
-            ? "rgba(94,234,212,0.22)"
+            ? "var(--mint-faint)"
             : it.status === "doing"
-              ? "rgba(124,58,237,0.14)"
+              ? "var(--violet-faint)"
               : "transparent";
         return (
           <li
             key={it.id}
             className="flex items-start gap-2.5 rounded-xl bg-white/55 px-3 py-2.5"
-            style={{ border: "1px solid rgba(124,58,237,0.06)" }}
+            style={{ border: "1px solid var(--violet-wash)" }}
           >
             <GripVertical
               size={12}

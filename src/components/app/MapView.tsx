@@ -3,6 +3,13 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import type { Place } from "./useCanvases";
 
+function pinTone(status: Place["status"]): string {
+  if (status === "shortlist") return "var(--color-violet)";
+  if (status === "calling") return "var(--color-magenta)";
+  if (status === "booked") return "var(--color-sage-deep)";
+  return "var(--color-ink)";
+}
+
 export function MapView({
   places,
   onShortlist,
@@ -23,8 +30,9 @@ export function MapView({
         className="relative overflow-hidden rounded-2xl"
         style={{
           aspectRatio: "1.4 / 1",
-          background: "radial-gradient(120% 80% at 30% 20%, #EDE6FF 0%, #DCC9FF 60%, #C9B8FF 100%)",
-          border: "1px solid rgba(124,58,237,0.10)",
+          background:
+            "radial-gradient(120% 80% at 30% 20%, #EDE6FF 0%, #DCC9FF 60%, var(--color-lilac) 100%)",
+          border: "1px solid var(--violet-faint)",
         }}
       >
         <svg
@@ -57,14 +65,14 @@ export function MapView({
           ))}
           <path
             d="M0 50 Q 30 38 60 44 T 100 30"
-            stroke="#A5D8FF"
+            stroke="var(--color-sky-pop)"
             strokeWidth="2"
             fill="none"
             opacity="0.7"
           />
           <path
             d="M 0 55 Q 35 60 70 52 T 100 58"
-            stroke="#5EEAD4"
+            stroke="var(--color-mint)"
             strokeWidth="3"
             fill="none"
             opacity="0.5"
@@ -73,14 +81,7 @@ export function MapView({
 
         {places.map((p) => {
           const isSel = p.id === selected;
-          const tone =
-            p.status === "shortlist"
-              ? "#7C3AED"
-              : p.status === "calling"
-                ? "#E64BFF"
-                : p.status === "booked"
-                  ? "#0F766E"
-                  : "#1A0B2E";
+          const tone = pinTone(p.status);
           return (
             <motion.button
               key={p.id}
@@ -125,7 +126,7 @@ export function MapView({
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-white/70 p-3.5 backdrop-blur-xl"
-            style={{ border: "1px solid rgba(124,58,237,0.10)" }}
+            style={{ border: "1px solid var(--violet-faint)" }}
           >
             <div
               className="font-display text-[18px] font-semibold leading-tight tracking-[-0.01em]"
@@ -141,11 +142,15 @@ export function MapView({
               style={{ color: "var(--color-ink-soft)" }}
             >
               <span className="inline-flex items-center gap-0.5">
-                <Star size={11} className="fill-current" style={{ color: "#E64BFF" }} />{" "}
+                <Star
+                  size={11}
+                  className="fill-current"
+                  style={{ color: "var(--color-magenta)" }}
+                />{" "}
                 {sel.rating}
               </span>
               <span>·</span>
-              <span className="font-mono" style={{ color: "#6D28D9" }}>
+              <span className="font-mono" style={{ color: "var(--violet-deep)" }}>
                 {sel.price}
               </span>
             </div>
@@ -154,10 +159,10 @@ export function MapView({
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onShortlist(sel.id)}
                 className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-[12px] transition-all hover:bg-white"
-                style={{ color: "var(--color-ink)", border: "1px solid rgba(124,58,237,0.15)" }}
+                style={{ color: "var(--color-ink)", border: "1px solid var(--violet-faint)" }}
               >
                 {sel.status === "shortlist" ? (
-                  <BookmarkCheck size={13} style={{ color: "#7C3AED" }} />
+                  <BookmarkCheck size={13} style={{ color: "var(--color-violet)" }} />
                 ) : (
                   <Bookmark size={13} />
                 )}
@@ -169,8 +174,8 @@ export function MapView({
                 disabled={sel.status === "calling"}
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] text-white transition-all disabled:opacity-60"
                 style={{
-                  background: "linear-gradient(135deg,#7C3AED,#E64BFF)",
-                  boxShadow: "0 6px 16px -6px rgba(124,58,237,0.55)",
+                  background: "var(--gradient-brand)",
+                  boxShadow: "0 6px 16px -6px var(--violet-strong)",
                 }}
               >
                 <Phone size={12} strokeWidth={2} />
@@ -192,16 +197,7 @@ export function MapView({
             >
               <span
                 className="grid h-6 w-6 place-items-center rounded-lg text-white"
-                style={{
-                  background:
-                    p.status === "shortlist"
-                      ? "#7C3AED"
-                      : p.status === "calling"
-                        ? "#E64BFF"
-                        : p.status === "booked"
-                          ? "#0F766E"
-                          : "#1A0B2E",
-                }}
+                style={{ background: pinTone(p.status) }}
               >
                 <MapPin size={11} strokeWidth={2} fill="white" />
               </span>

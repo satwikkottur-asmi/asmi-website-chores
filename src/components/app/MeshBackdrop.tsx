@@ -8,7 +8,7 @@ export function MeshBackdrop() {
           height: "60vw",
           top: "-15vw",
           left: "-10vw",
-          background: "#7C3AED",
+          background: "var(--color-violet)",
           animation: "mesh-drift-a 28s ease-in-out infinite",
         }}
       />
@@ -19,7 +19,7 @@ export function MeshBackdrop() {
           height: "55vw",
           top: "10vh",
           right: "-15vw",
-          background: "#E64BFF",
+          background: "var(--color-magenta)",
           animation: "mesh-drift-b 34s ease-in-out infinite",
         }}
       />
@@ -42,7 +42,7 @@ export function MeshBackdrop() {
           height: "40vw",
           top: "40vh",
           left: "30vw",
-          background: "#A5D8FF",
+          background: "var(--color-sky-pop)",
           animation: "mesh-drift-d 26s ease-in-out infinite",
           opacity: 0.4,
         }}

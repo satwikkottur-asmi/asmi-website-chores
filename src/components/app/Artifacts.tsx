@@ -49,9 +49,9 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
       onClick={() => setOpen((v) => !v)}
       className="group flex w-full flex-col items-start gap-1.5 rounded-2xl bg-white/65 p-3.5 text-left backdrop-blur-xl transition-all hover:bg-white/85"
       style={{
-        border: "1px solid rgba(124,58,237,0.10)",
+        border: "1px solid var(--violet-faint)",
         background: isSavings
-          ? "linear-gradient(135deg, rgba(94,234,212,0.22), rgba(124,58,237,0.10))"
+          ? "linear-gradient(135deg, var(--mint-faint), var(--violet-faint))"
           : undefined,
       }}
     >
@@ -59,8 +59,8 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         <span
           className="grid h-8 w-8 place-items-center rounded-xl"
           style={{
-            background: isSavings ? "rgba(94,234,212,0.30)" : "rgba(124,58,237,0.12)",
-            color: isSavings ? "#0F766E" : "#7C3AED",
+            background: isSavings ? "var(--mint-line)" : "var(--violet-faint)",
+            color: isSavings ? "var(--color-sage-deep)" : "var(--color-violet)",
           }}
         >
           <Icon size={15} strokeWidth={1.8} />
@@ -71,7 +71,9 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         >
           {artifact.title}
         </span>
-        {isSavings && <Sparkles size={13} strokeWidth={2} style={{ color: "#0F766E" }} />}
+        {isSavings && (
+          <Sparkles size={13} strokeWidth={2} style={{ color: "var(--color-sage-deep)" }} />
+        )}
         {artifact.meta && (
           <span className="label-mono" style={{ color: "var(--color-ink-soft)", fontSize: 8.5 }}>
             {artifact.meta}

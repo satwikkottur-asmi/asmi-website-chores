@@ -24,12 +24,12 @@ export function ParallelCalls({ calls, parallel }: { calls: Call[]; parallel?: b
                   <span
                     className="grid h-8 w-8 shrink-0 place-items-center rounded-xl"
                     style={{
-                      background: isLive ? "rgba(124,58,237,0.12)" : "rgba(26,11,46,0.05)",
-                      color: isLive ? "#7C3AED" : "var(--color-ink-soft)",
+                      background: isLive ? "var(--violet-faint)" : "var(--ink-wash)",
+                      color: isLive ? "var(--color-violet)" : "var(--color-ink-soft)",
                     }}
                   >
                     {isLive ? (
-                      <CallWave color="#7C3AED" size={14} />
+                      <CallWave color="var(--color-violet)" size={14} />
                     ) : (
                       <Phone size={14} strokeWidth={1.8} />
                     )}
@@ -56,7 +56,7 @@ export function ParallelCalls({ calls, parallel }: { calls: Call[]; parallel?: b
               {(call.result || call.nextAction) && (
                 <div
                   className="mt-2 flex flex-wrap items-center gap-2 pt-2"
-                  style={{ borderTop: "1px solid rgba(26,11,46,0.05)" }}
+                  style={{ borderTop: "1px solid var(--ink-wash)" }}
                 >
                   {call.result && (
                     <span className="text-[12.5px]" style={{ color: "var(--color-ink-soft)" }}>

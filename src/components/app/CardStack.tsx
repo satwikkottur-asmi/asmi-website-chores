@@ -81,7 +81,7 @@ export function CardStack({
         onClick={onMore}
         className="mt-6 flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all hover:bg-white/40"
         style={{
-          border: "1px dashed rgba(124,58,237,0.25)",
+          border: "1px dashed var(--violet-line)",
           background: "rgba(255,255,255,0.35)",
           backdropFilter: "blur(10px)",
         }}
@@ -95,7 +95,7 @@ export function CardStack({
             <div className="chip-mono mt-0.5">open history</div>
           </div>
         </div>
-        <ChevronRight size={18} style={{ color: "#7C3AED" }} />
+        <ChevronRight size={18} style={{ color: "var(--color-violet)" }} />
       </motion.button>
     </div>
   );
@@ -151,7 +151,7 @@ function FrontCard({
           <Archive size={14} strokeWidth={1.8} />
         </motion.button>
         <span key={burstKey} className="absolute inset-x-0 top-1/3">
-          <SparkleBurst size={120} color="#E64BFF" />
+          <SparkleBurst size={120} color="var(--color-magenta)" />
         </span>
       </div>
       {Math.abs(dragY) > 30 && (
@@ -159,11 +159,11 @@ function FrontCard({
           className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full px-3 py-1"
           style={{
             background: "rgba(255,255,255,0.95)",
-            border: "1px solid rgba(124,58,237,0.15)",
-            color: "#7C3AED",
+            border: "1px solid var(--violet-faint)",
+            color: "var(--color-violet)",
           }}
         >
-          <span className="chip-mono" style={{ color: "#7C3AED" }}>
+          <span className="chip-mono" style={{ color: "var(--color-violet)" }}>
             {dragY < 0 ? "↑ next" : "↓ previous"}
           </span>
         </div>
@@ -177,10 +177,10 @@ function PeekCard({ canvas, depth, onTap }: { canvas: Canvas; depth: number; onT
   const cat = categoryFor(canvas);
   const tint =
     variant === "live"
-      ? "rgba(124,58,237,0.05)"
+      ? "var(--violet-wash)"
       : variant === "queued"
         ? "rgba(201,184,255,0.10)"
-        : "rgba(94,234,212,0.07)";
+        : "var(--mint-wash)";
   return (
     <motion.button
       layout
@@ -195,7 +195,7 @@ function PeekCard({ canvas, depth, onTap }: { canvas: Canvas; depth: number; onT
         marginInline: depth * 8,
         background: `linear-gradient(180deg, #fff, ${tint})`,
         boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 12px 28px -18px rgba(76,29,149,0.22)",
-        border: "1px solid rgba(124,58,237,0.06)",
+        border: "1px solid var(--violet-wash)",
       }}
     >
       <CategoryTile Icon={cat.Icon} tone={cat.tone} size="sm" />

@@ -4,11 +4,11 @@ import type { CanvasStatus } from "./useCanvases";
 type Variant = "live" | "queued" | "needs" | "done" | "paused";
 
 const MAP: Record<Variant, { Icon: typeof Radio; color: string; label: string }> = {
-  live: { Icon: Radio, color: "#7C3AED", label: "live" },
+  live: { Icon: Radio, color: "var(--color-violet)", label: "live" },
   queued: { Icon: Clock3, color: "#8B7DCC", label: "queued" },
-  needs: { Icon: AlertCircle, color: "#C026D3", label: "needs you" },
-  done: { Icon: CheckCircle2, color: "#0F766E", label: "done" },
-  paused: { Icon: Pause, color: "#64748B", label: "paused" },
+  needs: { Icon: AlertCircle, color: "var(--color-amber-deep)", label: "needs you" },
+  done: { Icon: CheckCircle2, color: "var(--color-sage-deep)", label: "done" },
+  paused: { Icon: Pause, color: "var(--color-slate)", label: "paused" },
 };
 
 export function variantFor(s: CanvasStatus): Variant {

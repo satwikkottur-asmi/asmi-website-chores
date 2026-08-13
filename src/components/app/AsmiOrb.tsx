@@ -27,7 +27,7 @@ export function AsmiOrb({
       {state === "news" && (
         <span
           className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full"
-          style={{ background: "#E64BFF", boxShadow: "0 0 0 2px white" }}
+          style={{ background: "var(--color-magenta)", boxShadow: "0 0 0 2px white" }}
         />
       )}
     </motion.button>
