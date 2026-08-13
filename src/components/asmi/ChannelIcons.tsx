@@ -63,6 +63,14 @@ export function ChannelRow({
 }
 
 export type ChannelKind = "call" | "text" | "email" | "web";
+export type Tone = "fail" | "win";
+
+/** Maps a beat/step tone to its accent color, falling back to the section's default accent. */
+export function toneColor(tone: Tone | undefined, fallback: string): string {
+  if (tone === "win") return "var(--mint-pop)";
+  if (tone === "fail") return "var(--coral)";
+  return fallback;
+}
 
 export function ChannelGlyph({ kind, size = 13 }: { kind: ChannelKind; size?: number }) {
   const s = {

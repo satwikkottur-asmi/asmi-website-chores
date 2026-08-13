@@ -1,13 +1,13 @@
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { ChannelGlyph, ChannelKind } from "./ChannelIcons";
+import { ChannelGlyph, ChannelKind, Tone, toneColor } from "./ChannelIcons";
 import { Reveal, RevealGroup } from "./Reveal";
 
 interface Beat {
   kind: ChannelKind;
   label: string;
   time: string;
-  tone?: "fail" | "win";
+  tone?: Tone;
 }
 
 interface Job {
@@ -161,9 +161,9 @@ export function ChaseEngine() {
                 style={{
                   fontSize: "var(--t-base)",
                   borderRadius: 10,
-                  border: "1px solid rgba(255,253,248,0.28)",
+                  border: "1px solid var(--cream-line)",
                   background: on ? "var(--cream)" : "transparent",
-                  color: on ? "var(--ink)" : "rgba(255,253,248,0.75)",
+                  color: on ? "var(--ink)" : "var(--cream-body)",
                   fontWeight: on ? 600 : 400,
                 }}
               >
@@ -184,11 +184,11 @@ export function ChaseEngine() {
               className="min-w-0 max-w-[760px] p-5 sm:p-7"
               style={{
                 borderRadius: 10,
-                background: "rgba(255,253,248,0.06)",
-                border: "1px solid rgba(255,253,248,0.14)",
+                background: "var(--cream-wash)",
+                border: "1px solid var(--cream-faint)",
               }}
             >
-              <p className="t-mono" style={{ color: "rgba(255,253,248,0.55)" }}>
+              <p className="t-mono" style={{ color: "var(--cream-strong)" }}>
                 {job.who}
               </p>
 
@@ -200,19 +200,14 @@ export function ChaseEngine() {
               >
                 {job.beats.map((b, i) => {
                   const lit = i < shown;
-                  const accent =
-                    b.tone === "win"
-                      ? "var(--mint-pop)"
-                      : b.tone === "fail"
-                        ? "var(--coral)"
-                        : "var(--citrus)";
+                  const accent = toneColor(b.tone, "var(--citrus)");
                   return (
                     <div key={b.label + i} className="flex shrink-0 items-start">
                       {i > 0 && (
                         <span
                           className="mt-[19px] block h-px w-3 shrink-0 sm:w-10"
                           style={{
-                            background: lit ? "rgba(255,253,248,0.45)" : "rgba(255,253,248,0.14)",
+                            background: lit ? "var(--cream-strong)" : "var(--cream-faint)",
                             transition: "background 260ms",
                           }}
                           aria-hidden
@@ -230,8 +225,8 @@ export function ChaseEngine() {
                           style={{
                             width: 38,
                             height: 38,
-                            border: "1.5px solid rgba(255,253,248,0.3)",
-                            color: "rgba(255,253,248,0.6)",
+                            border: "1.5px solid var(--cream-line)",
+                            color: "var(--cream-strong)",
                             background:
                               lit && b.tone === "win" ? "rgba(126,217,167,0.14)" : "transparent",
                           }}
@@ -242,7 +237,7 @@ export function ChaseEngine() {
                           className="text-center font-sans text-[10.5px] sm:text-[12.5px]"
                           style={{
                             lineHeight: 1.25,
-                            color: lit ? "var(--cream)" : "rgba(255,253,248,0.32)",
+                            color: lit ? "var(--cream)" : "var(--cream-line)",
                             fontWeight: b.tone === "win" ? 600 : 400,
                             textDecoration: lit && b.tone === "fail" ? "line-through" : "none",
                             transition: "color 260ms",
@@ -254,7 +249,7 @@ export function ChaseEngine() {
                           className="font-mono"
                           style={{
                             fontSize: 10.5,
-                            color: lit ? "rgba(255,253,248,0.45)" : "transparent",
+                            color: lit ? "var(--cream-strong)" : "transparent",
                           }}
                         >
                           {b.time}

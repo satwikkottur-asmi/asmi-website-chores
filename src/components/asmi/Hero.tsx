@@ -13,8 +13,9 @@ import dentist from "@/assets/cut-dentist.png";
 import gymcard from "@/assets/cut-gymcard.png";
 import wrench from "@/assets/cut-wrench.png";
 import { ChannelCTA } from "./ChannelCTA";
-import { ChannelGlyph, ChannelKind } from "./ChannelIcons";
+import { ChannelGlyph, ChannelKind, Tone, toneColor } from "./ChannelIcons";
 import { Collage, CollageLayer } from "./Collage";
+import { ThreadHeader } from "./ThreadHeader";
 
 const PILE: CollageLayer[] = [
   {
@@ -87,7 +88,7 @@ interface Step {
   kind: ChannelKind;
   text: string;
   time: string;
-  tone?: "fail" | "win";
+  tone?: Tone;
 }
 
 const STEPS: Step[] = [
@@ -189,26 +190,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
             className="edge-card min-w-0 p-3 sm:p-5"
           >
-            <div
-              className="flex items-center gap-2 pb-3"
-              style={{ borderBottom: "1px dashed rgba(20,19,24,0.15)" }}
-            >
-              <span
-                className="grid h-8 w-8 shrink-0 place-items-center rounded-full font-display"
-                style={{ background: "var(--blue)", color: "#fff", fontSize: 14, fontWeight: 700 }}
-              >
-                a
-              </span>
-              <p className="font-display truncate" style={{ fontWeight: 700, fontSize: 15 }}>
-                asmi
-              </p>
-              <span
-                className="ml-auto font-mono shrink-0"
-                style={{ fontSize: "var(--t-mono)", color: "var(--ink-dim)" }}
-              >
-                imessage
-              </span>
-            </div>
+            <ThreadHeader />
 
             <div className="flex flex-col gap-2 py-3">
               {THREAD.map((m, i) => (
@@ -227,7 +209,7 @@ export function Hero() {
                   }`}
                   style={{
                     fontSize: "var(--t-sm)",
-                    background: m.from === "you" ? "var(--blue)" : "rgba(20,19,24,0.06)",
+                    background: m.from === "you" ? "var(--blue)" : "var(--ink-faint)",
                     color: m.from === "you" ? "#fff" : "var(--ink)",
                     borderBottomRightRadius: m.from === "you" ? 8 : undefined,
                     borderBottomLeftRadius: m.from === "you" ? undefined : 8,
@@ -238,7 +220,7 @@ export function Hero() {
               ))}
             </div>
 
-            <div className="rounded-2xl p-3 sm:p-3.5" style={{ background: "rgba(20,19,24,0.04)" }}>
+            <div className="rounded-2xl p-3 sm:p-3.5" style={{ background: "var(--ink-faint)" }}>
               <div className="mb-3 flex items-center justify-between">
                 <p
                   className="font-mono"
@@ -264,17 +246,12 @@ export function Hero() {
               >
                 <span
                   className="absolute left-[7px] top-2 bottom-2 w-px"
-                  style={{ background: "rgba(20,19,24,0.12)" }}
+                  style={{ background: "var(--ink-line)" }}
                   aria-hidden
                 />
                 <AnimatePresence initial={false}>
                   {STEPS.slice(0, visible).map((s) => {
-                    const accent =
-                      s.tone === "win"
-                        ? "var(--mint-pop)"
-                        : s.tone === "fail"
-                          ? "var(--coral)"
-                          : "var(--blue)";
+                    const accent = toneColor(s.tone, "var(--blue)");
                     return (
                       <motion.li
                         key={s.text}

@@ -5,6 +5,7 @@ import barImg from "@/assets/place-bar.jpg";
 import tavernImg from "@/assets/place-tavern.jpg";
 import vegImg from "@/assets/place-veg.jpg";
 import { Reveal, RevealGroup } from "./Reveal";
+import { ThreadHeader } from "./ThreadHeader";
 
 interface Place {
   id: string;
@@ -128,26 +129,7 @@ export function GenerativeUI() {
         {/* the thread */}
         <div className="min-w-0">
           <div className="edge-card mx-auto min-w-0 max-w-[520px] overflow-hidden p-3.5 sm:p-5">
-            <div
-              className="flex items-center gap-2 pb-3"
-              style={{ borderBottom: "1px dashed rgba(20,19,24,0.15)" }}
-            >
-              <span
-                className="grid h-8 w-8 shrink-0 place-items-center rounded-full font-display"
-                style={{ background: "var(--blue)", color: "#fff", fontSize: 14, fontWeight: 700 }}
-              >
-                a
-              </span>
-              <p className="font-display truncate" style={{ fontWeight: 700, fontSize: 15 }}>
-                asmi
-              </p>
-              <span
-                className="ml-auto shrink-0 font-mono"
-                style={{ fontSize: "var(--t-mono)", color: "var(--ink-dim)" }}
-              >
-                imessage
-              </span>
-            </div>
+            <ThreadHeader />
 
             <div className="flex flex-col gap-2.5 py-3.5">
               <div
@@ -165,7 +147,7 @@ export function GenerativeUI() {
                 className="max-w-[86%] self-start rounded-3xl px-4 py-2.5 font-sans"
                 style={{
                   fontSize: "var(--t-sm)",
-                  background: "rgba(20,19,24,0.06)",
+                  background: "var(--ink-faint)",
                   borderBottomLeftRadius: 8,
                 }}
               >
@@ -193,7 +175,7 @@ export function GenerativeUI() {
                       animate={{ opacity: dim ? 0.4 : 1 }}
                       className="w-full min-w-0 rounded-2xl p-2.5 text-left"
                       style={{
-                        border: on ? "2px solid var(--ink)" : "1px solid rgba(20,19,24,0.12)",
+                        border: on ? "2px solid var(--ink)" : "1px solid var(--ink-line)",
                         background: on ? "var(--citrus)" : "var(--cream)",
                       }}
                     >
@@ -249,7 +231,7 @@ export function GenerativeUI() {
                         <span
                           className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full"
                           style={{
-                            border: on ? "none" : "1.5px solid rgba(20,19,24,0.2)",
+                            border: on ? "none" : "1.5px solid var(--ink-strong)",
                             background: on ? "var(--ink)" : "transparent",
                             color: "var(--cream)",
                           }}
