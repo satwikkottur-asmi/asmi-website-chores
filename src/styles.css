@@ -25,6 +25,24 @@
   --color-mint: #5eead4;
   --color-lilac: #c9b8ff;
   --color-slate-soft: #9ca3b8;
+  --color-slate: #64748b;
+
+  /* alpha-blended violet/magenta, shared by borders, washes and glow shadows */
+  --violet-deep: #6d28d9;
+  --violet-wash: rgba(124, 58, 237, 0.06);
+  --violet-faint: rgba(124, 58, 237, 0.1);
+  --violet-line: rgba(124, 58, 237, 0.2);
+  --violet-strong: rgba(124, 58, 237, 0.55);
+  --magenta-wash: rgba(230, 75, 255, 0.08);
+  --magenta-strong: rgba(230, 75, 255, 0.55);
+  --gradient-brand: linear-gradient(135deg, var(--color-violet), var(--color-magenta));
+  --ink-wash: rgba(26, 11, 46, 0.05);
+  --ink-line: rgba(26, 11, 46, 0.18);
+  --mint-wash: rgba(94, 234, 212, 0.14);
+  --mint-faint: rgba(94, 234, 212, 0.22);
+  --mint-line: rgba(94, 234, 212, 0.3);
+  --destructive-wash: rgba(230, 75, 110, 0.1);
+  --destructive-faint: rgba(230, 75, 110, 0.18);
 
   /* Surfaces */
   --color-base: #f7f4ff;
@@ -601,6 +619,16 @@
   --violet-soft: #b39cff;
   --mint-pop: #35d6a4;
   --cream: #fffdf8;
+
+  /* alpha-blended ink/cream, shared by hairlines, dividers and overlay tints */
+  --ink-faint: rgba(20, 19, 24, 0.06);
+  --ink-line: rgba(20, 19, 24, 0.12);
+  --ink-strong: rgba(20, 19, 24, 0.2);
+  --cream-wash: rgba(255, 253, 248, 0.06);
+  --cream-faint: rgba(255, 253, 248, 0.14);
+  --cream-line: rgba(255, 253, 248, 0.28);
+  --cream-strong: rgba(255, 253, 248, 0.5);
+  --cream-body: rgba(255, 253, 248, 0.78);
 
   --font-display: "Bricolage Grotesque", "General Sans", system-ui, sans-serif;
 
