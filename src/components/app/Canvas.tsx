@@ -41,13 +41,28 @@ export function CanvasView({ canvas }: { canvas: CanvasT }) {
   const hasTimeline = (canvas.timeline?.length ?? 0) > 0;
   const hasArtifacts = canvas.artifacts.length > 0;
 
+  // Primary block: the first block in this priority order that has data wins.
+  const primaryBlock =
+    hasOptions || hasOptionsSummary
+      ? "options"
+      : hasCalls
+        ? "calls"
+        : hasPlaces
+          ? "places"
+          : hasScheduling
+            ? "scheduling"
+            : hasChecklist
+              ? "checklist"
+              : hasThread
+                ? "thread"
+                : null;
+
   return (
     <article className="relative">
       <CanvasHeader canvas={canvas} />
 
       <div className="space-y-4 px-5 pb-5 sm:px-7">
-        {/* Primary block - options take precedence when present */}
-        {(hasOptions || hasOptionsSummary) && (
+        {primaryBlock === "options" && (
           <OptionsList
             options={canvas.options ?? []}
             summary={canvas.optionsSummary}
@@ -59,11 +74,11 @@ export function CanvasView({ canvas }: { canvas: CanvasT }) {
           />
         )}
 
-        {!hasOptions && !hasOptionsSummary && hasCalls && (
+        {primaryBlock === "calls" && (
           <ParallelCalls calls={canvas.calls!} parallel={canvas.parallel} />
         )}
 
-        {!hasOptions && !hasOptionsSummary && !hasCalls && hasPlaces && (
+        {primaryBlock === "places" && (
           <MapView
             places={canvas.places!}
             onShortlist={(id) => togglePlaceShortlist(canvas.id, id)}
@@ -71,24 +86,11 @@ export function CanvasView({ canvas }: { canvas: CanvasT }) {
           />
         )}
 
-        {!hasOptions && !hasOptionsSummary && !hasCalls && !hasPlaces && hasScheduling && (
-          <SchedulingView grid={canvas.scheduling!} />
-        )}
+        {primaryBlock === "scheduling" && <SchedulingView grid={canvas.scheduling!} />}
 
-        {!hasOptions &&
-          !hasOptionsSummary &&
-          !hasCalls &&
-          !hasPlaces &&
-          !hasScheduling &&
-          hasChecklist && <Checklist items={canvas.checklist!} />}
+        {primaryBlock === "checklist" && <Checklist items={canvas.checklist!} />}
 
-        {!hasOptions &&
-          !hasOptionsSummary &&
-          !hasCalls &&
-          !hasPlaces &&
-          !hasScheduling &&
-          !hasChecklist &&
-          hasThread && <MessageThread thread={canvas.thread!} />}
+        {primaryBlock === "thread" && <MessageThread thread={canvas.thread!} />}
 
         {/* Top artifact (most recent) when status = done or paused */}
         {hasArtifacts && (canvas.status === "done" || canvas.status === "waiting") && (
@@ -163,6 +165,3 @@ function LatestEvent({ text, ts }: { text: string; ts: string }) {
     </div>
   );
 }
-
-// Back-compat: some older callers import { Canvas } from this file.
-export { CanvasView as Canvas };
