@@ -1,15 +1,20 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { withAlpha } from "@/lib/theme";
 
-type Pill = { label: string; cat: "home" | "health" | "fin" | "travel" | "family"; size: "lg" | "md" | "sm" };
+type Pill = {
+  label: string;
+  cat: "home" | "health" | "fin" | "travel" | "family";
+  size: "lg" | "md" | "sm";
+};
 
 const CATS: Record<Pill["cat"], string> = {
-  home: "#C25B3F",
-  health: "#8BA888",
-  fin: "#D4A574",
-  travel: "#7EADC2",
-  family: "#C9956F",
+  home: "var(--color-terracotta)",
+  health: "var(--color-sage)",
+  fin: "var(--color-clay)",
+  travel: "var(--color-sky)",
+  family: "var(--color-apricot)",
 };
 
 const PILLS: Pill[] = [
@@ -57,15 +62,20 @@ const PILLS: Pill[] = [
 function generatePositions(count: number) {
   const out: { x: number; y: number; delay: number; dur: number }[] = [];
   const minDist = 12;
-  const X_MIN = 8, X_MAX = 88;
-  const Y_MIN = 10, Y_MAX = 88;
+  const X_MIN = 8,
+    X_MAX = 88;
+  const Y_MIN = 10,
+    Y_MAX = 88;
   for (let i = 0; i < count; i++) {
-    let x = 0, y = 0, ok = false, tries = 0;
+    let x = 0,
+      y = 0,
+      ok = false,
+      tries = 0;
     while (!ok && tries < 120) {
       const a = Math.sin((i + 1) * 9.31 + tries * 0.7) * 10000;
       const b = Math.cos((i + 1) * 4.27 + tries * 1.3) * 10000;
-      x = ((a - Math.floor(a)) * (X_MAX - X_MIN)) + X_MIN;
-      y = ((b - Math.floor(b)) * (Y_MAX - Y_MIN)) + Y_MIN;
+      x = (a - Math.floor(a)) * (X_MAX - X_MIN) + X_MIN;
+      y = (b - Math.floor(b)) * (Y_MAX - Y_MIN) + Y_MIN;
       ok = out.every((p) => Math.hypot(p.x - x, p.y - y) > minDist);
       tries++;
     }
@@ -106,7 +116,7 @@ export function Act4Cloud() {
         </h2>
         <p
           className="mt-3 md:mt-4 font-sans"
-          style={{ color: "#6B6560", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
+          style={{ color: "var(--color-stone)", fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)" }}
         >
           Everything that needs a phone call.
         </p>
@@ -143,11 +153,28 @@ export function Act4Cloud() {
   );
 }
 
+const PILL_CHROME = {
+  background: withAlpha("cream", 0.85),
+  color: "var(--color-ink)",
+  backdropFilter: "blur(8px)",
+} as const;
+
+function CategoryDot({ cat }: { cat: Pill["cat"] }) {
+  return (
+    <span
+      className="inline-block rounded-full"
+      style={{ width: 6, height: 6, background: CATS[cat] }}
+    />
+  );
+}
+
 function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: number }) {
   const sizeClass =
-    pill.size === "lg" ? "px-4 py-2.5 text-[0.9rem]"
-    : pill.size === "md" ? "px-3.5 py-2 text-[0.82rem]"
-    : "px-3 py-2 text-[0.78rem]";
+    pill.size === "lg"
+      ? "px-4 py-2.5 text-[0.9rem]"
+      : pill.size === "md"
+        ? "px-3.5 py-2 text-[0.82rem]"
+        : "px-3 py-2 text-[0.78rem]";
   return (
     <motion.div
       animate={{ y: [0, -4, 0, 3, 0] }}
@@ -156,14 +183,12 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
       <span
         className={`inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap ${sizeClass}`}
         style={{
-          background: "rgba(251, 248, 243, 0.85)",
-          color: "#5C5349",
-          backdropFilter: "blur(8px)",
-          border: "1px solid rgba(44,37,32,0.08)",
+          ...PILL_CHROME,
+          border: `1px solid ${withAlpha("espresso", 0.08)}`,
           minHeight: 36,
         }}
       >
-        <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
+        <CategoryDot cat={pill.cat} />
         {pill.label}
       </span>
     </motion.div>
@@ -171,7 +196,8 @@ function FlowingPill({ pill, delay, dur }: { pill: Pill; delay: number; dur: num
 }
 
 function FloatingPill({
-  pill, pos,
+  pill,
+  pos,
 }: {
   pill: Pill;
   pos: { x: number; y: number; delay: number; dur: number };
@@ -203,9 +229,11 @@ function FloatingPill({
   }, []);
 
   const sizeClass =
-    pill.size === "lg" ? "px-5 py-3 text-[0.95rem]"
-    : pill.size === "md" ? "px-4 py-2.5 text-[0.85rem]"
-    : "px-3.5 py-2 text-[0.78rem]";
+    pill.size === "lg"
+      ? "px-5 py-3 text-[0.95rem]"
+      : pill.size === "md"
+        ? "px-4 py-2.5 text-[0.85rem]"
+        : "px-3.5 py-2 text-[0.78rem]";
 
   return (
     <motion.div
@@ -225,24 +253,19 @@ function FloatingPill({
       >
         <button
           className={`group inline-flex items-center gap-2 rounded-full font-sans font-normal whitespace-nowrap transition-all duration-300 ${sizeClass}`}
-          style={{
-            background: "rgba(251, 248, 243, 0.85)",
-            color: "#5C5349",
-            backdropFilter: "blur(8px)",
-            border: "1px solid rgba(44,37,32,0.06)",
-          }}
+          style={{ ...PILL_CHROME, border: `1px solid ${withAlpha("espresso", 0.06)}` }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "var(--color-terracotta)";
             e.currentTarget.style.color = "var(--color-espresso)";
             e.currentTarget.style.transform = "scale(1.06)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "rgba(44,37,32,0.06)";
-            e.currentTarget.style.color = "#5C5349";
+            e.currentTarget.style.borderColor = withAlpha("espresso", 0.06);
+            e.currentTarget.style.color = "var(--color-ink)";
             e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <span className="inline-block rounded-full" style={{ width: 6, height: 6, background: CATS[pill.cat] }} />
+          <CategoryDot cat={pill.cat} />
           {pill.label}
         </button>
       </motion.div>

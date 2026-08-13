@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from "react";
 
 type Props = { src?: string; color?: string };
 
+/** Alpha-blend an arbitrary CSS color (var() or literal) against transparent. */
+function colorMix(color: string, alpha: number) {
+  return `color-mix(in srgb, ${color} ${alpha * 100}%, transparent)`;
+}
+
 // Silent placeholder mp3 (base64). Swap `src` prop with real recordings later.
 const PLACEHOLDER =
   "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAACgAB//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAoAv4nMAAAAAAAAAAAAAAAAAAAAA";
@@ -16,14 +21,23 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
     audioRef.current = a;
     const onEnd = () => setPlaying(false);
     a.addEventListener("ended", onEnd);
-    return () => { a.pause(); a.removeEventListener("ended", onEnd); };
+    return () => {
+      a.pause();
+      a.removeEventListener("ended", onEnd);
+    };
   }, [src]);
 
   const toggle = () => {
     const a = audioRef.current;
     if (!a) return;
-    if (playing) { a.pause(); setPlaying(false); }
-    else { a.currentTime = 0; a.play().catch(() => {}); setPlaying(true); }
+    if (playing) {
+      a.pause();
+      setPlaying(false);
+    } else {
+      a.currentTime = 0;
+      a.play().catch(() => {});
+      setPlaying(true);
+    }
   };
 
   return (
@@ -33,12 +47,13 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
         aria-label={playing ? "Pause call recording" : "Play call recording"}
         className="relative flex items-center justify-center rounded-full transition-all"
         style={{
-          width: 44, height: 44,
+          width: 44,
+          height: 44,
           border: `1.5px solid ${color}`,
           background: "transparent",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(194,91,63,0.08)";
+          e.currentTarget.style.background = colorMix(color, 0.08);
           e.currentTarget.style.transform = "scale(1.05)";
         }}
         onMouseLeave={(e) => {
@@ -54,7 +69,8 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
         ) : (
           <span
             style={{
-              width: 0, height: 0,
+              width: 0,
+              height: 0,
               borderLeft: `10px solid ${color}`,
               borderTop: "6px solid transparent",
               borderBottom: "6px solid transparent",
@@ -82,7 +98,12 @@ export function AudioPlayButton({ src = PLACEHOLDER, color = "var(--color-terrac
       </button>
       <span
         className="font-mono"
-        style={{ fontSize: 10, color: "var(--color-stone-dim)", letterSpacing: "0.12em", textTransform: "uppercase" }}
+        style={{
+          fontSize: 10,
+          color: "var(--color-stone-dim)",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
       >
         Listen
       </span>

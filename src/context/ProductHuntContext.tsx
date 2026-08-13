@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 interface ProductHuntContextType {
@@ -21,9 +21,7 @@ export function ProductHuntProvider({ children }: { children: ReactNode }) {
   }, [location.pathname]);
 
   return (
-    <ProductHuntContext.Provider value={{ isProductHunt }}>
-      {children}
-    </ProductHuntContext.Provider>
+    <ProductHuntContext.Provider value={{ isProductHunt }}>{children}</ProductHuntContext.Provider>
   );
 }
 

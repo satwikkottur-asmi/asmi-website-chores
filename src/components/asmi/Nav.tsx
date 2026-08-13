@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { Fragment, useEffect, useState } from "react";
+import { withAlpha } from "@/lib/theme";
+import { NavMessagingLinks } from "./MessagingLinks";
+
+const NAV_LINKS = [
+  { href: "#how", label: "How" },
+  { href: "#stories", label: "Stories" },
+  { href: "#languages", label: "Languages" },
+];
 
 export function Nav() {
   const [show, setShow] = useState(false);
@@ -20,71 +28,51 @@ export function Nav() {
           transition={{ duration: 0.5 }}
           className="fixed top-0 left-0 right-0 z-50"
           style={{
-            background: "rgba(246, 241, 235, 0.78)",
+            background: withAlpha("linen", 0.78),
             backdropFilter: "blur(14px)",
-            borderBottom: "1px solid rgba(44,37,32,0.05)",
+            borderBottom: `1px solid ${withAlpha("espresso", 0.05)}`,
           }}
         >
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between" style={{ minHeight: 56 }}>
-            <a href="#" className="font-serif italic text-xl" style={{ color: "var(--color-espresso)" }}>
+          <div
+            className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between"
+            style={{ minHeight: 56 }}
+          >
+            <a
+              href="#"
+              className="font-serif italic text-xl"
+              style={{ color: "var(--color-espresso)" }}
+            >
               asmi
             </a>
-            <div className="hidden md:flex items-center gap-8 font-sans text-[0.9rem]" style={{ color: "#6B6560" }}>
-              <a href="#how" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>How</a>
-              <span style={{ color: "var(--color-stone-dim)" }}>·</span>
-              <a href="#stories" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Stories</a>
-              <span style={{ color: "var(--color-stone-dim)" }}>·</span>
-              <a href="#languages" className="transition-colors" style={{ color: "#6B6560" }}
-                 onMouseEnter={(e)=>e.currentTarget.style.color="#2C2520"}
-                 onMouseLeave={(e)=>e.currentTarget.style.color="#6B6560"}>Languages</a>
+            <div
+              className="hidden md:flex items-center gap-8 font-sans text-[0.9rem]"
+              style={{ color: "var(--color-stone)" }}
+            >
+              {NAV_LINKS.map((link, i) => (
+                <Fragment key={link.href}>
+                  {i > 0 && <span style={{ color: "var(--color-stone-dim)" }}>·</span>}
+                  <NavLink href={link.href}>{link.label}</NavLink>
+                </Fragment>
+              ))}
             </div>
-            <div className="flex items-center gap-4">
-              <motion.a
-                href="https://asmi-ai.link/PH"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
-                title="Open in iMessage"
-              >
-                <img src="/assets/logos/imessage.svg" alt="iMessage" style={{ width: 40, height: 40 }} />
-                <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
-                  iMessage
-                </span>
-              </motion.a>
-              <motion.a
-                href="https://asmi-ai.link/PH-2"
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
-                title="Open in WhatsApp"
-              >
-                <span
-                  className="flex items-center justify-center"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    background: "#25D366",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <img src="/assets/logos/whatsapp.svg" alt="WhatsApp" style={{ width: "60%", height: "60%" }} />
-                </span>
-                <span className="label-mono" style={{ fontSize: 9, color: "#6B6560" }}>
-                  WhatsApp
-                </span>
-              </motion.a>
-            </div>
+            <NavMessagingLinks />
           </div>
         </motion.nav>
       )}
     </AnimatePresence>
+  );
+}
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      className="transition-colors"
+      style={{ color: "var(--color-stone)" }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-espresso)")}
+      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-stone)")}
+    >
+      {children}
+    </a>
   );
 }

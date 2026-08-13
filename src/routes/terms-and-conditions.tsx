@@ -10,10 +10,7 @@ interface TermsSectionProps {
 const TermsSection = ({ number, title, children }: TermsSectionProps) => {
   return (
     <section className="mb-10 pb-8" style={{ borderBottom: "1px solid var(--color-border)" }}>
-      <p
-        className="label-mono mb-3"
-        style={{ color: "var(--color-stone-dim)" }}
-      >
+      <p className="label-mono mb-3" style={{ color: "var(--color-stone-dim)" }}>
         {number}
       </p>
       <h2
@@ -51,7 +48,10 @@ const TermsAndConditions = () => {
         </Link>
       </nav>
 
-      <main className="flex flex-col items-center flex-1 px-5 sm:px-8 pb-16" style={{ color: "var(--color-ink)", fontSize: "1.05rem", lineHeight: 1.7 }}>
+      <main
+        className="flex flex-col items-center flex-1 px-5 sm:px-8 pb-16"
+        style={{ color: "var(--color-ink)", fontSize: "1.05rem", lineHeight: 1.7 }}
+      >
         <div className="w-full max-w-2xl">
           {/* Header */}
           <div className="mb-8 text-center">
@@ -84,21 +84,21 @@ const TermsAndConditions = () => {
             }}
           >
             <p style={{ color: "var(--color-stone-dim)" }}>Effective: May 2026</p>
-            <p
-              className="label-mono mt-2"
-              style={{ color: "var(--color-stone-dim)" }}
-            >
+            <p className="label-mono mt-2" style={{ color: "var(--color-stone-dim)" }}>
               Humint Labs, Inc. (incorporated in Delaware)
             </p>
-            <p style={{ color: "var(--color-stone-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}>
+            <p
+              style={{ color: "var(--color-stone-dim)", marginTop: "0.25rem", fontSize: "0.9rem" }}
+            >
               710 Lakeway Drive, Suite 200, Sunnyvale, CA 94085
             </p>
           </div>
 
           {/* Intro */}
           <p className="mb-10">
-            These terms and conditions govern your use of Asmi and outline the rights and responsibilities
-            of both you and Humint Labs, Inc. By using Asmi, you agree to these terms.
+            These terms and conditions govern your use of Asmi and outline the rights and
+            responsibilities of both you and Humint Labs, Inc. By using Asmi, you agree to these
+            terms.
           </p>
 
           <div style={{ borderTop: "1px solid var(--color-border)", marginBottom: "2rem" }} />
@@ -106,17 +106,18 @@ const TermsAndConditions = () => {
           {/* Sections */}
           <TermsSection number="01 - SMS Terms & Conditions" title="SMS terms & conditions">
             <p className="mb-4">
-              By using Asmi, you consent to receive SMS messages related to your interactions and requests.
-              These messages may include summaries of calls, confirmations, and responses to actions you
-              initiate.
+              By using Asmi, you consent to receive SMS messages related to your interactions and
+              requests. These messages may include summaries of calls, confirmations, and responses
+              to actions you initiate.
             </p>
             <p className="mb-4">
-              Message frequency varies based on your usage. Message and data rates may apply depending on
-              your mobile carrier plan.
+              Message frequency varies based on your usage. Message and data rates may apply
+              depending on your mobile carrier plan.
             </p>
             <p className="mb-4">
-              You can opt out of receiving SMS messages at any time by replying <span className="font-mono">STOP</span>. For
-              assistance, reply <span className="font-mono">HELP</span> or contact support at{" "}
+              You can opt out of receiving SMS messages at any time by replying{" "}
+              <span className="font-mono">STOP</span>. For assistance, reply{" "}
+              <span className="font-mono">HELP</span> or contact support at{" "}
               <a
                 href="mailto:support@asmiai.com"
                 style={{
@@ -132,8 +133,8 @@ const TermsAndConditions = () => {
               .
             </p>
             <p>
-              SMS messages are sent only after user-initiated actions or explicit consent during interactions.
-              No marketing or promotional messages are sent.
+              SMS messages are sent only after user-initiated actions or explicit consent during
+              interactions. No marketing or promotional messages are sent.
             </p>
           </TermsSection>
         </div>

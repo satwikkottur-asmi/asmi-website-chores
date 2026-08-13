@@ -1,14 +1,11 @@
 import { motion } from "motion/react";
+import { EASE_OUT } from "@/lib/theme";
 import { AmbientBlobs } from "./Atmosphere";
 import { CTASection } from "./CTASection";
 
 export function Act6Close() {
   return (
-    <section
-      id="start"
-      className="relative"
-      style={{ padding: "80px 20px", minHeight: "90vh" }}
-    >
+    <section id="start" className="relative" style={{ padding: "80px 20px", minHeight: "90vh" }}>
       <div
         className="absolute inset-0 overflow-hidden pointer-events-none"
         style={{ opacity: 0.5 }}
@@ -29,7 +26,7 @@ export function Act6Close() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.8, ease: EASE_OUT }}
           >
             Your day,
           </motion.h2>
@@ -44,14 +41,14 @@ export function Act6Close() {
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.2, 0.7, 0.2, 1] }}
+            transition={{ duration: 0.9, delay: 0.15, ease: EASE_OUT }}
           >
             handled.
           </motion.p>
           <motion.p
             className="font-sans mx-auto mt-10"
             style={{
-              color: "#5C5349",
+              color: "var(--color-ink)",
               fontSize: 18,
               fontWeight: 300,
               maxWidth: 540,

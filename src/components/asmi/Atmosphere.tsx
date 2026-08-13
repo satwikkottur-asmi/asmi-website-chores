@@ -1,5 +1,14 @@
 import { motion, useMotionValue, useTransform } from "motion/react";
 import { useEffect, useRef } from "react";
+import { withAlpha } from "@/lib/theme";
+
+const BLOB_TONES = [
+  "var(--color-blob-1)",
+  "var(--color-blob-2)",
+  "var(--color-blob-3)",
+  "var(--color-blob-4)",
+  "var(--color-blob-5)",
+];
 
 // Soft drifting organic blobs as ambient backdrop.
 export function AmbientBlobs({ density = 5 }: { density?: number }) {
@@ -11,7 +20,7 @@ export function AmbientBlobs({ density = 5 }: { density?: number }) {
         const top = (i * 53) % 90;
         const left = (i * 79) % 90;
         const dur = 18 + (i % 5) * 4;
-        const tone = ["#E6DCC8", "#E8D9C3", "#D9CFC0", "#EADFCC", "#D8C9B5"][i % 5];
+        const tone = BLOB_TONES[i % BLOB_TONES.length];
         return (
           <div
             key={i}
@@ -45,7 +54,7 @@ export function BrushUnderline({ progress = 1 }: { progress?: number }) {
       <motion.path
         d="M10 25 C 120 5, 240 38, 360 18 S 560 28, 590 14"
         fill="none"
-        stroke="#C25B3F"
+        stroke="var(--color-terracotta)"
         strokeWidth="2.5"
         strokeLinecap="round"
         initial={{ pathLength: 0 }}
@@ -67,7 +76,7 @@ export function OrganicDivider({ flip = false }: { flip?: boolean }) {
       >
         <path
           d="M0,40 C240,80 480,0 720,40 C960,80 1200,10 1440,50 L1440,80 L0,80 Z"
-          fill="rgba(44,37,32,0.04)"
+          fill={withAlpha("espresso", 0.04)}
         />
       </svg>
     </div>

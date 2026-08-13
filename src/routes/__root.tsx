@@ -61,4 +61,4 @@ export function RootLayout() {
   return <Outlet />;
 }
 
-export { NotFoundComponent, ErrorComponent };
+export { ErrorComponent, NotFoundComponent };

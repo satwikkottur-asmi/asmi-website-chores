@@ -1,6 +1,4 @@
 import { useRef } from "react";
-import { Nav } from "@/components/asmi/Nav";
-import { ScrollProgress } from "@/components/asmi/ScrollProgress";
 import { Act1Opening } from "@/components/asmi/Act1Opening";
 import { Act2CallViz } from "@/components/asmi/Act2CallViz";
 import { Act3ThreeMoments } from "@/components/asmi/Act3Moments";
@@ -8,6 +6,8 @@ import { Act4Cloud } from "@/components/asmi/Act4Cloud";
 import { Act5, Act5Stories } from "@/components/asmi/Act5";
 import { Act6Close } from "@/components/asmi/Act6Close";
 import { OrganicDivider } from "@/components/asmi/Atmosphere";
+import { Nav } from "@/components/asmi/Nav";
+import { ScrollProgress } from "@/components/asmi/ScrollProgress";
 
 export default function Index() {
   const heroRef = useRef<HTMLElement>(null);
@@ -26,10 +26,7 @@ export default function Index() {
       <Act6Close />
 
       {/* Footer */}
-      <footer
-        className="relative"
-        style={{ background: "#EDE6DC" }}
-      >
+      <footer className="relative" style={{ background: "#EDE6DC" }}>
         {/* Organic wavy separator */}
         <svg
           viewBox="0 0 1440 24"
