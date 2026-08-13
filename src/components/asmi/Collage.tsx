@@ -133,7 +133,7 @@ function Piece({
         opacity: l.opacity ?? 1,
         scaleX: l.flip ? -1 : 1,
         willChange: "transform",
-        filter: `drop-shadow(${(2 + l.depth * 8).toFixed(0)}px ${(3 + l.depth * 10).toFixed(0)}px 0 rgba(20,19,24,0.10)) saturate(0.82)`,
+        filter: `drop-shadow(${(2 + l.depth * 8).toFixed(0)}px ${(3 + l.depth * 10).toFixed(0)}px 0 var(--ink-line)) saturate(0.82)`,
       }}
     />
   );

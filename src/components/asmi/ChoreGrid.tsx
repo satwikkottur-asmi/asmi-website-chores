@@ -15,7 +15,7 @@ function Punctuation({ src }: { src: string }) {
       aria-hidden
       loading="lazy"
       className="pointer-events-none h-11 w-auto shrink-0 select-none self-center sm:h-14"
-      style={{ filter: "saturate(0.8) drop-shadow(3px 4px 0 rgba(20,19,24,0.10))" }}
+      style={{ filter: "saturate(0.8) drop-shadow(3px 4px 0 var(--ink-line))" }}
     />
   );
 }
@@ -176,7 +176,7 @@ export function ChoreGrid() {
               <p
                 className="t-body px-4 py-3"
                 style={{
-                  background: "rgba(20,19,24,0.06)",
+                  background: "var(--ink-faint)",
                   borderRadius: 18,
                   borderBottomLeftRadius: 6,
                 }}

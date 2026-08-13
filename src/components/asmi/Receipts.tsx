@@ -55,7 +55,7 @@ export function Receipts() {
         />
 
         <div className="relative mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-24">
-          <p className="t-mono" style={{ color: "rgba(255,253,248,0.5)" }}>
+          <p className="t-mono" style={{ color: "var(--cream-strong)" }}>
             SOMEONE HAS TO SIT THROUGH THIS
           </p>
 
@@ -75,7 +75,7 @@ export function Receipts() {
                 <span className="sm:hidden">
                   <FlipNumber value={clock} size={62} />
                 </span>
-                <span className="t-mono pb-3" style={{ color: "rgba(255,253,248,0.45)" }}>
+                <span className="t-mono pb-3" style={{ color: "var(--cream-strong)" }}>
                   ON HOLD
                 </span>
               </motion.div>
@@ -83,10 +83,7 @@ export function Receipts() {
               <h2 className="mt-6 max-w-xl">she'll wait. you won't have to.</h2>
             </div>
 
-            <ul
-              className="flex flex-col divide-y"
-              style={{ borderColor: "rgba(255,253,248,0.14)" }}
-            >
+            <ul className="flex flex-col divide-y" style={{ borderColor: "var(--cream-faint)" }}>
               {FOOTNOTES.map((f, i) => (
                 <motion.li
                   key={f.n}
@@ -95,7 +92,7 @@ export function Receipts() {
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.4, delay: 0.1 + i * 0.1, ease: [0.22, 0.8, 0.24, 1] }}
                   className="flex items-baseline gap-4 py-5"
-                  style={{ borderColor: "rgba(255,253,248,0.14)" }}
+                  style={{ borderColor: "var(--cream-faint)" }}
                 >
                   <span
                     className="font-mono shrink-0"
@@ -104,10 +101,10 @@ export function Receipts() {
                     {f.n}
                   </span>
                   <span className="min-w-0">
-                    <span className="t-mono block" style={{ color: "rgba(255,253,248,0.5)" }}>
+                    <span className="t-mono block" style={{ color: "var(--cream-strong)" }}>
                       {f.label.toUpperCase()}
                     </span>
-                    <span className="t-body mt-1 block" style={{ color: "rgba(255,253,248,0.78)" }}>
+                    <span className="t-body mt-1 block" style={{ color: "var(--cream-body)" }}>
                       {f.line}
                     </span>
                   </span>

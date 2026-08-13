@@ -158,7 +158,7 @@ export function HairRule({ dark = false }: { dark?: boolean }) {
       viewport={{ once: true, margin: "-70px" }}
       transition={{ duration: 0.55, ease: EASE }}
       className="mt-6 h-px w-full origin-left"
-      style={{ background: dark ? "rgba(255,253,248,0.18)" : "rgba(20,19,24,0.12)" }}
+      style={{ background: dark ? "var(--cream-line)" : "var(--ink-line)" }}
       aria-hidden
     />
   );

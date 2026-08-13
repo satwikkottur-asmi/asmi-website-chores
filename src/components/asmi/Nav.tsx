@@ -21,7 +21,7 @@ export function Nav() {
       style={{
         background: "rgba(251, 247, 240, 0.78)",
         backdropFilter: "blur(14px)",
-        borderBottom: "1px solid rgba(20,19,24,0.07)",
+        borderBottom: "1px solid var(--ink-faint)",
       }}
     >
       <div

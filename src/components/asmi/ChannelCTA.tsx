@@ -38,7 +38,7 @@ export function ChannelCTA({
           fontSize: "var(--t-mono)",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
-          color: variant === "dark" ? "rgba(255,253,248,0.55)" : "var(--ink-dim)",
+          color: variant === "dark" ? "var(--cream-strong)" : "var(--ink-dim)",
         }}
       >
         {caption}
