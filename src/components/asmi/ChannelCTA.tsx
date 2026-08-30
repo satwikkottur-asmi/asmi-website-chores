@@ -1,7 +1,9 @@
 import { IMessageMark, WhatsAppMark } from "./ChannelIcons";
 
-export const IMSG_LINK = "https://asmi-ai.link/imsg";
-export const WA_LINK = "https://asmi-ai.link/whatsapp";
+export const IMSG_LINK =
+  "sms:+14083942821&body=Hey%21%20What%27s%20so%20different%20about%20you%3F";
+export const WA_LINK =
+  "https://wa.me/14086689990?text=Hey%21%20What%27s%20so%20different%20about%20you%3F";
 
 interface Props {
   className?: string;
