@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { IMSG_LINK } from "@/components/asmi/ChannelCTA";
 
 export default function NewNumber() {
   return (
@@ -36,7 +37,7 @@ export default function NewNumber() {
       </motion.h1>
 
       <motion.a
-        href="https://asmi-ai.link/imsg"
+        href={IMSG_LINK}
         target="_blank"
         rel="noopener noreferrer"
         initial={{ opacity: 0, y: 14 }}
