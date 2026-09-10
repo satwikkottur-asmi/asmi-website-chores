@@ -8,6 +8,10 @@
 // which is what this module exists to prevent. Update copy here, not at call sites.
 
 export const SITE_DESCRIPTION =
-  "AI for real-world chores. She calls, texts, emails and chases — she won't leave people alone until it's done.";
+  "she calls, texts, emails and chases - until your thing is actually done. cancel the gym, fight the charge, book the dentist.";
 
+// <title>/document.title — distinct from SITE_OG_TITLE (og:title, twitter:title)
 export const SITE_TITLE = "asmi - the most irritating assistant in the world";
+
+// og:title / twitter:title — kept separate from SITE_TITLE (the <title> tag)
+export const SITE_OG_TITLE = "AI for real-world chores";
