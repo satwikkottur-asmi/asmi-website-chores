@@ -10,21 +10,14 @@ import { Receipts } from "@/components/asmi/Receipts";
 import { ScrollSection } from "@/components/asmi/Reveal";
 import { ScrollProgress } from "@/components/asmi/ScrollProgress";
 import { useDocumentMeta } from "@/hooks/use-document-meta";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site-meta";
 import asmiLogoUrl from "/assets/asmi-logo-black.png";
 
 export default function Index() {
-  useDocumentMeta("asmi - the most irritating assistant in the world", [
-    {
-      name: "description",
-      content:
-        "AI for real-world chores. she calls, texts, emails and chases - she won't leave people alone until it's done.",
-    },
-    { property: "og:title", content: "asmi - the most irritating assistant in the world" },
-    {
-      property: "og:description",
-      content:
-        "AI for real-world chores. she calls, texts, emails and chases - she won't leave people alone until it's done.",
-    },
+  useDocumentMeta(SITE_TITLE, [
+    { name: "description", content: SITE_DESCRIPTION },
+    { property: "og:title", content: SITE_TITLE },
+    { property: "og:description", content: SITE_DESCRIPTION },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ]);
