@@ -17,13 +17,13 @@ export default function Index() {
     {
       name: "description",
       content:
-        "she calls, texts, emails and chases - until your thing is actually done. cancel the gym, fight the charge, book the dentist. just text her on iMessage or WhatsApp.",
+        "AI for real-world chores. she calls, texts, emails and chases - she won't leave people alone until it's done.",
     },
     { property: "og:title", content: "asmi - the most irritating assistant in the world" },
     {
       property: "og:description",
       content:
-        "she calls, texts, emails and chases - she won't leave people alone until it's done.",
+        "AI for real-world chores. she calls, texts, emails and chases - she won't leave people alone until it's done.",
     },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
