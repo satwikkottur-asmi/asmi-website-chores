@@ -19,7 +19,7 @@ export default function Index() {
     { property: "og:title", content: SITE_TITLE },
     { property: "og:description", content: SITE_DESCRIPTION },
     { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:card", content: "summary" },
   ]);
 
   return (
