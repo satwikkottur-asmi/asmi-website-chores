@@ -2,6 +2,7 @@
 //
 // - Mirrors prod Stripe prices in mvp_app_internal: backend/payments/products/prod.py (+ base.py)
 // - No API call → the page is static and crawlable; update here when prod.py changes
+// - Terms §5.1 (src/routes/terms-and-conditions.tsx) hardcodes these prices → update it too
 // - Display names match SubscriptionTier (STANDARD → "Pro", STANDARD_PLUS → "Ultra")
 
 export type BillingInterval = "month" | "year";
