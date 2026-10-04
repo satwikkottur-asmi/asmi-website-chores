@@ -219,7 +219,7 @@ export default function DocsMcp() {
       <header
         className="sticky top-0 z-40"
         style={{
-          background: "rgba(251, 247, 240, 0.85)",
+          background: "color-mix(in srgb, var(--paper) 85%, transparent)",
           backdropFilter: "blur(14px)",
           borderBottom: "1px solid var(--ink-faint)",
         }}
