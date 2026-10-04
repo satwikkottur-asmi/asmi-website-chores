@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { SiteFooter } from "@/components/asmi/SiteFooter";
 
 interface PrivacySectionProps {
   number: string;
@@ -104,7 +105,7 @@ const Privacy = () => {
               fontSize: "0.95rem",
             }}
           >
-            <p style={{ color: "var(--ink-dim)" }}>Effective: April 2026</p>
+            <p style={{ color: "var(--ink-dim)" }}>Effective: October 2026</p>
             <p className="label-mono mt-2" style={{ color: "var(--ink-dim)" }}>
               Humint Labs, Inc. (incorporated in Delaware)
             </p>
@@ -115,9 +116,9 @@ const Privacy = () => {
 
           {/* Intro */}
           <p className="mb-10">
-            Asmi works by remembering - your preferences, your tasks, the context that makes every
-            interaction more useful than the last. This page explains exactly what we save, why we
-            save it, who can see it, and what you can do about it.{" "}
+            Asmi works by remembering - your preferences, your tasks, and the context that makes
+            every interaction more useful than the last. This policy explains exactly what we save,
+            why we save it, who can see it, and what you can do about it.{" "}
             <span style={{ fontWeight: "bold" }}>No fine print.</span>
           </p>
 
@@ -126,8 +127,8 @@ const Privacy = () => {
           {/* Sections */}
           <PrivacySection number="01 - What We Save" title="What we save" delay={0}>
             <p className="mb-4">
-              When you have a conversation with Asmi - whether over a phone call or through WhatsApp
-              or iMessage - we save a record of that conversation. This includes:
+              When you have a conversation with Asmi - whether over a phone call, text message, or
+              another supported channel - we save a record of that conversation. This includes:
             </p>
             <ul className="mb-4 space-y-3" style={{ lineHeight: 1.7 }}>
               <li>
@@ -142,14 +143,16 @@ const Privacy = () => {
                 Asmi across conversations
               </li>
               <li>
-                — <span style={{ fontWeight: "bold" }}>Context Asmi builds over time</span> -
-                recurring preferences, names, habits, and patterns that help Asmi serve you better
+                —{" "}
+                <span style={{ fontWeight: "bold" }}>Memory and context Asmi builds over time</span>
+                , including recurring preferences, names, habits, and patterns that help Asmi serve
+                you better
               </li>
             </ul>
             <p>
-              We do not save conversations you have on your phone that don't involve Asmi. We have
-              no access to your general call log, messages, contacts, or any other data on your
-              device unless you explicitly share it with Asmi during a conversation.
+              We do not save conversations on your device that do not involve Asmi. We do not have
+              access to your general call log, messages, contacts, or other device data unless you
+              explicitly share that information with Asmi.
             </p>
           </PrivacySection>
 
@@ -159,12 +162,13 @@ const Privacy = () => {
               through the cracks."
             </Blockquote>
             <p className="mb-4">
-              Memory is the product. Asmi is only useful because it remembers what you told it last
-              Tuesday, knows your preferences without being asked, and can follow up on things you
-              mentioned weeks ago. None of that is possible without saving your conversations.
+              Memory is the product. Asmi is useful because it can remember what you told it before,
+              learn your preferences without making you repeat them, and follow up on things you
+              mentioned days or weeks ago. None of that is possible without saving your
+              conversations.
             </p>
             <p>
-              We save your conversations for one purpose:{" "}
+              We save your conversations{" "}
               <span style={{ fontWeight: "bold" }}>to make Asmi more useful to you.</span> We do not
               sell your data. We do not use it to target you with advertising. We do not share it
               with third parties for their commercial benefit.
@@ -173,20 +177,20 @@ const Privacy = () => {
 
           <PrivacySection number="03 - Your Calls With Asmi" title="Your calls with Asmi" delay={2}>
             <p className="mb-4">
-              Asmi calls you - typically once each morning - to check in, take tasks, and brief you
-              on anything outstanding. These calls are recorded and transcribed so Asmi can act on
-              what you discussed and remember it for future conversations.
+              Asmi may call you - for example, for a scheduled check-in, to take tasks, or to brief
+              you on anything outstanding. These calls are recorded and transcribed so Asmi can act
+              on what you discussed and remember it for future conversations.
             </p>
             <p className="mb-4">
-              You consented to this recording when you set up Asmi. You can withdraw this consent at
-              any time by contacting us at the address below. Withdrawing consent means Asmi can no
-              longer function as intended, as memory is core to how the product works.
+              You consent to this recording when you set up Asmi. You can withdraw that consent at
+              any time by contacting us using the details below. Withdrawing consent means Asmi can
+              no longer function as intended because memory is core to the product.
             </p>
             <p>
-              Calls are conducted using AI-generated voice technology. Asmi is not a human - it is
-              an AI assistant. Humint Labs, Inc. complies with all applicable regulations governing
-              AI-generated voice calls, including the US Telephone Consumer Protection Act (TCPA)
-              and California's Invasion of Privacy Act (CIPA).
+              Calls use AI-generated voice technology. Asmi is not a human; it is an AI assistant.
+              Humint Labs, Inc. complies with applicable laws governing AI-generated voice calls and
+              call recording, including the U.S. Telephone Consumer Protection Act (TCPA) and the
+              California Invasion of Privacy Act (CIPA).
             </p>
           </PrivacySection>
 
@@ -196,9 +200,9 @@ const Privacy = () => {
             delay={3}
           >
             <p className="mb-4">
-              When you ask Asmi to call someone on your behalf - a plumber, a restaurant, a service
-              provider - Asmi places that call using AI-generated voice and records it so it can
-              brief you accurately afterward.
+              When you ask Asmi to call someone on your behalf - such as a plumber, restaurant, or
+              service provider - Asmi places that call using an AI-generated voice and records it so
+              it can brief you accurately afterward.
             </p>
             <Blockquote>
               "Hi, this is Asmi, an AI assistant calling on behalf of [your name]. I am keeping a
@@ -206,19 +210,19 @@ const Privacy = () => {
               a good time?"
             </Blockquote>
             <p className="mb-4">
-              This disclosure ensures the person being called knows they are speaking with an AI,
-              knows the call is being recorded, and knows who sent the call. If the recipient
-              objects to being recorded, Asmi will either stop recording and proceed or end the call
-              and notify you.
+              This opening tells the recipient that they are speaking with an AI assistant, who the
+              call is on behalf of, why Asmi is calling, and that the call is being recorded. If the
+              recipient objects to recording, Asmi stops recording immediately. Asmi may continue
+              without recording only where that is lawful and technically possible; otherwise, it
+              ends the call and notifies you.
             </p>
             <p className="mb-4">
-              Asmi only places calls to third parties when explicitly instructed to do so by you for
-              a specific task. We do not place calls to your contacts without your instruction.
+              Asmi places calls to third parties only when you explicitly instruct it to do so for a
+              specific task. We do not call your contacts without your instruction.
             </p>
             <p>
-              Following each call made on your behalf, Asmi shares a summary, transcript, or
-              recording of that call with you so you can review what was discussed and what was
-              agreed.
+              After each call made on your behalf, Asmi shares a summary, transcript, or recording
+              with you so you can review what was discussed and what was agreed.
             </p>
           </PrivacySection>
 
@@ -234,7 +238,7 @@ const Privacy = () => {
             <ul className="mb-4 space-y-3" style={{ lineHeight: 1.7 }}>
               <li>
                 — <span style={{ fontWeight: "bold" }}>Unsolicited promotional calls</span> -
-                advertising, marketing, or soliciting any product or service to someone who did not
+                advertising, marketing, or soliciting a product or service to someone who did not
                 request contact
               </li>
               <li>
@@ -242,13 +246,9 @@ const Privacy = () => {
                 demanding, or following up on repayment of money owed by anyone
               </li>
               <li>
-                — <span style={{ fontWeight: "bold" }}>Emergency services</span> - 911, 112, 999,
-                100, 101, 108, or any emergency equivalent. If you are in an emergency, call
+                — <span style={{ fontWeight: "bold" }}>Emergency services</span> - calling 911, 112,
+                999, 100, 101, 108, or any emergency equivalent. If you are in an emergency, contact
                 emergency services directly
-              </li>
-              <li>
-                — <span style={{ fontWeight: "bold" }}>Calls outside permitted hours</span> - before
-                8:00 AM or after 9:00 PM in the recipient's local time zone
               </li>
               <li>
                 — <span style={{ fontWeight: "bold" }}>Political solicitation</span> - soliciting
@@ -257,18 +257,19 @@ const Privacy = () => {
               <li>
                 —{" "}
                 <span style={{ fontWeight: "bold" }}>Harassment or repeated unwanted contact</span>{" "}
-                - calling anyone who has previously asked not to be contacted
+                - calling anyone who has asked not to be contacted, or otherwise making unwanted
+                repeated contact
               </li>
               <li>
                 —{" "}
                 <span style={{ fontWeight: "bold" }}>Legal threats or securities solicitation</span>{" "}
-                - verbal cease and desist notices, demand letters, investment solicitation, or any
-                call where Asmi would be acting as an unauthorised agent of a third party
+                - verbal cease-and-desist notices, demand letters, investment solicitation, or calls
+                in which Asmi would act as an unauthorized agent of a third party
               </li>
             </ul>
             <p>
-              When Asmi declines a request, it will notify you via WhatsApp or iMessage and suggest
-              an alternative where one exists.
+              When Asmi declines a request, it will notify you through an available communication
+              channel and suggest an alternative when one exists.
             </p>
           </PrivacySection>
 
@@ -309,27 +310,27 @@ const Privacy = () => {
                     {
                       who: "You",
                       reason:
-                        "Full access to your conversation history at all times. Request a copy or deletion anytime.",
+                        "Full access to your conversation history. You can request a copy or deletion at any time.",
                     },
                     {
                       who: "Asmi (the AI)",
                       reason:
-                        "Reads your conversation history to provide context-aware responses and execute tasks on your behalf.",
+                        "Reads your conversation history to provide context-aware responses and carry out tasks on your behalf.",
                     },
                     {
                       who: "Humint Labs, Inc.",
                       reason:
-                        "Access only for support, safety, and legal compliance purposes. Not used for advertising or sold to third parties.",
+                        "Access only for support, safety, and legal compliance. We do not use this access for advertising or sell the data to third parties.",
                     },
                     {
                       who: "ElevenLabs",
                       reason:
-                        "Our voice infrastructure provider. Processes and stores call audio on our behalf under a data processing agreement. We have disabled training data use on your recordings.",
+                        "Our voice infrastructure provider. It processes and stores call audio for us under a data processing agreement. Training use of your recordings is disabled.",
                     },
                     {
                       who: "Twilio",
                       reason:
-                        "Our telephony provider. Routes calls on our behalf. Does not store conversation content.",
+                        "Our telephony provider. It routes calls for us and does not store conversation content.",
                     },
                   ].map((row, i) => (
                     <tr
@@ -354,6 +355,19 @@ const Privacy = () => {
             </p>
           </PrivacySection>
 
+          <PrivacySection
+            number="06A - Third-Party Integrations"
+            title="Third-party integrations"
+            delay={0}
+          >
+            <p>
+              If you connect Asmi through an external platform or integration, we receive the
+              information needed to carry out your requests - such as task descriptions, contact
+              details, and account identifiers you provide through that integration. This data is
+              handled under this policy exactly like data you provide to us directly.
+            </p>
+          </PrivacySection>
+
           <PrivacySection number="07 - Your Rights" title="Your rights" delay={1}>
             <p className="mb-4">You have the following rights over your data at any time:</p>
             <ul className="mb-4 space-y-3" style={{ lineHeight: 1.7 }}>
@@ -362,18 +376,18 @@ const Privacy = () => {
                 Asmi has saved about you
               </li>
               <li>
-                — <span style={{ fontWeight: "bold" }}>Deletion</span> - ask Asmi to delete your
-                entire conversation history and profile. Contact us below. Deletion is permanent and
-                cannot be undone
+                — <span style={{ fontWeight: "bold" }}>Deletion</span> - ask us to delete your
+                entire conversation history and profile. Deletion is permanent and cannot be undone
               </li>
             </ul>
             <p className="mb-4">
               California residents have additional rights under the California Consumer Privacy Act
-              (CCPA), including the right to know what personal information is collected, the right
-              to delete, and the right to non-discrimination for exercising these rights.
+              (CCPA), as amended, including the right to know what personal information is
+              collected, the right to delete, and the right to non-discrimination for exercising
+              these rights.
             </p>
             <p>
-              To exercise any of these rights, contact us at the address in the Contact section
+              To exercise any of these rights, contact us using the details in the Contact section
               below. We will respond within 30 days.
             </p>
           </PrivacySection>
@@ -381,9 +395,9 @@ const Privacy = () => {
           <PrivacySection number="08 - How Long We Keep It" title="How long we keep it" delay={2}>
             <p className="mb-4">
               We retain your conversation data for as long as your account is active. If you delete
-              your account or request deletion, we remove your data within 30 days. Some anonymised,
-              aggregated data may be retained for product improvement purposes - this cannot be
-              linked back to you.
+              your account or request deletion, we remove your data within 30 days. We may retain
+              anonymized, aggregated data for product improvement, but that data cannot be linked
+              back to you.
             </p>
             <p>
               Call recordings are retained for 90 days by default. Transcripts and the memory Asmi
@@ -394,21 +408,21 @@ const Privacy = () => {
 
           <PrivacySection number="09 - SMS Communications" title="SMS communications" delay={3}>
             <p className="mb-4">
-              We may send SMS (text) messages to users based on their interactions with Asmi. These
-              messages are sent only after the user provides consent, either during account
-              registration or through explicit confirmation during an interaction (such as a call).
+              We may send you SMS text messages based on your interactions with Asmi. We send them
+              only after you provide consent, either during account registration or through an
+              explicit confirmation during an interaction.
             </p>
             <p className="mb-4">
-              SMS messages are strictly transactional and informational, including summaries of
-              interactions, confirmations, and responses to user-initiated requests. Message
-              frequency varies based on user activity.
+              SMS messages are strictly transactional and informational. They may include
+              interaction summaries, confirmations, and responses to requests you initiated. Message
+              frequency varies based on your activity.
             </p>
             <p className="mb-4">
-              Users may opt out of receiving SMS messages at any time by replying{" "}
-              <span className="font-mono">STOP</span> and may request assistance by replying{" "}
+              You may opt out of SMS messages at any time by replying{" "}
+              <span className="font-mono">STOP</span>. You may request assistance by replying{" "}
               <span className="font-mono">HELP</span>. Message and data rates may apply.
             </p>
-            <p>We do not send unsolicited marketing or promotional messages via SMS.</p>
+            <p>We do not send unsolicited marketing or promotional messages by SMS.</p>
           </PrivacySection>
 
           <PrivacySection
@@ -417,18 +431,18 @@ const Privacy = () => {
             delay={4}
           >
             <p className="mb-4">
-              We will notify you of any material changes to this policy via WhatsApp/iMessage or
-              email before they take effect. Continued use of Asmi after notification constitutes
-              acceptance of the updated policy. If you do not agree with any changes, you may delete
-              your account at any time.
+              We will notify you of any material changes to this policy through an available
+              messaging channel or by email before the changes take effect. If you continue to use
+              Asmi after the notified effective date, you accept the updated policy. If you do not
+              agree with a change, you may delete your account at any time.
             </p>
             <p>The version history of this policy is available on request.</p>
           </PrivacySection>
 
           <PrivacySection number="11 - Contact" title="Contact" delay={0}>
             <p className="mb-4">
-              For any questions about this policy, to exercise your data rights, or to report a
-              concern:
+              For questions about this policy, to exercise your data rights, or to report a concern,
+              contact:
             </p>
             <div className="space-y-1" style={{ fontSize: "0.95rem" }}>
               <p style={{ fontWeight: "bold" }}>Humint Labs, Inc.</p>
@@ -454,6 +468,8 @@ const Privacy = () => {
           </PrivacySection>
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 };

@@ -7,8 +7,10 @@ import { RootLayout } from "./routes/__root";
 import AppShell from "./routes/app";
 import AppHistory from "./routes/app.history";
 import AppLayout from "./routes/app.layout";
+import DocsMcp from "./routes/docs.mcp";
 import Index from "./routes/index";
 import NewNumber from "./routes/new-number";
+import Pricing from "./routes/pricing";
 import Privacy from "./routes/privacy";
 import ProductHunt from "./routes/product-hunt";
 import TermsAndConditions from "./routes/terms-and-conditions";
@@ -28,6 +30,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </Route>
             <Route path="/product-hunt" element={<ProductHunt />} />
             <Route path="/new-number" element={<NewNumber />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/docs/mcp" element={<DocsMcp />} />
+            <Route path="/docs/mcp/:client" element={<DocsMcp />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           </Route>
