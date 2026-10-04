@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChannelCTA } from "@/components/asmi/ChannelCTA";
 import { SiteFooter } from "@/components/asmi/SiteFooter";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDocumentMeta } from "@/hooks/use-document-meta";
 import { type BillingInterval, COMMON_FEATURES, formatUsd, PLANS } from "@/lib/pricing";
 import asmiLogoUrl from "/assets/asmi-logo-black.png";
@@ -25,22 +26,22 @@ function IntervalToggle({
     { key: "year", label: "yearly" },
   ];
   return (
-    <div
-      role="radiogroup"
+    // Radix ToggleGroup → roving focus + arrow keys; single mode allows deselect, so ignore ""
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={(v) => v && onChange(v as BillingInterval)}
       aria-label="billing interval"
-      className="inline-flex rounded-full p-1"
+      className="inline-flex gap-0 rounded-full p-1"
       style={{ border: "2px solid var(--ink)", background: "var(--cream)" }}
     >
       {options.map((opt) => {
         const active = value === opt.key;
         return (
-          <button
+          <ToggleGroupItem
             key={opt.key}
-            type="button"
-            role="radio"
-            aria-checked={active}
-            onClick={() => onChange(opt.key)}
-            className="flex items-center gap-2 rounded-full px-4 py-2 font-mono"
+            value={opt.key}
+            className="h-auto rounded-full px-4 py-2 font-mono"
             style={{
               fontSize: 12,
               letterSpacing: "0.08em",
@@ -59,10 +60,10 @@ function IntervalToggle({
                 {MONTHS_FREE} mo free
               </span>
             )}
-          </button>
+          </ToggleGroupItem>
         );
       })}
-    </div>
+    </ToggleGroup>
   );
 }
 
