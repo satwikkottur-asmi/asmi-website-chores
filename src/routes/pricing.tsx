@@ -73,7 +73,7 @@ export default function Pricing() {
     { property: "og:description", content: PRICING_DESCRIPTION },
   ]);
 
-  const [interval, setInterval] = useState<BillingInterval>("month");
+  const [interval, setBillingInterval] = useState<BillingInterval>("month");
 
   return (
     <div className="landing-theme flex min-h-screen flex-col">
@@ -113,7 +113,7 @@ export default function Pricing() {
               your first task is free
             </p>
             <div className="mt-8">
-              <IntervalToggle value={interval} onChange={setInterval} />
+              <IntervalToggle value={interval} onChange={setBillingInterval} />
             </div>
           </header>
 
