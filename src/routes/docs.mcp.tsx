@@ -1,6 +1,6 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { SiteFooter } from "@/components/asmi/SiteFooter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDocumentMeta } from "@/hooks/use-document-meta";
@@ -22,6 +22,9 @@ import { formatUsd, PLANS } from "@/lib/pricing";
 import asmiLogoUrl from "/assets/asmi-logo-black.png";
 
 const DEFAULT_CLIENT: ClientSlug = "claude";
+
+const DOCS_DESCRIPTION =
+  "Connect Asmi to Claude, ChatGPT or Meta Muse over MCP. Your assistant hands Asmi real-world tasks and Asmi calls, texts and emails until they're done.";
 
 const SECTIONS = [
   { id: "connect", label: "Connect" },
@@ -201,13 +204,15 @@ export default function DocsMcp() {
   const active: ClientSlug = isClientSlug(client) ? client : DEFAULT_CLIENT;
 
   useDocumentMeta("Asmi MCP server docs | asmi", [
-    {
-      name: "description",
-      content:
-        "Connect Asmi to Claude, ChatGPT or Meta Muse over MCP. Your assistant hands Asmi real-world tasks and Asmi calls, texts and emails until they're done.",
-    },
+    { name: "description", content: DOCS_DESCRIPTION },
     { property: "og:title", content: "Asmi MCP server docs" },
+    { property: "og:description", content: DOCS_DESCRIPTION },
   ]);
+
+  // Unknown client slug → canonical default tab, not a silent fallback under a bogus URL
+  if (client !== undefined && !isClientSlug(client)) {
+    return <Navigate to={`/docs/mcp/${DEFAULT_CLIENT}`} replace />;
+  }
 
   return (
     <div className="landing-theme" style={{ color: "var(--ink-soft)", lineHeight: 1.7 }}>
