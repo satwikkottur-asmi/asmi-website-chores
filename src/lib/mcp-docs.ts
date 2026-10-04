@@ -241,7 +241,7 @@ export const TOOL_GROUPS: ToolGroup[] = [
       {
         name: "billing_status",
         summary:
-          "Your plan, whether it’s active, the renewal date, and how many third-party calls you have left this month.",
+          "Your plan, whether it’s active, the renewal date, and how many tasks you have left this month.",
         effect: "read",
       },
       {
@@ -311,6 +311,6 @@ export const TROUBLESHOOTING: TroubleshootItem[] = [
   },
   {
     symptom: "A task says it’s blocked on quota",
-    fix: "You’ve used this month’s third-party calls. Upgrade from the chat (billing_get_tiers → billing_get_payment_link) or wait for the monthly reset.",
+    fix: "You’ve used this month’s tasks. Upgrade from the chat (billing_get_tiers → billing_get_payment_link) or wait for the monthly reset.",
   },
 ];

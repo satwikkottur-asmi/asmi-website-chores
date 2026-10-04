@@ -386,9 +386,9 @@ export default function DocsMcp() {
 
             <Section id="plans" number="05" title="plans & limits">
               <p className="mb-6">
-                Searching, reading your tasks and checking status are always free. Calls to
-                businesses and people come from your plan’s monthly quota. On paid plans, the texts
-                and emails Asmi sends don’t count against it.
+                Searching, reading your tasks and checking status are always free. Each task Asmi
+                starts for you, where it calls, texts or emails businesses and people, counts
+                against your plan’s monthly task quota.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <PlanCard
@@ -406,7 +406,7 @@ export default function DocsMcp() {
                     key={plan.key}
                     name={plan.name}
                     price={`${formatUsd(plan.price.month)}/mo · ${formatUsd(plan.price.year)}/yr`}
-                    detail={`${plan.tasksPerMonth} third-party calls a month. Texts and emails unmetered.`}
+                    detail={`${plan.tasksPerMonth} tasks a month.`}
                     featured={plan.featured}
                   />
                 ))}
