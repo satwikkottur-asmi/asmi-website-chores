@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { SiteFooter } from "@/components/asmi/SiteFooter";
 
 interface PrivacySectionProps {
   number: string;
@@ -467,6 +468,8 @@ const Privacy = () => {
           </PrivacySection>
         </div>
       </main>
+
+      <SiteFooter />
     </div>
   );
 };
