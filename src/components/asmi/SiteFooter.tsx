@@ -13,8 +13,12 @@ export function SiteFooter() {
           className="flex flex-wrap items-center gap-2 font-sans"
           style={{ color: "var(--ink-dim)", fontSize: 14 }}
         >
-          <a href="mailto:support@asmiai.com" style={{ color: "inherit" }}>
-            support@asmiai.com
+          <a
+            href="mailto:support@asmiai.com"
+            title="support@asmiai.com"
+            style={{ color: "inherit" }}
+          >
+            Support
           </a>
           <span aria-hidden>·</span>
           <Link to="/pricing" style={{ color: "inherit" }}>
