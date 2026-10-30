@@ -1,20 +1,24 @@
 import { Link } from "react-router-dom";
-import asmiLogoUrl from "/assets/asmi-logo-black.png";
+import { AsmiLogo } from "./AsmiLogo";
 
 export function SiteFooter() {
   return (
     <footer className="px-5 sm:px-8" style={{ background: "var(--paper-deep)" }}>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 py-7">
         <Link to="/" aria-label="asmi home" className="shrink-0">
-          <img src={asmiLogoUrl} alt="asmi" width={112} height={40} className="h-9 w-auto" />
+          <AsmiLogo className="h-2.5" />
         </Link>
 
         <div
           className="flex flex-wrap items-center gap-2 font-sans"
           style={{ color: "var(--ink-dim)", fontSize: 14 }}
         >
-          <a href="mailto:support@asmiai.com" style={{ color: "inherit" }}>
-            support@asmiai.com
+          <a
+            href="mailto:support@asmiai.com"
+            title="support@asmiai.com"
+            style={{ color: "inherit" }}
+          >
+            Support
           </a>
           <span aria-hidden>·</span>
           <Link to="/pricing" style={{ color: "inherit" }}>

@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { AsmiLogo } from "@/components/asmi/AsmiLogo";
 import { SiteFooter } from "@/components/asmi/SiteFooter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDocumentMeta } from "@/hooks/use-document-meta";
@@ -19,7 +20,6 @@ import {
   TROUBLESHOOTING,
 } from "@/lib/mcp-docs";
 import { formatUsd, PLANS } from "@/lib/pricing";
-import asmiLogoUrl from "/assets/asmi-logo-black.png";
 
 const DEFAULT_CLIENT: ClientSlug = "claude";
 
@@ -226,7 +226,7 @@ export default function DocsMcp() {
       >
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3 sm:px-8">
           <Link to="/" aria-label="asmi home" className="shrink-0">
-            <img src={asmiLogoUrl} alt="asmi" width={112} height={40} className="h-10 w-auto" />
+            <AsmiLogo className="h-3" />
           </Link>
           <span className="font-mono" style={{ color: "var(--ink-dim)", fontSize: 12 }}>
             / docs / mcp

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { AsmiLogo } from "@/components/asmi/AsmiLogo";
 import { ChannelCTA } from "@/components/asmi/ChannelCTA";
 import { SiteFooter } from "@/components/asmi/SiteFooter";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDocumentMeta } from "@/hooks/use-document-meta";
 import { type BillingInterval, COMMON_FEATURES, formatUsd, PLANS } from "@/lib/pricing";
-import asmiLogoUrl from "/assets/asmi-logo-black.png";
 
 const PRICING_DESCRIPTION =
   "your first task is free. asmi pro: $10/month for 20 tasks. asmi ultra: $49/month for 100 tasks. save with annual billing.";
@@ -81,7 +81,7 @@ export default function Pricing() {
       <nav className="px-5 py-6 sm:px-8">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link to="/" aria-label="asmi home" className="shrink-0">
-            <img src={asmiLogoUrl} alt="asmi" width={168} height={60} className="h-14 w-auto" />
+            <AsmiLogo className="h-4" />
           </Link>
           <Link
             to="/"
