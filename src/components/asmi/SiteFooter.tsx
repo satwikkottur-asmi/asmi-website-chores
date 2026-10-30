@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import asmiLogoUrl from "/assets/asmi-logo-black.png";
+import { AsmiLogo } from "./AsmiLogo";
 
 export function SiteFooter() {
   return (
     <footer className="px-5 sm:px-8" style={{ background: "var(--paper-deep)" }}>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 py-7">
         <Link to="/" aria-label="asmi home" className="shrink-0">
-          <img src={asmiLogoUrl} alt="asmi" width={112} height={40} className="h-9 w-auto" />
+          <AsmiLogo className="h-2.5" />
         </Link>
 
         <div

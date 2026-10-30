@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import asmiLogoUrl from "/assets/asmi-logo-black.png";
+import { AsmiLogo } from "./AsmiLogo";
 import { IMSG_LINK, WA_LINK } from "./ChannelCTA";
 import { IMessageMark, WhatsAppMark } from "./ChannelIcons";
 
@@ -29,13 +29,7 @@ export function Nav() {
         style={{ minHeight: 58 }}
       >
         <Link to="/" className="shrink-0" aria-label="asmi home">
-          <img
-            src={asmiLogoUrl}
-            alt="asmi"
-            width={224}
-            height={80}
-            className="h-[4.5rem] w-auto md:h-20"
-          />
+          <AsmiLogo className="h-5 md:h-6" />
         </Link>
 
         <AnimatePresence>
